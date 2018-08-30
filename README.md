@@ -32,10 +32,10 @@ First you have to request data from the user.
 
 ```typescript
 import * as React from 'react'
-import {RequestQRCode} from '@bloom/share-kit'
+import {RequestQRCode, RequestData} from '@bloom/share-kit'
 
 const MyComponent: React.SFC = props => {
-  const requestData = {}
+  const requestData: RequestData = {...}
   return <RequestQRCode requestData={requestData} size={200} />
 }
 ```
@@ -43,9 +43,9 @@ const MyComponent: React.SFC = props => {
 #### Plain
 
 ```typescript
-import {createRequestQRCode, removeRequestQRCode} from '@bloom/share-kit'
+import {createRequestQRCode, removeRequestQRCode, RequestData} from '@bloom/share-kit'
 
-const requestData = {}
+const requestData: RequestData = {...}
 const options = {
   size: 200,
 }
@@ -69,7 +69,7 @@ Data to be rendered into the RequestQRCode.
 | url          | The API endpoint to POST the `ResponseData` to                | `string` |
 | org_logo_url | A url of the logo to display to the user when requesting data | `string` |
 | org_name     | The name of the organization requesting data                  | `string` |
-| types        |                                                               | `Types`  |
+| types        | The type of attestions required and the amount needed         | `Types`  |
 
 #### Example
 
@@ -83,6 +83,7 @@ Data to be rendered into the RequestQRCode.
   types: {
     phone: 1,
     email: 1,
+    sanctionScreen: 1,
   },
 }
 ```
@@ -108,20 +109,21 @@ When the user allows access you get a response back.
 
 This is the shape of the object that will be POSTed to the provided URL
 
-| Name     | Description                             | Type     |
-| -------- | --------------------------------------- | -------- |
-| bloom_id | The user's BloomID                      | `number` |
-| nonces   | maps `AttestationTypeID` to `NonceData` | `Nonces` |
+| Name     | Description                               | Type     |
+| -------- | ----------------------------------------- | -------- |
+| bloom_id | The user's BloomID                        | `number` |
+| nonces   | maps `AttestationTypeID` to `NonceData[]` | `Nonces` |
 
 #### NonceData
 
 Data associated with the attestation
 
-| Name  | Description                                               | Type     |
-| ----- | --------------------------------------------------------- | -------- |
-| nonce | The nonce of the attestation                              | `string` |
-| data  | The proof of the attestation                              | `string` |
-| tx    | The Ethereum transaction corresponding to the attestation | `string` |
+| Name   | Description                                               | Type       |
+| ------ | --------------------------------------------------------- | ---------- |
+| nonce  | The nonce of the attestation                              | `string`   |
+| data   | The proof of the attestation                              | `string`   |
+| tx     | The Ethereum transaction corresponding to the attestation | `string`   |
+| hashes | List of hashes of the attestation                         | `string[]` |
 
 #### Example
 
@@ -129,17 +131,30 @@ Data associated with the attestation
 {
   "bloom_id": 299,
   "attestations": {
-    "phone": {
-      "nonce": "...",
-      "data": "...",
-      "tx": "...",
-    },
-    "email": {
-      "nonce": "...",
-      "data": "...",
-      "tx": "...",
-    }
-    ...
+    "phone": [
+      {
+        "nonce": "...",
+        "data": "...",
+        "tx": "...",
+        "hashes": ["...", "..."]
+      }
+    ],
+    "email": [
+      {
+        "nonce": "...",
+        "data": "...",
+        "tx": "...",
+        "hashes": ["...", "..."]
+      }
+    ],
+    "sanctionScreen": [
+      {
+        "nonce": "...",
+        "data": "...",
+        "tx": "...",
+        "hashes": ["...", "..."]
+      }
+    ]
   }
 }
 ```

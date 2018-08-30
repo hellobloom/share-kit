@@ -30,6 +30,7 @@ type NonceData = {
   nonce: string
   data: string
   tx: string
+  hashes: string[]
 }
 
 type Nonces = {[P in keyof typeof AttestationTypeID]?: NonceData[]}
