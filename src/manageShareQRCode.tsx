@@ -27,6 +27,14 @@ const createShareQRCode = (shareData: ShareData, container: HTMLElement, options
   return id
 }
 
+const updateShareQRCode = (id: string, shareData: ShareData, options?: Options) => {
+  const qrWrapper = document.getElementById(id)
+
+  if (!qrWrapper) throw `Could not find the QR Code with the id: ${id}`
+
+  ReactDOM.render(<ShareQRCode shareData={shareData} {...options} />, qrWrapper)
+}
+
 const removeShareQRCode = (id: string) => {
   const elem = document.getElementById(id)
 
@@ -36,4 +44,4 @@ const removeShareQRCode = (id: string) => {
   elem.remove()
 }
 
-export {createShareQRCode, removeShareQRCode}
+export {createShareQRCode, updateShareQRCode, removeShareQRCode}
