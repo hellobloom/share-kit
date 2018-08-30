@@ -1,10 +1,10 @@
 {
-  "name": "data-request-ui-kit",
+  "name": "share-kit",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Easily create a QR Code to request a user's Bloom data",
-  "repository": "https://github.com/hellobloom/data-request-ui-kit",
+  "repository": "https://github.com/hellobloom/share-kit",
   "author": "Bloom Team <team@bloom.co>",
   "license": "UNLICENSED",
   "lint-staged": {
