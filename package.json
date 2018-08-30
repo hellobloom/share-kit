@@ -1,0 +1,35 @@
+{
+  "name": "data-request-ui-kit",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "description": "Easily create a QR Code to request a user's Bloom data",
+  "repository": "https://github.com/hellobloom/data-request-ui-kit",
+  "author": "Bloom Team <team@bloom.co>",
+  "license": "UNLICENSED",
+  "lint-staged": {
+    "src/**/*.{ts,tsx,json,css}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "scripts": {
+    "build": "yarn clean && ./bin/build",
+    "clean": "rimraf dist",
+    "prepack": "yarn build",
+    "prepare": "yarn build"
+  },
+  "dependencies": {
+    "@types/qrcode.react": "^0.8.1",
+    "@types/react": "^16.4.13",
+    "@types/react-dom": "^16.0.7",
+    "qrcode.react": "^0.8.0"
+  },
+  "devDependencies": {
+    "lint-staged": "^7.2.0",
+    "prettier": "^1.13.7",
+    "rimraf": "^2.6.2",
+    "tslint": "^5.11.0",
+    "typescript": "^2.9.2"
+  }
+}
