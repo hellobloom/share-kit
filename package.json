@@ -17,19 +17,28 @@
     "build": "yarn clean && ./bin/build",
     "clean": "rimraf dist",
     "prepack": "yarn build",
-    "prepare": "yarn build"
+    "prepare": "yarn build",
+    "storybook": "start-storybook -p 9001 -c .storybook"
   },
   "dependencies": {
     "@types/qrcode.react": "^0.8.1",
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
-    "qrcode.react": "^0.8.0"
+    "qrcode.react": "^0.8.0",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@storybook/react": "^4.0.0-alpha.12",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.0",
     "lint-staged": "^7.2.0",
     "prettier": "^1.13.7",
     "rimraf": "^2.6.2",
+    "ts-loader": "^4.5.0",
     "tslint": "^5.11.0",
-    "typescript": "^2.9.2"
+    "typescript": "^2.9.2",
+    "webpack": "^4.17.1"
   }
 }
