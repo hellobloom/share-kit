@@ -1,4 +1,4 @@
-type RequestData = {}
+type ShareData = {}
 
 type Options = {
   size?: number
@@ -11,4 +11,4 @@ type OptionsWithContainer = Options & {
   container?: HTMLElement
 }
 
-export {RequestData, Options, OptionsWithContainer}
+export {ShareData, Options, OptionsWithContainer}

@@ -5,7 +5,7 @@
 ## Installation
 
 ```
-yarn add @bloom/data-request-kit
+yarn add @bloom/share-kit
 ```
 
 ## Usage
@@ -13,7 +13,7 @@ yarn add @bloom/data-request-kit
 ### Plain
 
 ```typescript
-import {createRequestQRCode} from 'data-request-kit'
+import {createShareQRCode} from '@bloom/share-kit'
 
 const requestData = {}
 const options = {
@@ -21,22 +21,22 @@ const options = {
   container: window.querySelector('#my-container'),
 }
 
-createRequestQRCode(requestData, options)
+createShareQRCode(requestData, options)
 ```
 
 ### React
 
 ```typescript
 import * as React from 'react'
-import {RequestQRCode} from 'data-request-kit'
+import {ShareQRCode} from '@bloom/share-kit'
 
 const MyComponent: React.SFC = props => {
   const requestData = {}
-  return <RequestQRCode requestData={requestData} size={200} />
+  return <ShareQRCode requestData={requestData} size={200} />
 }
 ```
 
-## RequestData
+## ShareData
 
 ## Options
 
