@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
-import {ShareData, OptionsWithContainer} from './types'
+import {ShareData, Options} from './types'
 import {ShareQRCode} from './ShareQRCode'
 
 const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -15,22 +15,20 @@ const generateQRWrapperId = () => {
   return 'bloom-share-qr-code-wrapper-' + rand
 }
 
-const createShareQRCode = (shareData: ShareData, options?: OptionsWithContainer) => {
-  const qrWrapperId = generateQRWrapperId()
+const createShareQRCode = (shareData: ShareData, container: HTMLElement, options?: Options) => {
+  const id = generateQRWrapperId()
   const qrWrapper = document.createElement('div')
-  qrWrapper.id = qrWrapperId
-
-  const container = options && options.container ? options.container : document.body
+  qrWrapper.id = id
 
   container.appendChild(qrWrapper)
 
   ReactDOM.render(<ShareQRCode shareData={shareData} {...options} />, qrWrapper)
 
-  return qrWrapperId
+  return id
 }
 
-const removeShareQRCode = (qrWrapperId: string) => {
-  const elem = document.getElementById(qrWrapperId)
+const removeShareQRCode = (id: string) => {
+  const elem = document.getElementById(id)
 
   if (!elem) return
 

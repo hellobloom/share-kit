@@ -7,8 +7,4 @@ type Options = {
   renderAs?: 'svg' | 'canvas'
 }
 
-type OptionsWithContainer = Options & {
-  container?: HTMLElement
-}
-
-export {ShareData, Options, OptionsWithContainer}
+export {ShareData, Options}

@@ -11,9 +11,8 @@ class Manager extends React.Component {
 
   componentDidUpdate() {
     if (this.state.shown) {
-      console.log(this.shareQRCodeId)
       if (this.shareQRCodeId) throw 'Already Created'
-      this.shareQRCodeId = createShareQRCode({})
+      this.shareQRCodeId = createShareQRCode({}, document.body)
     } else {
       removeShareQRCode(this.shareQRCodeId)
       this.shareQRCodeId = undefined
