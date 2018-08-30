@@ -13,7 +13,7 @@ yarn add @bloom/share-kit
 ### Plain
 
 ```typescript
-import {createShareQRCode} from '@bloom/share-kit'
+import {createShareQRCode, removeShareQRCode} from '@bloom/share-kit'
 
 const requestData = {}
 const options = {
@@ -21,7 +21,10 @@ const options = {
   container: window.querySelector('#my-container'),
 }
 
-createShareQRCode(requestData, options)
+const shareQRCodeId = createShareQRCode(requestData, options)
+
+// Some time later
+removeShareQRCode(shareQRCodeId)
 ```
 
 ### React
