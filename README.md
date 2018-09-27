@@ -1,6 +1,8 @@
-# data-request-kit
+![Share Kit](logo.png)
 
-> Easily create a QR Code to that allows Bloom users to share their data
+# Share Kit
+
+Easily allow your users to share their verified personal information directly with your application by scanning a QR code.
 
 ## Installation
 
