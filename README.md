@@ -2,19 +2,24 @@
 
 > Easily create a QR Code to that allows Bloom users to share their data
 
-- **[Installation](#installation)**
-- **[Usage](#usage)**
-  - **[Request](#request)**
-    - **[Usage](#usage)**
-      - **[React](#react)**
-      - **[Plain](#plain)**
-    - **[Types](#request-types)**
-      - **[RequestData](#requestdata)**
-      - **[Options](#options)**
-  - **[Response](#response)**
-    - **[Types](#response-types)**
-      - **[ResponseData](#responsedata)**
-      - **[AttestationData](#attestationdata)**
+- [share-kit](#share-kit)
+  - [Installation](#installation)
+  - [Request](#request)
+    - [Usage](#usage)
+      - [React](#react)
+      - [Plain](#plain)
+    - [Types {#request-types}](#types-request-types)
+      - [RequestData](#requestdata)
+      - [Example](#example)
+      - [Options](#options)
+  - [Response](#response)
+    - [Types {#response-types}](#types-response-types)
+      - [ResponseData](#responsedata)
+      - [VerifiedData](#verifieddata)
+      - [Attestation](#attestation)
+      - [Proof](#proof)
+      - [Example TODO with real hashes that can be verified with attestations-lib](#example-todo-with-real-hashes-that-can-be-verified-with-attestations-lib)
+  - [Receive](#receive)
 
 ## Installation
 
@@ -62,14 +67,16 @@ removeRequestQRCode(requestQRCodeId)
 
 Data to be rendered into the RequestQRCode.
 
-| Name         | Description                                                   | Type     |
-| ------------ | ------------------------------------------------------------- | -------- |
-| action       |                                                               | `Action` |
-| token        |                                                               | `string` |
-| url          | The API endpoint to POST the `ResponseData` to                | `string` |
-| org_logo_url | A url of the logo to display to the user when requesting data | `string` |
-| org_name     | The name of the organization requesting data                  | `string` |
-| types        | The type of attestions required and the amount needed         | `Types`  |
+| Name                   | Description                                                        | Type     |
+| ---------------------- | ------------------------------------------------------------------ | -------- |
+| action                 |                                                                    | `Action` |
+| token                  |                                                                    | `string` |
+| url                    | The API endpoint to POST the `ResponseData` to                     | `string` |
+| org_logo_url           | A url of the logo to display to the user when requesting data      | `string` |
+| org_name               | The name of the organization requesting data                       | `string` |
+| types                  | The type of attestions required and the amount needed              | `Types`  |
+| org_usage_policy_url   | The url of the usage policy for the organization requesting data   | `string` |
+| org_privacy_policy_url | The url of the privacy policy for the organization requesting data | `string` |
 
 #### Example
 
@@ -80,11 +87,13 @@ Data to be rendered into the RequestQRCode.
   url: '...',
   org_logo_url: '...',
   org_name: '...',
-  types: {
-    phone: 1,
-    email: 1,
-    sanctionScreen: 1,
-  },
+  types: [
+    'phone',
+    'email',
+    'sanction-screen',
+  ],
+  org_usage_policy_url: '...',
+  org_privacy_policy_url: '...',
 }
 ```
 
@@ -109,23 +118,45 @@ When the user allows access you get a response back.
 
 This is the shape of the object that will be POSTed to the provided URL
 
-| Name     | Description                               | Type     |
-| -------- | ----------------------------------------- | -------- |
-| bloom_id | The user's BloomID                        | `number` |
-| nonces   | maps `AttestationTypeID` to `NonceData[]` | `Nonces` |
+| Name     | Description                    | Type           |
+| -------- | ------------------------------ | -------------- |
+| bloom_id | The user's BloomID             | `number`       |
+| data     | Array of VerifiedData objects  | `VerifiedData` |
 
-#### NonceData
+#### VerifiedData
 
 Data associated with the attestation
 
-| Name   | Description                                               | Type       |
-| ------ | --------------------------------------------------------- | ---------- |
-| nonce  | The nonce of the attestation                              | `string`   |
-| data   | The proof of the attestation                              | `string`   |
-| tx     | The Ethereum transaction corresponding to the attestation | `string`   |
-| hashes | List of hashes of the attestation                         | `string[]` |
+| Name     | Description                                                        | Type            |
+| -------- | ------------------------------------------------------------------ | --------------- |
+| tx       | The Ethereum transaction corresponding to the attestation          | `string`        |
+| stage    | The Ethereum network name on which the tx can be found             | `string`        |
+| rootHash | Root hash of the data merkle tree emitted by the attestation event | `string`        |
+| target   | Root hash of the data merkle tree emitted by the attestation event | `Attestation`   |
+| proof    | Array of hashes needed to perform the merkle proof                 | `Proof`         |
 
-#### Example
+#### Attestation
+
+Format of target attestation data
+
+| Name     | Description                                                       | Type           |
+| -------- | ----------------------------------------------------------------- | -------------- |
+| type     | String identifying the type of attestation                        | `string`       |
+| provider | Optional identifier of the service used to verify this data       | `string`       |
+| data     | Stringified plaintext representation of the verified data         | `string`       |
+| nonce    | Unique hex string used to obfuscate the hashed form of this data  | `string`       |
+| version  | Semantic version used to keep track of attestation data formats   | `string`       |
+
+#### Proof
+
+Format of proof object used to perform merkle proof
+
+| Name     | Description                                                       | Type           |
+| -------- | ----------------------------------------------------------------- | -------------- |
+| position | `left` or `right` indicating position of hash in merkle tree | `string`       |
+| data     | Hex string of node hash                                      | `string`       |
+
+#### Example TODO with real hashes that can be verified with attestations-lib
 
 ```json
 {
@@ -158,3 +189,6 @@ Data associated with the attestation
   }
 }
 ```
+## Receive 
+
+Info on how to verify the data received by the POST
