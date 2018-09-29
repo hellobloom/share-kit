@@ -1,5 +1,17 @@
-import {createShareQRCode, updateShareQRCode, removeShareQRCode} from './src/manageShareQRCode'
-import {ShareQRCode} from './src/ShareQRCode'
-import {ShareData, Options} from './src/types'
+import {createRequestQRCode, updateRequestQRCode, removeRequestQRCode} from './src/manageRequestQRCode'
+import {RequestQRCode} from './src/RequestQRCode'
+import {Action, Types, RequestData, Options, NonceData, Nonces, ResponseData} from './src/types'
 
-export {createShareQRCode, updateShareQRCode, removeShareQRCode, ShareQRCode, ShareData, Options}
+export {
+  createRequestQRCode,
+  updateRequestQRCode,
+  removeRequestQRCode,
+  RequestQRCode,
+  Action,
+  Types,
+  RequestData,
+  Options,
+  NonceData,
+  Nonces,
+  ResponseData,
+}
