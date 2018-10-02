@@ -83,19 +83,17 @@ Data to be rendered into the RequestQRCode.
 ```ts
 {
   action: Action.attestation,
-  token: '...',
-  url: '...',
-  org_logo_url: '...',
-  org_name: '...',
-  types: [
-    'phone',
-    'email',
-    'sanction-screen',
-  ],
-  org_usage_policy_url: '...',
-  org_privacy_policy_url: '...',
+  token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
+  url: 'bloom.co/api/receiveData/mock',
+  org_logo_url: 'bloom.co/images/bloom-logo.png',
+  org_name: 'Bloom',
+  org_usage_policy_url: 'https://bloom.co/legal/privacy',
+  org_privacy_policy_url: 'https://bloom.co/legal/privacy',
+  types: ['phone', 'email'],
 }
 ```
+
+![alt text](images/sampleQR.png)
 
 #### Options
 
