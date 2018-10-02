@@ -7,10 +7,12 @@ import {Manager} from './Manager'
 const defaultData = {
   action: Action.attestation,
   token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
-  url: 'bloom.co',
+  url: 'bloom.co/api/receiveData/mock',
   org_logo_url: 'bloom.co/images/bloom-logo.png',
   org_name: 'Bloom',
-  types: {phone: 1, payroll: 1},
+  org_usage_policy_url: 'https://bloom.co/legal/privacy',
+  org_privacy_policy_url: 'https://bloom.co/legal/privacy',
+  types: ['phone', 'email'],
 }
 
 storiesOf('RequestQRCode', module)
