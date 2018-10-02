@@ -18,7 +18,7 @@
       - [VerifiedData](#verifieddata)
       - [Attestation](#attestation)
       - [Proof](#proof)
-      - [Example TODO with real hashes that can be verified with attestations-lib](#example-todo-with-real-hashes-that-can-be-verified-with-attestations-lib)
+      - [Example](#example)
   - [Receive](#receive)
 
 ## Installation
@@ -89,7 +89,7 @@ Data to be rendered into the RequestQRCode.
   org_name: 'Bloom',
   org_usage_policy_url: 'https://bloom.co/legal/privacy',
   org_privacy_policy_url: 'https://bloom.co/legal/privacy',
-  types: ['phone', 'email'],
+  types: ['full-name', 'phone', 'email'],
 }
 ```
 
@@ -116,75 +116,110 @@ When the user allows access you get a response back.
 
 This is the shape of the object that will be POSTed to the provided URL
 
-| Name     | Description                    | Type           |
-| -------- | ------------------------------ | -------------- |
-| bloom_id | The user's BloomID             | `number`       |
-| data     | Array of VerifiedData objects  | `VerifiedData` |
+| Name     | Description                   | Type           |
+| -------- | ----------------------------- | -------------- |
+| bloom_id | The user's BloomID            | `number`       |
+| data     | Array of VerifiedData objects | `VerifiedData` |
 
 #### VerifiedData
 
 Data associated with the attestation
 
-| Name     | Description                                                        | Type            |
-| -------- | ------------------------------------------------------------------ | --------------- |
-| tx       | The Ethereum transaction corresponding to the attestation          | `string`        |
-| stage    | The Ethereum network name on which the tx can be found             | `string`        |
-| rootHash | Root hash of the data merkle tree emitted by the attestation event | `string`        |
-| target   | Root hash of the data merkle tree emitted by the attestation event | `Attestation`   |
-| proof    | Array of hashes needed to perform the merkle proof                 | `Proof`         |
+| Name     | Description                                                        | Type          |
+| -------- | ------------------------------------------------------------------ | ------------- |
+| tx       | The Ethereum transaction corresponding to the attestation          | `string`      |
+| stage    | The Ethereum network name on which the tx can be found             | `string`      |
+| rootHash | Root hash of the data merkle tree emitted by the attestation event | `string`      |
+| target   | Root hash of the data merkle tree emitted by the attestation event | `Attestation` |
+| proof    | Array of hashes needed to perform the merkle proof                 | `Proof`       |
 
 #### Attestation
 
 Format of target attestation data
 
-| Name     | Description                                                       | Type           |
-| -------- | ----------------------------------------------------------------- | -------------- |
-| type     | String identifying the type of attestation                        | `string`       |
-| provider | Optional identifier of the service used to verify this data       | `string`       |
-| data     | Stringified plaintext representation of the verified data         | `string`       |
-| nonce    | Unique hex string used to obfuscate the hashed form of this data  | `string`       |
-| version  | Semantic version used to keep track of attestation data formats   | `string`       |
+| Name     | Description                                                      | Type     |
+| -------- | ---------------------------------------------------------------- | -------- |
+| type     | String identifying the type of attestation                       | `string` |
+| provider | Optional identifier of the service used to verify this data      | `string` |
+| data     | Stringified plaintext representation of the verified data        | `string` |
+| nonce    | Unique hex string used to obfuscate the hashed form of this data | `string` |
+| version  | Semantic version used to keep track of attestation data formats  | `string` |
 
 #### Proof
 
 Format of proof object used to perform merkle proof
 
-| Name     | Description                                                       | Type           |
-| -------- | ----------------------------------------------------------------- | -------------- |
-| position | `left` or `right` indicating position of hash in merkle tree | `string`       |
-| data     | Hex string of node hash                                      | `string`       |
+| Name     | Description                                                  | Type     |
+| -------- | ------------------------------------------------------------ | -------- |
+| position | `left` or `right` indicating position of hash in merkle tree | `string` |
+| data     | Hex string of node hash                                      | `string` |
 
-#### Example TODO with real hashes that can be verified with attestations-lib
+#### Example
 
 ```json
 {
   "bloom_id": 299,
-  "attestations": {
-    "phone": [
-      {
-        "nonce": "...",
-        "data": "...",
-        "tx": "...",
-        "hashes": ["...", "..."]
-      }
-    ],
-    "email": [
-      {
-        "nonce": "...",
-        "data": "...",
-        "tx": "...",
-        "hashes": ["...", "..."]
-      }
-    ],
-    "sanctionScreen": [
-      {
-        "nonce": "...",
-        "data": "...",
-        "tx": "...",
-        "hashes": ["...", "..."]
-      }
-    ]
-  }
+  "data": [
+    {
+      "tx": "0xe1f7b9603bd8d71927b9aabf88be14342964b4f4abc673a5e0f8dcbbd7c610e8",
+      "stage": "mainnet",
+      "rootHash": "0xc13405b3de1d86d0e23ee749779dc4dc90166d1f74a4e76cf1cf84f3de15902f",
+      "target": {
+        "type": "phone",
+        "data": "+16195550587",
+        "nonce": "c3877038-79a9-477d-8037-9826032e6af5",
+        "version": "1.0.0"
+      },
+      "proof": [
+        {
+          "position": "right",
+          "data": "0x662a74ce03d761ab066d0fc8306f474534fa5fdb087ad88baf067caefe1c026f"
+        },
+        {
+          "position": "right",
+          "data": "0xdb7d23746b0e8cbb81762bdce521cee4abdd4232bd63f017d136f24a751d0a5b"
+        }
+      ]
+    },
+    {
+      "tx": "0xe1f7b9603bd8d71927b9aabf88be14342964b4f4abc673a5e0f8dcbbd7c610e8",
+      "stage": "mainnet",
+      "rootHash": "0xc13405b3de1d86d0e23ee749779dc4dc90166d1f74a4e76cf1cf84f3de15902f",
+      "target": {
+        "type": "email",
+        "data": "test@bloom.co",
+        "nonce": "b3877038-79a9-477d-8037-9826032e6af4",
+        "version": "1.0.0"
+      },
+      "proof": [
+        {
+          "position": "left",
+          "data": "0x2b81050468ea28d94e5db2ee6ae59e3cf03ab6f2da8c5f79c10e4d982af86844"
+        }
+      ]
+    },
+    {
+      "tx": "0xe1f7b9603bd8d71927b9aabf88be14342964b4f4abc673a5e0f8dcbbd7c610e8",
+      "stage": "mainnet",
+      "rootHash": "0xc13405b3de1d86d0e23ee749779dc4dc90166d1f74a4e76cf1cf84f3de15902f",
+      "target": {
+        "type": "full-name",
+        "data": "John Bloom",
+        "nonce": "c3877038-79a9-477d-8037-9826032e6af5",
+        "version": "1.0.0"
+      },
+      "proof": [
+        {
+          "position": "left",
+          "data": "0x07b51789d6bbe5cb084c502b03168adafbbb58ad5fff2af9f612b2b9cf54c31f"
+        },
+        {
+          "position": "right",
+          "data": "0xdb7d23746b0e8cbb81762bdce521cee4abdd4232bd63f017d136f24a751d0a5b"
+        }
+      ]
+    }
+  ]
 }
 ```
 ## Receive 
