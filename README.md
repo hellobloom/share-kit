@@ -159,6 +159,7 @@ Format of proof object used to perform merkle proof
 ```json
 {
   "bloom_id": 299,
+  "token": "a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf",
   "data": [
     {
       "tx": "0xe1f7b9603bd8d71927b9aabf88be14342964b4f4abc673a5e0f8dcbbd7c610e8",

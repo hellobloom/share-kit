@@ -85,6 +85,7 @@ type Nonces = {[P in keyof typeof AttestationTypeID]?: NonceData[]}
 type ResponseData = {
   bloom_id: number
   data: IVerifiedData[]
+  token: string
 }
 
 export {Action, Types, RequestData, Options, NonceData, Nonces, ResponseData}
