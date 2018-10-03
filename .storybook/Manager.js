@@ -1,44 +1,47 @@
 import React from 'react'
 
-import {createShareQRCode, updateShareQRCode, removeShareQRCode} from '../index'
+import {createRequestQRCode, updateRequestQRCode, removeRequestQRCode} from '../index'
 
 class Manager extends React.Component {
   state = {shown: true, counter: 0}
+
+  mergedData = () => ({counter: this.state.counter, ...this.props.requestData})
+  create = () => (this.requestQRCodeId = createRequestQRCode(this.mergedData(), document.body))
+  update = () => updateRequestQRCode(this.requestQRCodeId, this.mergedData())
+  remove = () => {
+    removeRequestQRCode(this.requestQRCodeId)
+    this.requestQRCodeId = undefined
+  }
 
   handleShownToggle = () =>
     this.setState(
       prevState => ({shown: !prevState.shown}),
       () => {
         if (this.state.shown) {
-          if (this.shareQRCodeId) throw 'Already Created'
-          this.shareQRCodeId = createShareQRCode({data: this.state.counter}, document.body)
+          if (this.requestQRCodeId) throw 'Already Created'
+          this.create()
         } else {
-          removeShareQRCode(this.shareQRCodeId)
-          this.shareQRCodeId = undefined
+          this.remove()
         }
       }
     )
 
-  handleUpdate = () =>
-    this.setState(
-      prevState => ({counter: prevState.counter + 1}),
-      () => updateShareQRCode(this.shareQRCodeId, {data: this.state.counter})
-    )
+  handleUpdate = () => this.setState(prevState => ({counter: prevState.counter + 1}), () => this.update())
 
   componentDidMount() {
-    this.shareQRCodeId = createShareQRCode({data: this.state.counter}, document.body)
+    this.create()
   }
 
   componentWillUnmount() {
-    removeShareQRCode(this.shareQRCodeId)
+    this.remove()
   }
 
   render() {
     return (
       <React.Fragment>
-        <button onClick={this.handleShownToggle}>{this.state.shown ? 'Remove' : 'Create'} ShareQRCode</button>
+        <button onClick={this.handleShownToggle}>{this.state.shown ? 'Remove' : 'Create'} RequestQRCode</button>
         <button disabled={!this.state.shown} onClick={this.handleUpdate}>
-          Update ShareQRCode
+          Update RequestQRCode
         </button>
       </React.Fragment>
     )
