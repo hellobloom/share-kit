@@ -8,7 +8,7 @@ const defaultData = {
   action: Action.attestation,
   token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
   url: 'https://bloom.co/api/receiveData',
-  org_logo_url: 'bloom.co/images/bloom-logo.png',
+  org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
   org_name: 'Bloom',
   org_usage_policy_url: 'https://bloom.co/legal/privacy',
   org_privacy_policy_url: 'https://bloom.co/legal/privacy',
