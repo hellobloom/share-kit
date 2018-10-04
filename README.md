@@ -10,12 +10,12 @@ Easily allow your users to share their verified personal information directly wi
     - [Usage](#usage)
       - [React](#react)
       - [Plain](#plain)
-    - [Types {#request-types}](#types-request-types)
+    - [Types](#request-types)
       - [RequestData](#requestdata)
       - [Example](#example)
       - [Options](#options)
   - [Response](#response)
-    - [Types {#response-types}](#types-response-types)
+    - [Types](#response-types)
       - [ResponseData](#responsedata)
       - [VerifiedData](#verifieddata)
       - [Attestation](#attestation)
@@ -63,7 +63,7 @@ const requestQRCodeId = createRequestQRCode(requestData, window.querySelector('#
 removeRequestQRCode(requestQRCodeId)
 ```
 
-### Types {#request-types}
+<h3 id="request-types">Types</h3>
 
 #### RequestData
 
@@ -101,18 +101,18 @@ Data to be rendered into the RequestQRCode.
 
 Display options for the RequestQRCode.
 
-| Name     | Description                          | Type               | Default   |
-| -------- | ------------------------------------ | ------------------ | --------- |
-| size     | The height and width of the QR code. | `number`           | `128`     |
-| bgColor  | The background color of the QR code. | `string`           | `#fff`    |
-| fgColor  | The foreground color of the QR code. | `string`           | `#6067f1` |
-| renderAs | What the QR code should render as.   | `"svg" | "canvas"` | `svg`     |
+| Name     | Description                          | Type                               | Default   |
+| -------- | ------------------------------------ | ---------------------------------- | --------- |
+| size     | The height and width of the QR code. | `number`                           | `128`     |
+| bgColor  | The background color of the QR code. | `string`                           | `#fff`    |
+| fgColor  | The foreground color of the QR code. | `string`                           | `#6067f1` |
+| renderAs | What the QR code should render as.   | <code>"svg" &#124; "canvas"</code> | `svg`     |
 
 ## Response
 
 When the user allows access you get a response back.
 
-### Types {#response-types}
+<h3 id="response-types">Types</h3>
 
 #### ResponseData
 
