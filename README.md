@@ -12,7 +12,7 @@ Easily allow your users to share their verified personal information directly wi
       - [Plain](#plain)
     - [Types](#request-types)
       - [RequestData](#requestdata)
-      - [Example](#example)
+      - [Example](#request-example)
       - [Options](#options)
   - [Response](#response)
     - [Types](#response-types)
@@ -20,7 +20,7 @@ Easily allow your users to share their verified personal information directly wi
       - [VerifiedData](#verifieddata)
       - [Attestation](#attestation)
       - [Proof](#proof)
-      - [Example](#example)
+      - [Example](#response-example)
   - [Receive](#receive)
 
 ## Installation
@@ -80,7 +80,7 @@ Data to be rendered into the RequestQRCode.
 | org_usage_policy_url   | The url of the usage policy for the organization requesting data   | `string` |
 | org_privacy_policy_url | The url of the privacy policy for the organization requesting data | `string` |
 
-#### Example
+<h4 id="request-example">Example</h4>
 
 ```ts
 {
@@ -156,7 +156,7 @@ Format of proof object used to perform merkle proof
 | position | `left` or `right` indicating position of hash in merkle tree | `string` |
 | data     | Hex string of node hash                                      | `string` |
 
-#### Example
+<h4 id="response-example">Example</h4>
 
 ```json
 {
