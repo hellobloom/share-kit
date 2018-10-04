@@ -1,4 +1,4 @@
-![Share Kit](logo.png)
+![Share Kit](images/logo.png)
 
 # Share Kit
 
@@ -10,23 +10,23 @@ Easily allow your users to share their verified personal information directly wi
     - [Usage](#usage)
       - [React](#react)
       - [Plain](#plain)
-    - [Types {#request-types}](#types-request-types)
+    - [Types](#request-types)
       - [RequestData](#requestdata)
-      - [Example](#example)
+      - [Example](#request-example)
       - [Options](#options)
   - [Response](#response)
-    - [Types {#response-types}](#types-response-types)
+    - [Types](#response-types)
       - [ResponseData](#responsedata)
       - [VerifiedData](#verifieddata)
       - [Attestation](#attestation)
       - [Proof](#proof)
-      - [Example](#example)
+      - [Example](#response-example)
   - [Receive](#receive)
 
 ## Installation
 
 ```
-yarn add @bloom/share-kit
+yarn add @bloomprotocol/share-kit
 ```
 
 ## Request
@@ -39,7 +39,7 @@ First you have to request data from the user.
 
 ```typescript
 import * as React from 'react'
-import {RequestQRCode, RequestData} from '@bloom/share-kit'
+import {RequestQRCode, RequestData} from '@bloomprotocol/share-kit'
 
 const MyComponent: React.SFC = props => {
   const requestData: RequestData = {...}
@@ -50,7 +50,7 @@ const MyComponent: React.SFC = props => {
 #### Plain
 
 ```typescript
-import {createRequestQRCode, removeRequestQRCode, RequestData} from '@bloom/share-kit'
+import {createRequestQRCode, removeRequestQRCode, RequestData} from '@bloomprotocol/share-kit'
 
 const requestData: RequestData = {...}
 const options = {
@@ -63,7 +63,7 @@ const requestQRCodeId = createRequestQRCode(requestData, window.querySelector('#
 removeRequestQRCode(requestQRCodeId)
 ```
 
-### Types {#request-types}
+<h3 id="request-types">Types</h3>
 
 #### RequestData
 
@@ -80,7 +80,7 @@ Data to be rendered into the RequestQRCode.
 | org_usage_policy_url   | The url of the usage policy for the organization requesting data   | `string` |
 | org_privacy_policy_url | The url of the privacy policy for the organization requesting data | `string` |
 
-#### Example
+<h4 id="request-example">Example</h4>
 
 ```ts
 {
@@ -101,18 +101,18 @@ Data to be rendered into the RequestQRCode.
 
 Display options for the RequestQRCode.
 
-| Name     | Description                          | Type               | Default   |
-| -------- | ------------------------------------ | ------------------ | --------- |
-| size     | The height and width of the QR code. | `number`           | `128`     |
-| bgColor  | The background color of the QR code. | `string`           | `#fff`    |
-| fgColor  | The foreground color of the QR code. | `string`           | `#6067f1` |
-| renderAs | What the QR code should render as.   | `"svg" | "canvas"` | `svg`     |
+| Name     | Description                          | Type                               | Default   |
+| -------- | ------------------------------------ | ---------------------------------- | --------- |
+| size     | The height and width of the QR code. | `number`                           | `128`     |
+| bgColor  | The background color of the QR code. | `string`                           | `#fff`    |
+| fgColor  | The foreground color of the QR code. | `string`                           | `#6067f1` |
+| renderAs | What the QR code should render as.   | <code>"svg" &#124; "canvas"</code> | `svg`     |
 
 ## Response
 
 When the user allows access you get a response back.
 
-### Types {#response-types}
+<h3 id="response-types">Types</h3>
 
 #### ResponseData
 
@@ -156,7 +156,7 @@ Format of proof object used to perform merkle proof
 | position | `left` or `right` indicating position of hash in merkle tree | `string` |
 | data     | Hex string of node hash                                      | `string` |
 
-#### Example
+<h4 id="response-example">Example</h4>
 
 ```json
 {
@@ -224,6 +224,7 @@ Format of proof object used to perform merkle proof
   ]
 }
 ```
-## Receive 
+
+## Receive
 
 Info on how to verify the data received by the POST

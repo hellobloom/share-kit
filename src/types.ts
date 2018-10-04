@@ -1,4 +1,4 @@
-import {AttestationTypeID} from 'attestations-lib'
+import {AttestationTypeID} from '@bloomprotocol/attestations-lib'
 
 // Request Types
 
@@ -74,7 +74,7 @@ export interface IProof {
 
 export interface IVerifiedData {
   tx: string // Blockchain transaction hash which emitted the specified root hash
-  stage: 'mainnet' | 'rinkeby' | 'local' // Network on which the tx can be found 
+  stage: 'mainnet' | 'rinkeby' | 'local' // Network on which the tx can be found
   rootHash: 'string' // Root hash of data merkle tree emitted by attestation event in specified transaction
   target: IAttestationData
   proof: IProof[]
