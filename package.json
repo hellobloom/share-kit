@@ -6,7 +6,7 @@
   "description": "Easily create a QR Code to that allows Bloom users to share their data",
   "repository": "https://github.com/hellobloom/share-kit",
   "author": "Bloom Team <team@bloom.co>",
-  "license": "GNU GPLv3",
+  "license": "GPL-3.0-only",
   "lint-staged": {
     "src/**/*.{ts,tsx,json,css}": [
       "prettier --write",
@@ -21,10 +21,10 @@
     "storybook": "start-storybook -p 9001 -c .storybook"
   },
   "dependencies": {
+    "@bloomprotocol/attestations-lib": "^0.4.3",
     "@types/qrcode.react": "^0.8.1",
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
-    "attestations-lib": "https://github.com/hellobloom/attestations-lib/releases/download/v0.4.1/attestations-lib-v0.4.1.tgz",
     "qrcode.react": "^0.8.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2"

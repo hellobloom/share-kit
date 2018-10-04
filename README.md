@@ -26,7 +26,7 @@ Easily allow your users to share their verified personal information directly wi
 ## Installation
 
 ```
-yarn add @bloom/share-kit
+yarn add @bloomprotocol/share-kit
 ```
 
 ## Request
@@ -224,6 +224,7 @@ Format of proof object used to perform merkle proof
   ]
 }
 ```
-## Receive 
+
+## Receive
 
 Info on how to verify the data received by the POST
