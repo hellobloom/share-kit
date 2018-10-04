@@ -1,4 +1,4 @@
-![Share Kit](logo.png)
+![Share Kit](images/logo.png)
 
 # Share Kit
 
@@ -39,7 +39,7 @@ First you have to request data from the user.
 
 ```typescript
 import * as React from 'react'
-import {RequestQRCode, RequestData} from '@bloom/share-kit'
+import {RequestQRCode, RequestData} from '@bloomprotocol/share-kit'
 
 const MyComponent: React.SFC = props => {
   const requestData: RequestData = {...}
@@ -50,7 +50,7 @@ const MyComponent: React.SFC = props => {
 #### Plain
 
 ```typescript
-import {createRequestQRCode, removeRequestQRCode, RequestData} from '@bloom/share-kit'
+import {createRequestQRCode, removeRequestQRCode, RequestData} from '@bloomprotocol/share-kit'
 
 const requestData: RequestData = {...}
 const options = {

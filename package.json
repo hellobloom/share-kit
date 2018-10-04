@@ -1,9 +1,9 @@
 {
-  "name": "@bloom/share-kit",
+  "name": "@bloomprotocol/share-kit",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "description": "Easily create a QR Code to that allows Bloom users to share their data",
+  "description": "Easily allow your users to share their verified personal information directly with your application by scanning a QR code.",
   "repository": "https://github.com/hellobloom/share-kit",
   "author": "Bloom Team <team@bloom.co>",
   "license": "GPL-3.0-only",
