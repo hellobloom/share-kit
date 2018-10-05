@@ -247,7 +247,7 @@ const verified = verifyproof(responseData)
 if (verified) {
   console.log('success')
 } else {
-  console.log('failed to verify merkle proof)
+  console.log('failed to verify merkle proof')
 }
 ```
 
