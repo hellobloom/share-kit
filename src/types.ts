@@ -6,8 +6,6 @@ enum Action {
   attestation = 'request_attestation_data',
 }
 
-type Types = [keyof typeof AttestationTypeID]
-
 type RequestData = {
   action: Action
   token: string
@@ -16,7 +14,7 @@ type RequestData = {
   org_name: string
   org_usage_policy_url: string
   org_privacy_policy_url: string
-  types: Types
+  types: (keyof typeof AttestationTypeID)[]
 }
 
 type Options = {
