@@ -67,9 +67,9 @@ export interface IAttestationData {
   version: string
 }
 
-export interface IProof {
-  position: 'left ' | 'right'
-  data: 'string'
+export interface IProofShare {
+  position: 'left' | 'right'
+  data: string
 }
 
 export interface IVerifiedData {
@@ -77,7 +77,7 @@ export interface IVerifiedData {
   stage: 'mainnet' | 'rinkeby' | 'local' // Network on which the tx can be found
   rootHash: 'string' // Root hash of data merkle tree emitted by attestation event in specified transaction
   target: IAttestationData
-  proof: IProof[]
+  proof: IProofShare[]
 }
 
 type Nonces = {[P in keyof typeof AttestationTypeID]?: NonceData[]}

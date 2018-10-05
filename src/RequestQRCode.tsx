@@ -13,7 +13,7 @@ const RequestQRCode: React.SFC<RequestQRCodeProps> = props => (
     bgColor={props.bgColor}
     fgColor={props.fgColor}
     renderAs={props.renderAs}
-    level="H"
+    level="L"
     value={JSON.stringify(props.requestData)}
   />
 )
