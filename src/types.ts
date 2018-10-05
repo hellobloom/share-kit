@@ -72,10 +72,15 @@ export interface IProofShare {
   data: string
 }
 
+export interface IProof {
+  position: 'left' | 'right'
+  data: Buffer
+}
+
 export interface IVerifiedData {
   tx: string // Blockchain transaction hash which emitted the specified root hash
   stage: 'mainnet' | 'rinkeby' | 'local' // Network on which the tx can be found
-  rootHash: 'string' // Root hash of data merkle tree emitted by attestation event in specified transaction
+  rootHash: string // Root hash of data merkle tree emitted by attestation event in specified transaction
   target: IAttestationData
   proof: IProofShare[]
 }

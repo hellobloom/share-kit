@@ -13,10 +13,10 @@ Easily allow your users to share their verified personal information directly wi
       - [RequestData](#requestdata)
       - [Options](#options)
   - [Response](#response)
-      - [ResponseData](#responsedata)
-      - [VerifiedData](#verifieddata)
-      - [Attestation](#attestation)
-      - [Proof](#proof)
+    - [ResponseData](#responsedata)
+    - [VerifiedData](#verifieddata)
+    - [Attestation](#attestation)
+    - [Proof](#proof)
   - [Receive](#receive)
     - [1. Perform Merkle Proof](#1-perform-merkle-proof)
     - [2. Recover Ethereum address from signature](#2-recover-ethereum-address-from-signature)
@@ -119,12 +119,12 @@ When the user allows access you get a response back.
 
 This is the shape of the object that will be POSTed to the provided URL
 
-| Name        | Description                                 | Type           |
-| ----------  | ------------------------------------------- | -------------- |
-| bloom_id    | The user's BloomID                          | `number`       |
-| token       | Unique string to identify this data request | `string`       |
-| signature   | Request body signed by the Bloom app wallet | `string`       |
-| data        | Array of VerifiedData objects               | `VerifiedData` |
+| Name      | Description                                 | Type           |
+| --------- | ------------------------------------------- | -------------- |
+| bloom_id  | The user's BloomID                          | `number`       |
+| token     | Unique string to identify this data request | `string`       |
+| signature | Request body signed by the Bloom app wallet | `string`       |
+| data      | Array of VerifiedData objects               | `VerifiedData` |
 
 #### VerifiedData
 
@@ -261,7 +261,7 @@ Read the BloomID for the recovered address using Bloom's Account Registry contra
 
 ```javascript
 // Web3
-const accountRegistry = AccountRegistry.at("[address of registry contract]")
+const accountRegistry = AccountRegistry.at('[address of registry contract]')
 const BloomID = accountRegistry.accountIdForAddress.call(address)
 ```
 
@@ -276,7 +276,7 @@ Read the attestation status from attestation repo. Confirm the attestation exist
 ```javascript
 // Web3
   const attestationRepo = AttestationRepo.at("[address of attestation repo contract]")
-  const attestationId = 0 ... // increments for each attestation. Retrieve from attestation event 
+  const attestationId = 0 ... // increments for each attestation. Retrieve from attestation event
 
   const recoveredAttestation = await attestationRepo.readAttestation.call(BloomID, 0)
 
@@ -288,5 +288,4 @@ Read the attestation status from attestation repo. Confirm the attestation exist
   ] = recoveredAttestation;
 
   if (completedAt > 0)
-
 ```

@@ -18,6 +18,7 @@
     "clean": "rimraf dist",
     "prepack": "yarn build",
     "prepare": "yarn build",
+    "test": "node_modules/.bin/jest --watch",
     "storybook": "start-storybook -p 9001 -c .storybook"
   },
   "dependencies": {
@@ -30,12 +31,15 @@
     "react-dom": "^16.4.2"
   },
   "devDependencies": {
+    "@types/jest": "^23.3.3",
     "@babel/core": "^7.0.0",
     "@storybook/react": "^4.0.0-alpha.12",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.0",
+    "jest": "^23.6.0",
     "lint-staged": "^7.2.0",
     "prettier": "^1.13.7",
+    "ts-jest": "^23.1.4",
     "rimraf": "^2.6.2",
     "ts-loader": "^4.5.0",
     "tslint": "^5.11.0",
