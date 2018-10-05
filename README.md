@@ -1,4 +1,4 @@
-![Share Kit](images/logo.png)
+![Share Kit](https://github.com/hellobloom/share-kit/blob/master/images/logo.png)
 
 # Share Kit
 
@@ -10,18 +10,19 @@ Easily allow your users to share their verified personal information directly wi
     - [Usage](#usage)
       - [React](#react)
       - [Plain](#plain)
-    - [Types](#request-types)
       - [RequestData](#requestdata)
-      - [Example](#request-example)
       - [Options](#options)
   - [Response](#response)
-    - [Types](#response-types)
-      - [ResponseData](#responsedata)
-      - [VerifiedData](#verifieddata)
-      - [Attestation](#attestation)
-      - [Proof](#proof)
-      - [Example](#response-example)
+    - [ResponseData](#responsedata)
+    - [VerifiedData](#verifieddata)
+    - [Attestation](#attestation)
+    - [Proof](#proof)
   - [Receive](#receive)
+    - [1. Perform Merkle Proof](#1-perform-merkle-proof)
+    - [2. Recover Ethereum address from signature](#2-recover-ethereum-address-from-signature)
+    - [3. Retrieve BloomID for recovered address](#3-retrieve-bloomid-for-recovered-address)
+    - [4. Retrieve dataHash and attestation ID from attestation in specified transaction](#4-retrieve-datahash-and-attestation-id-from-attestation-in-specified-transaction)
+    - [5. Confirm attestation status](#5-confirm-attestation-status)
 
 ## Installation
 
@@ -85,17 +86,17 @@ Data to be rendered into the RequestQRCode.
 ```ts
 {
   action: Action.attestation,
-  token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
+  token: '0x8f31e48a585fd12ba58e70e03292cac712cbae39bc7eb980ec189aa88e24d043',
   url: 'https://bloom.co/api/receiveData',
   org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
   org_name: 'Bloom',
-  org_usage_policy_url: 'https://bloom.co/legal/privacy',
+  org_usage_policy_url: 'https://bloom.co/legal/terms',
   org_privacy_policy_url: 'https://bloom.co/legal/privacy',
   types: ['full-name', 'phone', 'email'],
 }
 ```
 
-![alt text](images/sampleQR.png)
+![Sample QR](https://github.com/hellobloom/share-kit/blob/master/images/sampleQR.png)
 
 #### Options
 
@@ -118,10 +119,12 @@ When the user allows access you get a response back.
 
 This is the shape of the object that will be POSTed to the provided URL
 
-| Name     | Description                   | Type           |
-| -------- | ----------------------------- | -------------- |
-| bloom_id | The user's BloomID            | `number`       |
-| data     | Array of VerifiedData objects | `VerifiedData` |
+| Name      | Description                                 | Type           |
+| --------- | ------------------------------------------- | -------------- |
+| bloom_id  | The user's BloomID                          | `number`       |
+| token     | Unique string to identify this data request | `string`       |
+| signature | Request body signed by the Bloom app wallet | `string`       |
+| data      | Array of VerifiedData objects               | `VerifiedData` |
 
 #### VerifiedData
 
@@ -161,6 +164,8 @@ Format of proof object used to perform merkle proof
 ```json
 {
   "bloom_id": 299,
+  "token": "a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf",
+  "signature": "0x4ee64886332a9d4fb480dfea0308264c1b56eb8293792d47696f6df2f1c36e1836deab53c46954fdcf0dc1f7ff7a6e7f6ac83039b597cc0f99192d1e8455b11b1b"
   "data": [
     {
       "tx": "0xe1f7b9603bd8d71927b9aabf88be14342964b4f4abc673a5e0f8dcbbd7c610e8",
@@ -227,4 +232,60 @@ Format of proof object used to perform merkle proof
 
 ## Receive
 
-Info on how to verify the data received by the POST
+The endpoint specified in the QR code should be configured to accept data in the format shown in [ResponseData](#responsedata).
+
+The recipient can perform several verifications to ensure the data and attestation are valid.
+
+### 1. Perform Merkle Proof
+
+Verify that the plaintext data belongs to the merkle tree with the specified rootHash.
+
+```javascript
+import {verifyProof} from @bloomprotocol/share-kit
+const verified = verifyproof(responseData)
+
+if (verified) {
+  console.log('success')
+} else {
+  console.log('failed to verify merkle proof)
+}
+```
+
+### 2. Recover Ethereum address from signature
+
+Recover the Ethereum address that signed the request body.
+
+### 3. Retrieve BloomID for recovered address
+
+Read the BloomID for the recovered address using Bloom's Account Registry contract.
+
+```javascript
+// Web3
+const accountRegistry = AccountRegistry.at('[address of registry contract]')
+const BloomID = accountRegistry.accountIdForAddress.call(address)
+```
+
+### 4. Retrieve dataHash and attestation ID from attestation in specified transaction
+
+Read the event logs from the attestation that occured in the specified transaction hash. Confirm the dataHash emitted in the attestation event matches the root hash.
+
+### 5. Confirm attestation status
+
+Read the attestation status from attestation repo. Confirm the attestation exists and has not been revoked. An attestation with a non-zero `completedAt` should be considered valid.
+
+```javascript
+// Web3
+  const attestationRepo = AttestationRepo.at("[address of attestation repo contract]")
+  const attestationId = 0 ... // increments for each attestation. Retrieve from attestation event
+
+  const recoveredAttestation = await attestationRepo.readAttestation.call(BloomID, 0)
+
+  const [
+    attesterId,
+    completedAt,
+    stakeValue,
+    expiresAt
+  ] = recoveredAttestation;
+
+  if (completedAt > 0)
+```
