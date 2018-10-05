@@ -90,4 +90,4 @@ type ResponseData = {
   data: IVerifiedData[]
 }
 
-export {Action, Types, RequestData, Options, NonceData, Nonces, ResponseData}
+export {Action, RequestData, Options, NonceData, Nonces, ResponseData}
