@@ -13,16 +13,22 @@ Easily allow your users to share their verified personal information directly wi
       - [RequestData](#requestdata)
       - [Options](#options)
   - [Response](#response)
-    - [ResponseData](#responsedata)
-    - [VerifiedData](#verifieddata)
-    - [Attestation](#attestation)
-    - [Proof](#proof)
+      - [ResponseData](#responsedata)
+      - [VerifiedData](#verifieddata)
+      - [Attestation](#attestation)
+      - [Proof](#proof)
   - [Receive](#receive)
     - [1. Perform Merkle Proof](#1-perform-merkle-proof)
     - [2. Recover Ethereum address from signature](#2-recover-ethereum-address-from-signature)
     - [3. Retrieve BloomID for recovered address](#3-retrieve-bloomid-for-recovered-address)
     - [4. Retrieve dataHash and attestation ID from attestation in specified transaction](#4-retrieve-datahash-and-attestation-id-from-attestation-in-specified-transaction)
     - [5. Confirm attestation status](#5-confirm-attestation-status)
+- [Using Share-Kit for BloomID Sign-In](#using-share-kit-for-bloomid-sign-in)
+    - [1. Configure an endpoint to receive data](#1-configure-an-endpoint-to-receive-data)
+    - [2. Embed a QR code with a link to your endpoint and the verified data you would like to receive](#2-embed-a-qr-code-with-a-link-to-your-endpoint-and-the-verified-data-you-would-like-to-receive)
+    - [3. Add verification to the endpoint](#3-add-verification-to-the-endpoint)
+    - [4. Listen for a login over a websocket connection to the server](#4-listen-for-a-login-over-a-websocket-connection-to-the-server)
+    - [5. Authorize the user to log in to the account matching the verified email](#5-authorize-the-user-to-log-in-to-the-account-matching-the-verified-email)
 
 ## Installation
 
@@ -242,7 +248,9 @@ Verify that the plaintext data belongs to the merkle tree with the specified roo
 
 ```javascript
 import {verifyProof} from @bloomprotocol/share-kit
-const verified = verifyproof(responseData)
+const verified = responseData.data.every(data => {
+  return verifyProof(data)
+})
 
 if (verified) {
   console.log('success')
@@ -289,3 +297,81 @@ Read the attestation status from attestation repo. Confirm the attestation exist
 
   if (completedAt > 0)
 ```
+
+# Using Share-Kit for BloomID Sign-In
+
+Integrate the Bloom Protocol Share-Kit into your application to allow users to sign into your website simply by scanning a QR code. No passwords required! The following steps will walk you through the basic configuration steps.
+
+### 1. Configure an endpoint to receive data
+
+We will add functionality to this endpoint later. For now just receive the data
+
+```typescript
+export default (app: express.Application) => {
+  // NOTE: This endpoint is public
+  app.post('/api/receiveData', async (req, res) => {
+    try {
+      serverLogger.info(`Received data for request token ${req.body.token}`)
+      const parsedData: IVerifiedData[] = req.body.data
+      parsedData.forEach(dataToVerify => {
+        serverLogger.info(`Attempting to verify ${JSON.stringify(dataToVerify)}`)
+      })
+      return res.status(200).json({
+        success: true,
+        token: req.body.token,
+      })
+    } catch (error) {
+      serverLogger.warn('Encountered an error while receiving data', {
+        error,
+      })
+      return renderError(req, res)(
+        new ClientFacingError('Encountered an error while receiving data')
+      )
+    }
+  })
+}
+```
+
+### 2. Embed a QR code with a link to your endpoint and the verified data you would like to receive
+
+```typescript
+const signinDataRequest = {
+  action: Action.attestation,
+  token: '... generate a unique id string for this request',
+  url: 'https://Acme.app/api/receiveData',
+  org_logo_url: 'https://.../logo.png',
+  org_name: 'Acme',
+  org_usage_policy_url: 'https://acme.co/legal/terms',
+  org_privacy_policy_url: 'https://acme.co/legal/privacy',
+  types: ['email'],
+}
+
+import * as React from 'react'
+import {RequestQRCode, RequestData} from '@bloomprotocol/share-kit'
+
+const MyComponent: React.SFC = props => {
+  const requestData: RequestData = {...}
+  return <RequestQRCode signinDataRequest={signinDataRequest} size={200} />
+}
+```
+
+### 3. Add verification to the endpoint
+
+Perform the Merkle Proof and confirm the Merkle root matches the dataHash from the attestaion event.
+
+```javascript
+import {verifyProof} from @bloomprotocol/share-kit
+const verified = responseData.data.every(data => {
+  return verifyProof(data)
+})
+
+if (verified) {
+  console.log('success')
+} else {
+  console.log('failed to verify merkle proof')
+}
+```
+
+### 4. Listen for a login over a websocket connection to the server
+
+### 5. Authorize the user to log in to the account matching the verified email
