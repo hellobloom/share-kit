@@ -350,7 +350,6 @@ import * as React from 'react'
 import {RequestQRCode, RequestData} from '@bloomprotocol/share-kit'
 
 const MyComponent: React.SFC = props => {
-  const requestData: RequestData = {...}
   return <RequestQRCode requestData={requestData} size={200} />
 }
 ```
