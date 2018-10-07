@@ -98,7 +98,7 @@ Data to be rendered into the RequestQRCode.
   org_name: 'Bloom',
   org_usage_policy_url: 'https://bloom.co/legal/terms',
   org_privacy_policy_url: 'https://bloom.co/legal/privacy',
-  types: ['full-name', 'phone', 'email'],
+  types: ['phone', 'email'],
 }
 ```
 
