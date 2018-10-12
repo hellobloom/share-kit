@@ -113,7 +113,6 @@ Display options for the RequestQRCode.
 | size     | The height and width of the QR code. | `number`                           | `128`     |
 | bgColor  | The background color of the QR code. | `string`                           | `#fff`    |
 | fgColor  | The foreground color of the QR code. | `string`                           | `#6067f1` |
-| renderAs | What the QR code should render as.   | <code>"svg" &#124; "canvas"</code> | `svg`     |
 
 ## Response
 
