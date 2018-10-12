@@ -1,4 +1,5 @@
 import {AttestationTypeID} from '@bloomprotocol/attestations-lib'
+import {IProps as QRCodeProps} from 'react-qrcode-logo'
 
 // Request Types
 
@@ -17,10 +18,13 @@ type RequestData = {
   types: (keyof typeof AttestationTypeID)[]
 }
 
-type Options = {
-  size?: number
-  bgColor?: string
-  fgColor?: string
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+
+type TrimmedProps = Omit<QRCodeProps, 'value'>
+
+type Options = TrimmedProps & {
+  logoImage?: string
+  hideLogo?: boolean
 }
 
 // Response Types
