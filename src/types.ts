@@ -21,7 +21,6 @@ type Options = {
   size?: number
   bgColor?: string
   fgColor?: string
-  renderAs?: 'svg' | 'canvas'
 }
 
 // Response Types
