@@ -13,10 +13,10 @@ Easily allow your users to share their verified personal information directly wi
       - [RequestData](#requestdata)
       - [Options](#options)
   - [Response](#response)
-      - [ResponseData](#responsedata)
-      - [VerifiedData](#verifieddata)
-      - [Attestation](#attestation)
-      - [Proof](#proof)
+    - [ResponseData](#responsedata)
+    - [VerifiedData](#verifieddata)
+    - [Attestation](#attestation)
+    - [Proof](#proof)
   - [Receive](#receive)
     - [1. Perform Merkle Proof](#1-perform-merkle-proof)
     - [2. Recover Ethereum address from signature](#2-recover-ethereum-address-from-signature)
@@ -24,11 +24,11 @@ Easily allow your users to share their verified personal information directly wi
     - [4. Retrieve dataHash and attestation ID from attestation in specified transaction](#4-retrieve-datahash-and-attestation-id-from-attestation-in-specified-transaction)
     - [5. Confirm attestation status](#5-confirm-attestation-status)
 - [Using Share-Kit for BloomID Sign-In](#using-share-kit-for-bloomid-sign-in)
-    - [1. Configure an endpoint to receive data](#1-configure-an-endpoint-to-receive-data)
-    - [2. Embed a QR code with a link to your endpoint and the verified data you would like to receive](#2-embed-a-qr-code-with-a-link-to-your-endpoint-and-the-verified-data-you-would-like-to-receive)
-    - [3. Add verification to the endpoint](#3-add-verification-to-the-endpoint)
-    - [4. Listen for a login over a websocket connection to the server](#4-listen-for-a-login-over-a-websocket-connection-to-the-server)
-    - [5. Authorize the user to log in to the account matching the verified email](#5-authorize-the-user-to-log-in-to-the-account-matching-the-verified-email)
+  - [1. Configure an endpoint to receive data](#1-configure-an-endpoint-to-receive-data)
+  - [2. Embed a QR code with a link to your endpoint and the verified data you would like to receive](#2-embed-a-qr-code-with-a-link-to-your-endpoint-and-the-verified-data-you-would-like-to-receive)
+  - [3. Add verification to the endpoint](#3-add-verification-to-the-endpoint)
+  - [4. Listen for a login over a websocket connection to the server](#4-listen-for-a-login-over-a-websocket-connection-to-the-server)
+  - [5. Authorize the user to log in to the account matching the verified email](#5-authorize-the-user-to-log-in-to-the-account-matching-the-verified-email)
 
 ## Installation
 
@@ -108,12 +108,13 @@ Data to be rendered into the RequestQRCode.
 
 Display options for the RequestQRCode.
 
-| Name     | Description                          | Type                               | Default   |
-| -------- | ------------------------------------ | ---------------------------------- | --------- |
-| size     | The height and width of the QR code. | `number`                           | `128`     |
-| bgColor  | The background color of the QR code. | `string`                           | `#fff`    |
-| fgColor  | The foreground color of the QR code. | `string`                           | `#6067f1` |
-| renderAs | What the QR code should render as.   | <code>"svg" &#124; "canvas"</code> | `svg`     |
+| Name      | Description                                      | Type      | Default    |
+| --------- | ------------------------------------------------ | --------- | ---------- |
+| size      | The height and width of the QR code.             | `number`  | `128`      |
+| bgColor   | The background color of the QR code.             | `string`  | `#fff`     |
+| fgColor   | The foreground color of the QR code.             | `string`  | `#6067f1`  |
+| logoImage | The `<img />` src to displayed over the QR code. | `string`  | Bloom logo |
+| hideLogo  | Whether the `logoImage` should be rendered.      | `boolean` | `false`    |
 
 ## Response
 
@@ -324,9 +325,7 @@ export default (app: express.Application) => {
       serverLogger.warn('Encountered an error while receiving data', {
         error,
       })
-      return renderError(req, res)(
-        new ClientFacingError('Encountered an error while receiving data')
-      )
+      return renderError(req, res)(new ClientFacingError('Encountered an error while receiving data'))
     }
   })
 }
@@ -336,7 +335,7 @@ export default (app: express.Application) => {
 
 ```typescript
 const requestData = {
-  action: "... action type string",
+  action: '... action type string',
   token: '... generate a unique id string for this request',
   url: 'https://Acme.app/api/receiveData',
   org_logo_url: 'https://.../logo.png',
