@@ -28,7 +28,6 @@ RequestQRCode.defaultProps = {
   hideLogo: false,
   padding: 0,
   ecLevel: 'M',
-  logoOpacity: 0.8,
 }
 
 export {RequestQRCode}
