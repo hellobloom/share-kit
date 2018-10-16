@@ -10,7 +10,7 @@ type RequestQRCodeProps = Options & {
 
 const RequestQRCode: React.SFC<RequestQRCodeProps> = props => {
   // If hideLogo is true then don't render any logo
-  // If logoImage is not set default to BloomLogo with colors mathing the rest of the QR code
+  // If logoImage is not set default to BloomLogo with colors matching the rest of the QR code
   // Otherwise display the provided logo
   const logoImage = props.hideLogo
     ? undefined
