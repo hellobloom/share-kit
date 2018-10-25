@@ -13,10 +13,10 @@ Easily allow your users to share their verified personal information directly wi
       - [RequestData](#requestdata)
       - [Options](#options)
   - [Response](#response)
-    - [ResponseData](#responsedata)
-    - [VerifiedData](#verifieddata)
-    - [Attestation](#attestation)
-    - [Proof](#proof)
+      - [ResponseData](#responsedata)
+      - [VerifiedData](#verifieddata)
+      - [Attestation](#attestation)
+      - [Proof](#proof)
   - [Receive](#receive)
     - [1. Perform Merkle Proof](#1-perform-merkle-proof)
     - [2. Recover Ethereum address from signature](#2-recover-ethereum-address-from-signature)
@@ -24,11 +24,11 @@ Easily allow your users to share their verified personal information directly wi
     - [4. Retrieve dataHash and attestation ID from attestation in specified transaction](#4-retrieve-datahash-and-attestation-id-from-attestation-in-specified-transaction)
     - [5. Confirm attestation status](#5-confirm-attestation-status)
 - [Using Share-Kit for BloomID Sign-In](#using-share-kit-for-bloomid-sign-in)
-  - [1. Configure an endpoint to receive data](#1-configure-an-endpoint-to-receive-data)
-  - [2. Embed a QR code with a link to your endpoint and the verified data you would like to receive](#2-embed-a-qr-code-with-a-link-to-your-endpoint-and-the-verified-data-you-would-like-to-receive)
-  - [3. Add verification to the endpoint](#3-add-verification-to-the-endpoint)
-  - [4. Listen for a login over a websocket connection to the server](#4-listen-for-a-login-over-a-websocket-connection-to-the-server)
-  - [5. Authorize the user to log in to the account matching the verified email](#5-authorize-the-user-to-log-in-to-the-account-matching-the-verified-email)
+    - [1. Configure an endpoint to receive data](#1-configure-an-endpoint-to-receive-data)
+    - [2. Embed a QR code with a link to your endpoint and the verified data you would like to receive](#2-embed-a-qr-code-with-a-link-to-your-endpoint-and-the-verified-data-you-would-like-to-receive)
+    - [3. Add verification to the endpoint](#3-add-verification-to-the-endpoint)
+    - [4. Listen for a login over a websocket connection to the server](#4-listen-for-a-login-over-a-websocket-connection-to-the-server)
+    - [5. Authorize the user to log in to the account matching the verified email](#5-authorize-the-user-to-log-in-to-the-account-matching-the-verified-email)
 
 ## Installation
 
@@ -241,6 +241,92 @@ Format of proof object used to perform merkle proof
 
 The endpoint specified in the QR code should be configured to accept data in the format shown in [ResponseData](#responsedata).
 
+```javascript
+  const ethUtil = require('ethereumjs-util')
+
+  export const recoverHashSigner = (hash: Buffer, sig: string): string => {
+    const signature = ethUtil.toBuffer(sig)
+    const sigParams = ethUtil.fromRpcSig(signature)
+    const pubKey = ethUtil.ecrecover(hash, sigParams.v, sigParams.r, sigParams.s)
+    const sender = ethUtil.publicToAddress(pubKey)
+    return ethUtil.bufferToHex(sender)
+  }
+
+  app.post('/api/receiveData', async (req, res) => {
+    try {
+      if (typeof req.body.bloom_id !== 'number') {
+        throw Error('Missing expected `bloom_id` of type `number` field in request.')
+      }
+      if (!(req.body.data instanceof Array)) {
+        throw Error(
+          'Missing expected `data` field of type `Array` field in request.'
+        )
+      }
+      if (typeof req.body.token !== 'string') {
+        throw Error(
+          'Missing expected `token` field of type `string` field in request.'
+        )
+      }
+      if (typeof req.body.signature !== 'string') {
+        throw Error(
+          'Missing expected `signature` field of type `string` field in request.'
+        )
+      }
+
+      // Recover address of wallet that signed the payload
+      const qrToken = (req.body.token as string).trim()
+      const signature: string = req.body.signature
+      const parsedData: IShareData[] = req.body.data
+      const sortedData = parsedData.map(d => sortObject(d))
+      const sortedDataJSON = JSON.stringify(
+        sortObject({
+          data: sortedData,
+          token: qrToken,
+        })
+      )
+      console.log(`sortedDataJSON = ${sortedDataJSON}`)
+
+      const packedData: string = ethUtil.addHexPrefix(keccak256(sortedDataJSON))
+      console.log(`Previously computed packedData = ${req.body.packedData}`)
+      console.log(`Newly computed packedData = ${packedData}`)
+      if (req.body.packedData !== packedData) {
+        throw Error(
+          "Previously computed packedData doesn't match the newly computed " +
+            `packedData for the following data: ${sortedDataJSON}`
+        )
+      }
+
+      const signerEthAddress = recoverHashSigner(
+        ethUtil.toBuffer(packedData),
+        signature
+      )
+      console.log(`signerEthAddress = '${signerEthAddress}'`)
+      // Check that the recovered address matches the subject of the attestation
+      // ...
+      // ...
+
+      // Validate parsedData using the embedded Merkle Proof
+      // ...
+      // ...
+
+      return res.status(200).json({
+        success: true,
+        token: req.body.token,
+      })
+    } catch (error) {
+      console.log(
+        'Encountered an error while receiving data',
+        JSON.stringify({
+          error,
+        })
+      )
+      return renderError(req, res)(
+        new ClientFacingError('Encountered an error while receiving data')
+      )
+    }
+  })
+  ```
+
 The recipient can perform several verifications to ensure the data and attestation are valid.
 
 ### 1. Perform Merkle Proof
@@ -312,17 +398,18 @@ export default (app: express.Application) => {
   // NOTE: This endpoint is public
   app.post('/api/receiveData', async (req, res) => {
     try {
-      serverLogger.info(`Received data for request token ${req.body.token}`)
+      console.log(`Received data for request token ${req.body.token}`)
       const parsedData: IVerifiedData[] = req.body.data
       parsedData.forEach(dataToVerify => {
-        serverLogger.info(`Attempting to verify ${JSON.stringify(dataToVerify)}`)
+        console.log(`Attempting to verify ${JSON.stringify(dataToVerify)}`)
+        // Perform addition verifications on the data
       })
       return res.status(200).json({
         success: true,
         token: req.body.token,
       })
     } catch (error) {
-      serverLogger.warn('Encountered an error while receiving data', {
+      console.log('Encountered an error while receiving data', {
         error,
       })
       return renderError(req, res)(new ClientFacingError('Encountered an error while receiving data'))
