@@ -56,6 +56,8 @@ class BloomLogo {
       },
       config || {}
     )
+    defaultedConfig.fgColor = encodeURIComponent(defaultedConfig.fgColor)
+    defaultedConfig.bgColor = encodeURIComponent(defaultedConfig.bgColor)
 
     return `data:image/svg+xml;utf8,${logoWithColors(defaultedConfig)}`
   }
