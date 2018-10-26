@@ -2,6 +2,7 @@ import React from 'react'
 import {storiesOf} from '@storybook/react'
 
 import {RequestQRCode, Action} from '../index'
+import {Logo} from './Logo'
 import {Manager} from './Manager'
 
 const defaultData = {
@@ -18,5 +19,6 @@ const defaultData = {
 storiesOf('RequestQRCode', module)
   .add('Default', () => <RequestQRCode requestData={defaultData} />)
   .add('Colors', () => <RequestQRCode requestData={defaultData} bgColor={'#EBF0F1'} fgColor={'#3C3C3D'} />)
+  .add('Logo', () => <Logo requestData={defaultData} />)
   .add('Size', () => <RequestQRCode requestData={defaultData} size={300} />)
   .add('Managed', () => <Manager requestData={defaultData} />)
