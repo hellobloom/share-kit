@@ -142,7 +142,7 @@ Data associated with the attestation
 | tx       | The Ethereum transaction corresponding to the attestation          | `string`      |
 | stage    | The Ethereum network name on which the tx can be found             | `string`      |
 | rootHash | Root hash of the data merkle tree emitted by the attestation event | `string`      |
-| target   | Root hash of the data merkle tree emitted by the attestation event | `Attestation` |
+| target   | Target attestation data | `Attestation` |
 | proof    | Array of hashes needed to perform the merkle proof                 | `Proof`       |
 
 #### Attestation
