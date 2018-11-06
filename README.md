@@ -78,7 +78,7 @@ Data to be rendered into the RequestQRCode.
 
 | Name                   | Description                                                        | Type                                                                                   |
 | ---------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| action                 | Action Type                                                        | `Action`                                                                               |
+| action                 | Action type                                                        | `Action`                                                                               |
 | token                  | Unique string to identify this data request                        | `string`                                                                               |
 | url                    | The API endpoint to POST the `ResponseData` to                     | `string`                                                                               |
 | org_logo_url           | A url of the logo to display to the user when requesting data      | `string`                                                                               |
@@ -91,7 +91,7 @@ Data to be rendered into the RequestQRCode.
 
 ```ts
 {
-  action: "request_attestation_data",
+  action: <Action>"request_attestation_data",
   token: '0x8f31e48a585fd12ba58e70e03292cac712cbae39bc7eb980ec189aa88e24d043',
   url: 'https://bloom.co/api/receiveData',
   org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
@@ -421,8 +421,9 @@ export default (app: express.Application) => {
 ### 2. Embed a QR code with a link to your endpoint and the verified data you would like to receive
 
 ```typescript
+
 const requestData = {
-  action: '... action type string',
+  action: <Action>'... action type',
   token: '... generate a unique id string for this request',
   url: 'https://Acme.app/api/receiveData',
   org_logo_url: 'https://.../logo.png',
