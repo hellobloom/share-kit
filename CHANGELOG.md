@@ -1,3 +1,16 @@
+## 2.0.2
+
+**Bug fixes**:
+
+- Fix npm package including the `.git` directory
+  - Now using `yarn publish` with yarn 1.12.1 since it supports 2fa
+
+## 2.0.1
+
+**Bug fixes**:
+
+- Fix rendering issue in Firefox
+
 ## 2.0.0
 
 **BREAKING**:
