@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/share-kit",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Easily allow your users to share their verified personal information directly with your application by scanning a QR code.",
@@ -13,6 +13,9 @@
       "git add"
     ]
   },
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "yarn clean && ./bin/build",
     "clean": "rimraf dist",

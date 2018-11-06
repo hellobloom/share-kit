@@ -1,3 +1,10 @@
+## 2.0.3
+
+**Bug fixes**:
+
+- Fix npm package
+  - Use package.json#files to include only the files we need in the package
+
 ## 2.0.2
 
 **Bug fixes**:
