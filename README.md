@@ -286,7 +286,7 @@ The endpoint specified in the QR code should be configured to accept data in the
       )
       console.log(`sortedDataJSON = ${sortedDataJSON}`)
 
-      const packedData: string = ethUtil.addHexPrefix(keccak256(sortedDataJSON))
+      const packedData: string = ethUtil.addHexPrefix(ethUtil.keccak256(sortedDataJSON))
       console.log(`Previously computed packedData = ${req.body.packedData}`)
       console.log(`Newly computed packedData = ${packedData}`)
       if (req.body.packedData !== packedData) {
