@@ -9,6 +9,7 @@
 **Improvements**:
 
 - Change the default EC level of the QR code to `L`
+- Change image URLs in README so they show up on npm
 
 **Deprecations**:
 

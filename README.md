@@ -1,4 +1,4 @@
-![Share Kit](https://github.com/hellobloom/share-kit/blob/master/images/logo.png)
+![Share Kit](https://github.com/hellobloom/share-kit/raw/master/images/logo.png)
 
 # Share Kit
 
@@ -101,7 +101,7 @@ Data to be rendered into the RequestQRCode.
 }
 ```
 
-![Sample QR](https://github.com/hellobloom/share-kit/blob/master/images/sampleQR.png)
+![Sample QR](https://github.com/hellobloom/share-kit/raw/master/images/sampleQR.png)
 
 #### Options
 
