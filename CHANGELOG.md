@@ -1,3 +1,9 @@
+## 2.1.1 (HOTFIX)
+
+**Improvements**:
+
+- Fix default width calculation of logo image
+
 ## 2.1.0
 
 **New Features**:

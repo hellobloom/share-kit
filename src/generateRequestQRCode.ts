@@ -147,8 +147,9 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
 
     const image = new Image()
     image.onload = () => {
-      const defaultRatio = size * 0.2 + cellSize * 0.33
-      const defaultWidth = defaultRatio + cellSize
+      const numberOfCellsToCover = Math.floor(cells.length * 0.2)
+      const addExtra = numberOfCellsToCover % 2 === 0
+      const defaultWidth = numberOfCellsToCover * cellSize + (addExtra ? cellSize : 0)
       const dwidth = options.logoWidth || defaultWidth
       const dheight = options.logoHeight || dwidth
       const dx = (size - dwidth) / 2
