@@ -30,6 +30,7 @@ type Options = {
   bgColor: string
   fgColor: string
   hideLogo: boolean
+  padding: number
   logoImage?: string
   logoWidth?: number
   logoHeight?: number

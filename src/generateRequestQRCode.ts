@@ -9,6 +9,7 @@ const defaultOptions: Options = {
   size: 128,
   bgColor: '#fff',
   fgColor: '#6067f1',
+  padding: 0,
 }
 
 type CellInfo = {
@@ -74,7 +75,7 @@ const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionTyp
 const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, options: Partial<Options>) => {
   const defaultedOptions = {...defaultOptions, ...options}
 
-  const {ecLevel, size, bgColor, fgColor} = defaultedOptions
+  const {ecLevel, size, bgColor, fgColor, padding} = defaultedOptions
 
   const qr = new QRCodeImpl(-1, ErrorCorrectionLevel[ecLevel])
   qr.addData(JSON.stringify(data))
@@ -87,6 +88,7 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
   const cellSize = size / cells.length
   canvas.height = canvas.width = size * scale
   canvas.style.height = canvas.style.width = `${size}px`
+  canvas.style.padding = (100 * padding) / size + '%'
   ctx.scale(scale, scale)
 
   ctx.fillStyle = bgColor
