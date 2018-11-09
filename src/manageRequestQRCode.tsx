@@ -6,6 +6,13 @@ import {RequestQRCode} from './RequestQRCode'
 
 const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
+const deprecationMessage = (functionName: string) => {
+  console.groupCollapsed()
+  console.warn(`${functionName} is deprecated`)
+  console.warn('Either use RequestQRCode if you are using React, or generateQRCode for plain JS usage.')
+  console.groupEnd()
+}
+
 const generateId = () => {
   let rand = ''
   for (var i = 0; i < 4; i++) {
@@ -15,7 +22,9 @@ const generateId = () => {
   return 'bloom-request-qr-code-' + rand
 }
 
-const createRequestQRCode = (requestData: RequestData, container: HTMLElement, options?: Options) => {
+const createRequestQRCode = (requestData: RequestData, container: HTMLElement, options: Partial<Options>) => {
+  deprecationMessage('createRequestQRCode')
+
   const id = generateId()
   const root = document.createElement('div')
   root.id = id
@@ -28,6 +37,8 @@ const createRequestQRCode = (requestData: RequestData, container: HTMLElement, o
 }
 
 const updateRequestQRCode = (id: string, requestData: RequestData, options?: Options) => {
+  deprecationMessage('updateRequestQRCode')
+
   const root = document.getElementById(id)
 
   if (!root) throw `Could not find the QR Code with the id: ${id}`
@@ -36,6 +47,8 @@ const updateRequestQRCode = (id: string, requestData: RequestData, options?: Opt
 }
 
 const removeRequestQRCode = (id: string) => {
+  deprecationMessage('removeRequestQRCode')
+
   const root = document.getElementById(id)
 
   if (!root) return

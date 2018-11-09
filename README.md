@@ -13,10 +13,10 @@ Easily allow your users to share their verified personal information directly wi
       - [RequestData](#requestdata)
       - [Options](#options)
   - [Response](#response)
-      - [ResponseData](#responsedata)
-      - [VerifiedData](#verifieddata)
-      - [Attestation](#attestation)
-      - [Proof](#proof)
+    - [ResponseData](#responsedata)
+    - [VerifiedData](#verifieddata)
+    - [Attestation](#attestation)
+    - [Proof](#proof)
   - [Receive](#receive)
     - [1. Perform Merkle Proof](#1-perform-merkle-proof)
     - [2. Recover Ethereum address from signature](#2-recover-ethereum-address-from-signature)
@@ -24,11 +24,11 @@ Easily allow your users to share their verified personal information directly wi
     - [4. Retrieve dataHash and attestation ID from attestation in specified transaction](#4-retrieve-datahash-and-attestation-id-from-attestation-in-specified-transaction)
     - [5. Confirm attestation status](#5-confirm-attestation-status)
 - [Using Share-Kit for BloomID Sign-In](#using-share-kit-for-bloomid-sign-in)
-    - [1. Configure an endpoint to receive data](#1-configure-an-endpoint-to-receive-data)
-    - [2. Embed a QR code with a link to your endpoint and the verified data you would like to receive](#2-embed-a-qr-code-with-a-link-to-your-endpoint-and-the-verified-data-you-would-like-to-receive)
-    - [3. Add verification to the endpoint](#3-add-verification-to-the-endpoint)
-    - [4. Listen for a login over a websocket connection to the server](#4-listen-for-a-login-over-a-websocket-connection-to-the-server)
-    - [5. Authorize the user to log in to the account matching the verified email](#5-authorize-the-user-to-log-in-to-the-account-matching-the-verified-email)
+  - [1. Configure an endpoint to receive data](#1-configure-an-endpoint-to-receive-data)
+  - [2. Embed a QR code with a link to your endpoint and the verified data you would like to receive](#2-embed-a-qr-code-with-a-link-to-your-endpoint-and-the-verified-data-you-would-like-to-receive)
+  - [3. Add verification to the endpoint](#3-add-verification-to-the-endpoint)
+  - [4. Listen for a login over a websocket connection to the server](#4-listen-for-a-login-over-a-websocket-connection-to-the-server)
+  - [5. Authorize the user to log in to the account matching the verified email](#5-authorize-the-user-to-log-in-to-the-account-matching-the-verified-email)
 
 ## Installation
 
@@ -57,17 +57,16 @@ const MyComponent: React.SFC = props => {
 #### Plain
 
 ```typescript
-import {createRequestQRCode, removeRequestQRCode, RequestData} from '@bloomprotocol/share-kit'
+import {generateRequestQRCode} from '@bloomprotocol/share-kit'
 
 const requestData: RequestData = {...}
 const options = {
   size: 200,
 }
 
-const requestQRCodeId = createRequestQRCode(requestData, window.querySelector('#my-container'), options)
+const canvas = document.createElement('canvas')
 
-// Some time later
-removeRequestQRCode(requestQRCodeId)
+generateRequestQRCode(canvas, requestData, options)
 ```
 
 <h3 id="request-types">Types</h3>
@@ -142,7 +141,7 @@ Data associated with the attestation
 | tx       | The Ethereum transaction corresponding to the attestation          | `string`      |
 | stage    | The Ethereum network name on which the tx can be found             | `string`      |
 | rootHash | Root hash of the data merkle tree emitted by the attestation event | `string`      |
-| target   | Target attestation data | `Attestation` |
+| target   | Target attestation data                                            | `Attestation` |
 | proof    | Array of hashes needed to perform the merkle proof                 | `Proof`       |
 
 #### Attestation
@@ -325,7 +324,7 @@ The endpoint specified in the QR code should be configured to accept data in the
       )
     }
   })
-  ```
+```
 
 The recipient can perform several verifications to ensure the data and attestation are valid.
 
@@ -421,7 +420,6 @@ export default (app: express.Application) => {
 ### 2. Embed a QR code with a link to your endpoint and the verified data you would like to receive
 
 ```typescript
-
 const requestData = {
   action: <Action>'... action type',
   token: '... generate a unique id string for this request',

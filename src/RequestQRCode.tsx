@@ -1,33 +1,38 @@
 import * as React from 'react'
-import {QRCode} from 'react-qrcode-logo'
 
 import {RequestData, Options} from './types'
-import {BloomLogo} from './BloomLogo'
+import {generateRequestQRCode} from './generateRequestQRCode'
 
-type RequestQRCodeProps = Options & {
+type RequestQRCodeProps = Partial<Options> & {
   requestData: RequestData
 }
 
-const RequestQRCode: React.SFC<RequestQRCodeProps> = props => {
-  // If hideLogo is true then don't render any logo
-  // If logoImage is not set default to BloomLogo with colors matching the rest of the QR code
-  // Otherwise display the provided logo
-  const logoImage = props.hideLogo
-    ? undefined
-    : props.logoImage === undefined
-      ? BloomLogo.getLogo({fgColor: props.fgColor, bgColor: props.bgColor})
-      : props.logoImage
+class RequestQRCode extends React.Component<RequestQRCodeProps> {
+  private canvasRef: React.RefObject<HTMLCanvasElement>
 
-  return <QRCode {...props} logoImage={logoImage} value={JSON.stringify(props.requestData)} />
-}
+  constructor(props: RequestQRCodeProps) {
+    super(props)
 
-RequestQRCode.defaultProps = {
-  size: 128,
-  bgColor: '#fff',
-  fgColor: '#6067f1',
-  hideLogo: false,
-  padding: 0,
-  ecLevel: 'M',
+    this.canvasRef = React.createRef()
+  }
+
+  componentDidMount() {
+    if (this.canvasRef.current) {
+      const {requestData, ...rest} = this.props
+      generateRequestQRCode(this.canvasRef.current, requestData, rest)
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.canvasRef.current) {
+      const {requestData, ...rest} = this.props
+      generateRequestQRCode(this.canvasRef.current, requestData, rest)
+    }
+  }
+
+  render() {
+    return <canvas ref={this.canvasRef} />
+  }
 }
 
 export {RequestQRCode}

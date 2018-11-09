@@ -1,5 +1,4 @@
 import {AttestationTypeID} from '@bloomprotocol/attestations-lib'
-import {IProps as QRCodeProps} from 'react-qrcode-logo'
 
 // Request Types
 
@@ -18,13 +17,23 @@ type RequestData = {
   types: (keyof typeof AttestationTypeID)[]
 }
 
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+enum ErrorCorrectionLevel {
+  'L' = 1,
+  'M' = 0,
+  'Q' = 3,
+  'H' = 2,
+}
 
-type TrimmedProps = Omit<QRCodeProps, 'value'>
-
-type Options = TrimmedProps & {
+type Options = {
+  ecLevel: ErrorCorrectionLevel
+  size: number
+  bgColor: string
+  fgColor: string
+  hideLogo: boolean
   logoImage?: string
-  hideLogo?: boolean
+  logoWidth?: number
+  logoHeight?: number
+  logoOpacity?: number
 }
 
 // Response Types
@@ -93,4 +102,4 @@ type ResponseData = {
   data: IVerifiedData[]
 }
 
-export {Action, RequestData, Options, NonceData, Nonces, ResponseData}
+export {Action, RequestData, ErrorCorrectionLevel, Options, NonceData, Nonces, ResponseData}
