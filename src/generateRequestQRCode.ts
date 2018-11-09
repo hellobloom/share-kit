@@ -1,11 +1,11 @@
-import {Options, ErrorCorrectionLevel, RequestData} from './types'
+import {Options, RequestData, ErrorCorrectionLevel} from './types'
 import {BloomLogo} from './BloomLogo'
 
 const QRCodeImpl = require('qr.js/lib/QRCode')
 
 const defaultOptions: Options = {
   hideLogo: false,
-  ecLevel: ErrorCorrectionLevel.L,
+  ecLevel: 'L',
   size: 128,
   bgColor: '#fff',
   fgColor: '#6067f1',
@@ -70,7 +70,7 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
 
   const {ecLevel, size, bgColor, fgColor} = defaultedOptions
 
-  const qr = new QRCodeImpl(-1, ecLevel)
+  const qr = new QRCodeImpl(-1, ErrorCorrectionLevel[ecLevel])
   qr.addData(JSON.stringify(data))
   qr.make()
 

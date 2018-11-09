@@ -25,7 +25,7 @@ enum ErrorCorrectionLevel {
 }
 
 type Options = {
-  ecLevel: ErrorCorrectionLevel
+  ecLevel: keyof typeof ErrorCorrectionLevel
   size: number
   bgColor: string
   fgColor: string

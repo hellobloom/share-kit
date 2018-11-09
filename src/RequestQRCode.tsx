@@ -16,18 +16,19 @@ class RequestQRCode extends React.Component<RequestQRCodeProps> {
     this.canvasRef = React.createRef()
   }
 
-  componentDidMount() {
+  private generate = () => {
     if (this.canvasRef.current) {
       const {requestData, ...rest} = this.props
       generateRequestQRCode(this.canvasRef.current, requestData, rest)
     }
   }
 
+  componentDidMount() {
+    this.generate()
+  }
+
   componentDidUpdate() {
-    if (this.canvasRef.current) {
-      const {requestData, ...rest} = this.props
-      generateRequestQRCode(this.canvasRef.current, requestData, rest)
-    }
+    this.generate()
   }
 
   render() {
