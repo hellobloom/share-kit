@@ -1,6 +1,6 @@
 const logoWithColors = (config: {fgColor: string; bgColor: string}) =>
   `<svg width="25" height="25" viewBox="0 0 710 705" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="0" rx="200" ry="200" width="710" height="705" fill="${config.bgColor}" />
+    <rect x="0" y="0" width="710" height="705" fill="${config.bgColor}" />
     <g fill="${config.fgColor}">
       <g id="Leaf" transform="translate(260.000000, -27.000000)">
         <path d="M194.415739,215.192523 C194.258317,268.684765

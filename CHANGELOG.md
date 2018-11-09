@@ -1,3 +1,23 @@
+## Unreleased
+
+**New Features**:
+
+- Implement a QR code with circles and rounded "eyes" instead of squares
+- Add `generateRequestQRCode`
+  - This takes a `canvas` element as well as the request data and options for the QR code.
+
+**Improvements**:
+
+- Change the default EC level of the QR code to `L`
+- Change image URLs in README so they show up on npm
+- Make it so the logo doesn't half-cover any data bits
+- Change the logo background from a rounded rectangle to a regular rectangle
+
+**Deprecations**:
+
+- `createRequestQRCode`, `updateRequestQRCode`, and `removeRequestQRCode`
+  - If using React use `RequestQRCode`, otherwise use `generateRequestQRCode`
+
 ## 2.0.3
 
 **Bug fixes**:
