@@ -63,7 +63,7 @@ const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionTyp
   if (isBottom) {
     ctx.fillRect(info.left, centerY, info.size, halfSize)
   }
-  if (((isLeft && !isRight) || (!isLeft && isRight)) && ((isTop && !isBottom) || (!isTop && isBottom))) {
+  if (isLeft !== isRight && isTop !== isBottom) {
     // Only add a dot to corner pieces
     makeDot(ctx, info)
   }
