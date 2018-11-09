@@ -10,6 +10,8 @@
 
 - Change the default EC level of the QR code to `L`
 - Change image URLs in README so they show up on npm
+- Make it so the logo doesn't half-cover any data bits
+- Change the logo background from a rounded rectangle to a regular rectangle
 
 **Deprecations**:
 

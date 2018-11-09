@@ -21,7 +21,7 @@ type CellInfo = {
 const makeDot = (ctx: CanvasRenderingContext2D, info: CellInfo) => {
   const centerX = info.left + info.size / 2
   const centerY = info.top + info.size / 2
-  const radius = info.size / 2
+  const radius = (info.size / 2) * 0.85
 
   ctx.beginPath()
   ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false)
@@ -46,20 +46,26 @@ const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionTyp
 
   ctx.fillStyle = info.fillStyle
 
-  // The base is still a dot
-  makeDot(ctx, info)
+  const isLeft = (connectionType & ConnectionType.left) === ConnectionType.left
+  const isRight = (connectionType & ConnectionType.right) === ConnectionType.right
+  const isTop = (connectionType & ConnectionType.top) === ConnectionType.top
+  const isBottom = (connectionType & ConnectionType.bottom) === ConnectionType.bottom
 
-  if ((connectionType & ConnectionType.left) === ConnectionType.left) {
+  if (isLeft) {
     ctx.fillRect(centerX, info.top, halfSize, info.size)
   }
-  if ((connectionType & ConnectionType.right) === ConnectionType.right) {
+  if (isRight) {
     ctx.fillRect(info.left, info.top, halfSize, info.size)
   }
-  if ((connectionType & ConnectionType.top) === ConnectionType.top) {
+  if (isTop) {
     ctx.fillRect(info.left, info.top, info.size, halfSize)
   }
-  if ((connectionType & ConnectionType.bottom) === ConnectionType.bottom) {
+  if (isBottom) {
     ctx.fillRect(info.left, centerY, info.size, halfSize)
+  }
+  if (((isLeft && !isRight) || (!isLeft && isRight)) && ((isTop && !isBottom) || (!isTop && isBottom))) {
+    // Only add a dot to corner peices
+    makeDot(ctx, info)
   }
 
   ctx.fill()
@@ -77,7 +83,7 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
   const ctx = canvas.getContext('2d')!
 
   const scale = window.devicePixelRatio || 1
-  const cells: [number[]] = qr.modules
+  const cells: [boolean[]] = qr.modules
   const cellSize = size / cells.length
   canvas.height = canvas.width = size * scale
   canvas.style.height = canvas.style.width = `${size}px`
@@ -86,8 +92,8 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
   ctx.fillStyle = bgColor
   ctx.fillRect(0, 0, size, size)
 
-  cells.forEach((row: number[], rowIndex: number) => {
-    row.forEach((cell: number, cellIndex: number) => {
+  cells.forEach((row: boolean[], rowIndex: number) => {
+    row.forEach((cell: boolean, cellIndex: number) => {
       // This is a data bit
       if (cell) {
         const isTopLeftEye = cellIndex <= 7 && rowIndex <= 7
@@ -139,7 +145,9 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
 
     const image = new Image()
     image.onload = () => {
-      const dwidth = options.logoWidth || size * 0.2
+      const defaultRatio = size * 0.2 + cellSize * 0.33
+      const defaultWidth = defaultRatio + cellSize
+      const dwidth = options.logoWidth || defaultWidth
       const dheight = options.logoHeight || dwidth
       const dx = (size - dwidth) / 2
       const dy = (size - dheight) / 2
