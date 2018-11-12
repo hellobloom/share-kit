@@ -24,12 +24,58 @@ const makeDot = (ctx: CanvasRenderingContext2D, info: CellInfo) => {
   const centerY = info.top + info.size / 2
   const radius = (info.size / 2) * 0.85
 
+  ctx.save()
   ctx.beginPath()
-  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false)
+
   ctx.fillStyle = info.fillStyle
 
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false)
   ctx.fill()
+
   ctx.closePath()
+  ctx.restore()
+}
+
+const makeRect = (
+  ctx: CanvasRenderingContext2D,
+  fillStyle: string,
+  rect: {x: number; y: number; w: number; h: number}
+) => {
+  ctx.save()
+  ctx.beginPath()
+
+  ctx.fillStyle = fillStyle
+  ctx.strokeStyle = fillStyle
+  ctx.lineWidth = 0.5
+  ctx.lineJoin = 'round'
+  ctx.lineCap = 'round'
+
+  ctx.rect(rect.x, rect.y, rect.w, rect.h)
+  ctx.fill()
+  ctx.stroke()
+
+  ctx.closePath()
+  ctx.restore()
+}
+
+const makeCorner = (ctx: CanvasRenderingContext2D, info: CellInfo) => {
+  const centerX = info.left + info.size / 2
+  const centerY = info.top + info.size / 2
+  const radius = info.size / 2
+
+  ctx.save()
+  ctx.beginPath()
+
+  ctx.fillStyle = info.fillStyle
+  ctx.strokeStyle = info.fillStyle
+  ctx.lineWidth = 0.5
+
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false)
+  ctx.fill()
+  ctx.stroke()
+
+  ctx.closePath()
+  ctx.restore()
 }
 
 class ConnectionType {
@@ -43,9 +89,7 @@ class ConnectionType {
 const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionType: number) => {
   const centerX = info.left + info.size / 2
   const centerY = info.top + info.size / 2
-  const halfSize = info.size % 2 === 0 ? info.size / 2 : Math.ceil(info.size / 2)
-
-  ctx.fillStyle = info.fillStyle
+  const halfSize = info.size / 2
 
   const isLeft = (connectionType & ConnectionType.left) === ConnectionType.left
   const isRight = (connectionType & ConnectionType.right) === ConnectionType.right
@@ -53,23 +97,24 @@ const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionTyp
   const isBottom = (connectionType & ConnectionType.bottom) === ConnectionType.bottom
 
   if (isLeft) {
-    ctx.fillRect(centerX, info.top, halfSize, info.size)
-  }
-  if (isRight) {
-    ctx.fillRect(info.left, info.top, halfSize, info.size)
-  }
-  if (isTop) {
-    ctx.fillRect(info.left, info.top, info.size, halfSize)
-  }
-  if (isBottom) {
-    ctx.fillRect(info.left, centerY, info.size, halfSize)
-  }
-  if (isLeft !== isRight && isTop !== isBottom) {
-    // Only add a dot to corner pieces
-    makeDot(ctx, info)
+    makeRect(ctx, info.fillStyle, {x: centerX, y: info.top, w: halfSize, h: info.size})
   }
 
-  ctx.fill()
+  if (isRight) {
+    makeRect(ctx, info.fillStyle, {x: info.left, y: info.top, w: halfSize, h: info.size})
+  }
+
+  if (isTop) {
+    makeRect(ctx, info.fillStyle, {x: info.left, y: info.top, w: info.size, h: halfSize})
+  }
+
+  if (isBottom) {
+    makeRect(ctx, info.fillStyle, {x: info.left, y: centerY, w: info.size, h: halfSize})
+  }
+
+  if (isLeft !== isRight && isTop !== isBottom) {
+    makeCorner(ctx, info)
+  }
 }
 
 const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, options: Partial<Options>) => {
@@ -91,8 +136,7 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
   canvas.style.padding = (100 * padding) / size + '%'
   ctx.scale(scale, scale)
 
-  ctx.fillStyle = bgColor
-  ctx.fillRect(0, 0, size, size)
+  makeRect(ctx, bgColor, {x: 0, y: 0, w: size, h: size})
 
   cells.forEach((row: boolean[], rowIndex: number) => {
     row.forEach((cell: boolean, cellIndex: number) => {
@@ -156,6 +200,7 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
       const dy = (size - dheight) / 2
       image.width = dwidth
       image.height = dheight
+
       ctx.save()
       ctx.globalAlpha = options.logoOpacity || 1
       ctx.drawImage(image, dx, dy, dwidth, dheight)

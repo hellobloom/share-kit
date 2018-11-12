@@ -1,3 +1,9 @@
+## Unreleased
+
+**Improvements**:
+
+- Improve "eye" rendering
+
 ## 2.1.1 (HOTFIX)
 
 **Improvements**:
