@@ -16,7 +16,7 @@ type CellInfo = {
   top: number
   left: number
   size: number
-  fillStyle: string
+  color: string
 }
 
 const makeDot = (ctx: CanvasRenderingContext2D, info: CellInfo) => {
@@ -27,7 +27,7 @@ const makeDot = (ctx: CanvasRenderingContext2D, info: CellInfo) => {
   ctx.save()
   ctx.beginPath()
 
-  ctx.fillStyle = info.fillStyle
+  ctx.fillStyle = info.color
 
   ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false)
   ctx.fill()
@@ -36,17 +36,13 @@ const makeDot = (ctx: CanvasRenderingContext2D, info: CellInfo) => {
   ctx.restore()
 }
 
-const makeRect = (
-  ctx: CanvasRenderingContext2D,
-  fillStyle: string,
-  rect: {x: number; y: number; w: number; h: number}
-) => {
+const makeRect = (ctx: CanvasRenderingContext2D, color: string, rect: {x: number; y: number; w: number; h: number}) => {
   ctx.save()
   ctx.beginPath()
 
-  ctx.fillStyle = fillStyle
-  ctx.strokeStyle = fillStyle
-  ctx.lineWidth = 0.5
+  ctx.fillStyle = color
+  ctx.strokeStyle = color
+  ctx.lineWidth = 1
   ctx.lineJoin = 'round'
   ctx.lineCap = 'round'
 
@@ -58,19 +54,81 @@ const makeRect = (
   ctx.restore()
 }
 
-const makeCorner = (ctx: CanvasRenderingContext2D, info: CellInfo) => {
-  const centerX = info.left + info.size / 2
-  const centerY = info.top + info.size / 2
-  const radius = info.size / 2
+enum CornerType {
+  none,
+  topLeft,
+  topRight,
+  bottomRight,
+  bottomLeft,
+}
+
+const makeCorner = (ctx: CanvasRenderingContext2D, info: CellInfo, type: CornerType, part: EyePart) => {
+  const outerRadius = part === EyePart.outer ? info.size : info.size / 4
+  const innerRadius = outerRadius / 2
+
+  const {top, left} = info
+  const bottom = top + info.size
+  const right = left + info.size
+  const halfSize = info.size / 2
 
   ctx.save()
   ctx.beginPath()
 
-  ctx.fillStyle = info.fillStyle
-  ctx.strokeStyle = info.fillStyle
-  ctx.lineWidth = 0.5
+  ctx.fillStyle = info.color
+  ctx.strokeStyle = info.color
+  ctx.lineWidth = 1
+  ctx.lineJoin = 'round'
+  ctx.lineCap = 'round'
 
-  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false)
+  switch (type) {
+    case CornerType.topLeft:
+      ctx.moveTo(left, bottom)
+      ctx.arcTo(left, top, right, top, outerRadius)
+      ctx.lineTo(right, top)
+      ctx.lineTo(right, bottom)
+      ctx.lineTo(right + halfSize, bottom)
+      ctx.arcTo(right, bottom, right, bottom + 5, innerRadius)
+      ctx.lineTo(right, bottom + 5)
+      ctx.lineTo(right, bottom)
+      ctx.lineTo(left, bottom)
+      break
+    case CornerType.topRight:
+      ctx.moveTo(left, bottom)
+      ctx.lineTo(left, top)
+      ctx.arcTo(right, top, right, bottom, outerRadius)
+      ctx.lineTo(right, bottom)
+      ctx.lineTo(left, bottom)
+      ctx.lineTo(left, bottom + halfSize)
+      ctx.arcTo(left, bottom, left - halfSize, bottom, innerRadius)
+      ctx.lineTo(left - halfSize, bottom)
+      ctx.lineTo(left, bottom)
+      break
+    case CornerType.bottomRight:
+      ctx.moveTo(left, bottom)
+      ctx.lineTo(left, top)
+      ctx.lineTo(left - halfSize, top)
+      ctx.arcTo(left, top, left, top - halfSize, innerRadius)
+      ctx.lineTo(left, top - halfSize)
+      ctx.lineTo(left, top)
+      ctx.lineTo(right, top)
+      ctx.arcTo(right, bottom, left, bottom, outerRadius)
+      ctx.lineTo(left, bottom)
+      break
+    case CornerType.bottomLeft:
+      ctx.moveTo(left, top)
+      ctx.lineTo(right, top)
+      ctx.lineTo(right, top - halfSize)
+      ctx.arcTo(right, top, right + halfSize, top, innerRadius)
+      ctx.lineTo(right + halfSize, top)
+      ctx.lineTo(right, top)
+      ctx.lineTo(right, bottom)
+      ctx.arcTo(left, bottom, left, top, outerRadius)
+      ctx.lineTo(left, top)
+      break
+    default:
+      break
+  }
+
   ctx.fill()
   ctx.stroke()
 
@@ -86,7 +144,12 @@ class ConnectionType {
   static readonly bottom = 1 << 4
 }
 
-const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionType: number) => {
+enum EyePart {
+  inner,
+  outer,
+}
+
+const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionType: number, part: EyePart) => {
   const centerX = info.left + info.size / 2
   const centerY = info.top + info.size / 2
   const halfSize = info.size / 2
@@ -96,24 +159,36 @@ const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionTyp
   const isTop = (connectionType & ConnectionType.top) === ConnectionType.top
   const isBottom = (connectionType & ConnectionType.bottom) === ConnectionType.bottom
 
-  if (isLeft) {
-    makeRect(ctx, info.fillStyle, {x: centerX, y: info.top, w: halfSize, h: info.size})
-  }
-
-  if (isRight) {
-    makeRect(ctx, info.fillStyle, {x: info.left, y: info.top, w: halfSize, h: info.size})
-  }
-
-  if (isTop) {
-    makeRect(ctx, info.fillStyle, {x: info.left, y: info.top, w: info.size, h: halfSize})
-  }
-
-  if (isBottom) {
-    makeRect(ctx, info.fillStyle, {x: info.left, y: centerY, w: info.size, h: halfSize})
-  }
-
   if (isLeft !== isRight && isTop !== isBottom) {
-    makeCorner(ctx, info)
+    let cornerType = CornerType.none
+
+    if (isBottom && isRight) {
+      cornerType = CornerType.topRight
+    } else if (isBottom && isLeft) {
+      cornerType = CornerType.topLeft
+    } else if (isTop && isRight) {
+      cornerType = CornerType.bottomRight
+    } else if (isTop && isLeft) {
+      cornerType = CornerType.bottomLeft
+    }
+
+    makeCorner(ctx, info, cornerType, part)
+  } else {
+    if (isLeft) {
+      makeRect(ctx, info.color, {x: centerX, y: info.top, w: halfSize, h: info.size})
+    }
+
+    if (isRight) {
+      makeRect(ctx, info.color, {x: info.left, y: info.top, w: halfSize, h: info.size})
+    }
+
+    if (isTop) {
+      makeRect(ctx, info.color, {x: info.left, y: info.top, w: info.size, h: halfSize})
+    }
+
+    if (isBottom) {
+      makeRect(ctx, info.color, {x: info.left, y: centerY, w: info.size, h: halfSize})
+    }
   }
 }
 
@@ -131,7 +206,10 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
   const scale = window.devicePixelRatio || 1
   const cells: [boolean[]] = qr.modules
   const cellSize = size / cells.length
-  canvas.height = canvas.width = size * scale
+  // Add 4 to account for:
+  // - The 1 extra on top and left of each cell
+  // - The 1 extra from the border on top/left
+  canvas.height = canvas.width = size * scale + 4
   canvas.style.height = canvas.style.width = `${size}px`
   canvas.style.padding = (100 * padding) / size + '%'
   ctx.scale(scale, scale)
@@ -147,10 +225,11 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
         const isBottomLeftEye = cellIndex <= 7 && rowIndex >= row.length - 7
         const isEye = isTopLeftEye || isTopRightEye || isBottomLeftEye
 
+        // Add an extra 1 to the top/left so the border isn't cut off by the edge of the canvas
         const cellInfo = {
-          fillStyle: fgColor,
-          left: cellIndex * cellSize,
-          top: rowIndex * cellSize,
+          color: fgColor,
+          left: cellIndex * cellSize + 1,
+          top: rowIndex * cellSize + 1,
           size: cellSize,
         }
 
@@ -174,7 +253,15 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
             connectionType = connectionType | ConnectionType.left
           }
 
-          makeEyeBit(ctx, cellInfo, connectionType)
+          const isInnerEyeX =
+            (cellIndex >= 2 && cellIndex <= 4) || (cellIndex >= cells.length - 7 && cellIndex <= cells.length)
+          const isInnerEyeY =
+            (rowIndex >= 2 && rowIndex <= 4) || (rowIndex >= cells.length - 5 && rowIndex <= cells.length - 3)
+          const isInnerEye = isInnerEyeX && isInnerEyeY
+
+          const eyePart = isInnerEye ? EyePart.inner : EyePart.outer
+
+          makeEyeBit(ctx, cellInfo, connectionType, eyePart)
         } else {
           makeDot(ctx, cellInfo)
         }
@@ -196,8 +283,9 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
       const defaultWidth = numberOfCellsToCover * cellSize + (addExtra ? cellSize : 0)
       const dwidth = options.logoWidth || defaultWidth
       const dheight = options.logoHeight || dwidth
-      const dx = (size - dwidth) / 2
-      const dy = (size - dheight) / 2
+      // Add 1 to accomodate for the 1 shift of the cells
+      const dx = (size - dwidth) / 2 + 1
+      const dy = (size - dheight) / 2 + 1
       image.width = dwidth
       image.height = dheight
 
