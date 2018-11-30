@@ -459,3 +459,126 @@ if (verified) {
 ### 4. Listen for a login over a websocket connection to the server
 
 ### 5. Authorize the user to log in to the account matching the verified email
+
+### An Example app built using sharekit for login
+
+[bloomcheck](https://github.com/pvela/bloomcheck)
+
+### Prereq :
+
+[feathers-cli](https://github.com/feathersjs/cli)
+
+```
+npm install @feathersjs/cli -g
+```
+
+[browserify](http://browserify.org/)
+
+### Create a new app
+
+Generate a new [feathers app](https://docs.feathersjs.com/guides/basics/starting.html)
+```
+feathers g app
+```
+Include bloom share kit
+```
+npm i --save @bloomprotocol/share-kit
+```
+### Services
+
+We will be making use of 3 services to provide realtime updates on browsers
+
+1. callback service and an API for bloom to call
+2. client service for registering the clients and isolating notification to specific clients
+3. bloom service to bridge the callback to realtime notification events
+
+feathers provides a cli to generate services
+
+```
+feathers g service bloomcallback
+feathers g service bloom
+feathers g service client
+```
+
+### Hooks
+
+Add a hook to bloomcallback service to process the incoming data and take appropriate action. In our case we will create a bloom service object with appropriate message object. On successful verification set the status to true.
+
+```
+let body = context.data;
+      try {
+        if (body && body.token && body.data) {
+          const parsedData = body.data;
+          let verificationPassed = false;
+          let email = '';
+          parsedData.forEach(dataToVerify => {
+            if (sharekit.verifyProof(dataToVerify)) {
+              verificationPassed = true;
+              email = dataToVerify.target.data;
+            } else {
+              verificationPassed = false;
+            }
+          });
+          if (verificationPassed) {
+            context.app.service('bloom').create({ 'status': 'true', 'email': email, 'token':body.token });
+          } else {
+            context.app.service('bloom').create({ 'status': 'false', 'email': email, 'token':body.token });
+          }
+          context.data = {
+            success: true,
+            token: body.token
+          };
+        } else {
+          context.app.service('bloom').create({ 'token':body.token, status: 'false' });
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log('Encountered an error while receiving data', {
+          error,
+        });
+        context.app.service('bloom').create({'token':body.token, 'status': 'false' });
+        //context.app.service('bloom').emit('changed',{'status':'false'});
+        context.data = { success: 'false' };
+      }
+      return context;
+
+```
+
+Create another hook on client service to subscribe client connections to specific channels.
+
+```
+app.channel(`client/${data.token}`).join(params.connection);
+```
+
+### Frontend
+
+Create a simple html page that can include a Bloom QR code in a canvas.
+```
+<canvas id="QR-Container"></canvas>
+```
+Use the share kit library to generate the QR code.
+```
+sharekit.generateRequestQRCode(document.getElementById('QR-Container'), requestData, options)
+```
+
+Create a socket connection and list for bloom service create event. A bloom object would be created when the bloom service invokes the callback.
+
+```
+const socket = io(window.location.origin);
+const token = btoa(Math.random()).substr(5, 5);
+socket.emit('create', 'client', {
+  token: token
+}, (error, message) => {
+  console.log('Client created', message);
+});
+socket.on(`bloom created`, function (message) {
+  document.getElementById("QR-Container").style.display = "none";
+  document.getElementById("bloomed").style.display = "block";
+  document.getElementById("message").innerHTML = message.status ? `User ${message.email} logged in successfully` : 'Login Failed';
+});
+
+```
+
+### local development.
+
+Incorporated ngrok to tunnel a internet facing url to localhost. Starting the app using npm start would start the tunnel and print the url in the console. The url used to access the page is used to encode the callback url in QR code. This callback url will be used by bloom to callback with the verification information.
