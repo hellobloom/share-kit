@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/share-kit",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Easily allow your users to share their verified personal information directly with your application by scanning a QR code.",
@@ -25,7 +25,7 @@
     "storybook": "start-storybook -p 9001 -c .storybook"
   },
   "dependencies": {
-    "@bloomprotocol/attestations-lib": "^0.4.3",
+    "@bloomprotocol/attestations-lib": "^3.0.2",
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
     "qr.js": "0.0.0",
