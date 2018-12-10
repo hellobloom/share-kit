@@ -129,7 +129,7 @@ This is the shape of the object that will be POSTed to the provided URL
 | ---------- | ----------------------------------------------------------------------- | -------------- |
 | bloom_id   | The user's BloomID                                                      | `number`       |
 | token      | Unique string to identify this data request                             | `string`       |
-| signature  | Request body signed by the Bloom app wallet                             | `string`       |
+| signature  | Signature of `packedData` by the user with their mnemonic.              | `string`       |
 | data       | Array of VerifiedData objects                                           | `VerifiedData` |
 | packedData | Hex string representation of the `data` property being keccak256 hashed | `string`       |
 
