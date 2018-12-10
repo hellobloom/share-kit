@@ -223,7 +223,7 @@ Format of proof object used to perform merkle proof
 The endpoint specified in the QR code should be configured to accept data in the format shown in [ResponseData](#responsedata).
 
 ```javascript
-  const shareKitUtil = require('@bloomprotocol/share-kit/src/util')
+  const shareKit = require('@bloomprotocol/share-kit')
   const ethUtil = require('ethereumjs-util')
 
   export const recoverHashSigner = (hash: Buffer, sig: string): string => {
@@ -262,7 +262,7 @@ The endpoint specified in the QR code should be configured to accept data in the
       const sortedData = parsedData.map(d => sortObject(d))
 
       // Verify off chain data integrity
-      if (!sortedData.every(d => shareKitUtil.verifyOffChainDataIntegrity(d).length === 0)) {
+      if (!sortedData.every(d => shareKit.util.verifyOffChainDataIntegrity(d).length === 0)) {
         throw Error('Unable to verify the layer2Hash, attester address, and merkle proof with the provided data.')
       }
 
