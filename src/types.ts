@@ -82,7 +82,7 @@ interface IVerifiedData {
   proof: IProofShare[]
 
   /**
-   * Network on which the tx can be found
+   * The Ethereum network name on which the tx can be found
    */
   stage: 'mainnet' | 'rinkeby' | 'local'
 
@@ -92,7 +92,7 @@ interface IVerifiedData {
   target: HashingLogic.IDataNode
 
   /**
-   * Etherum address of the attester that performed the attestation
+   * Ethereum address of the attester that performed the attestation
    */
   attester: string
 }

@@ -125,36 +125,48 @@ When the user allows access you get a response back.
 
 This is the shape of the object that will be POSTed to the provided URL
 
-| Name      | Description                                 | Type           |
-| --------- | ------------------------------------------- | -------------- |
-| bloom_id  | The user's BloomID                          | `number`       |
-| token     | Unique string to identify this data request | `string`       |
-| signature | Request body signed by the Bloom app wallet | `string`       |
-| data      | Array of VerifiedData objects               | `VerifiedData` |
+| Name       | Description                                                             | Type           |
+| ---------- | ----------------------------------------------------------------------- | -------------- |
+| bloom_id   | The user's BloomID                                                      | `number`       |
+| token      | Unique string to identify this data request                             | `string`       |
+| signature  | Request body signed by the Bloom app wallet                             | `string`       |
+| data       | Array of VerifiedData objects                                           | `VerifiedData` |
+| packedData | Hex string representation of the `data` property being keccak256 hashed | `string`       |
 
 #### VerifiedData
 
 Data associated with the attestation
 
-| Name     | Description                                                        | Type          |
-| -------- | ------------------------------------------------------------------ | ------------- |
-| tx       | The Ethereum transaction corresponding to the attestation          | `string`      |
-| stage    | The Ethereum network name on which the tx can be found             | `string`      |
-| rootHash | Root hash of the data merkle tree emitted by the attestation event | `string`      |
-| target   | Target attestation data                                            | `Attestation` |
-| proof    | Array of hashes needed to perform the merkle proof                 | `Proof`       |
+| Name          | Description                                                                                          | Type                     |
+| ------------- | ---------------------------------------------------------------------------------------------------- | ------------------------ |
+| tx            | The Ethereum transaction corresponding to the attestation                                            | `string`                 |
+| layer2Hash    | Attestation hash that lives on chain and is formed by hashing the merkle tree root hash with a nonce | `string`                 |
+| rootHash      | Root hash of the data merkle tree emitted by the attestation event                                   | `string`                 |
+| rootHashNonce | Nonce used to hash the `rootHash` to create the `layer2Hash`                                         | `string`                 |
+| proof         | Merkle tree leaf proof needed to verify the merkle proof                                             | `IProofShare[]`          |
+| stage         | The Ethereum network name on which the tx can be found                                               | `string`                 |
+| target        | Data node containing the raw verified data that was requested                                        | `HashingLogic.IDataNode` |
+| attester      | Ethereum address of the attester that performed the attestation                                      | `string`                 |
 
 #### Attestation
 
 Format of target attestation data
 
-| Name     | Description                                                      | Type     |
-| -------- | ---------------------------------------------------------------- | -------- |
-| type     | String identifying the type of attestation                       | `string` |
-| provider | Optional identifier of the service used to verify this data      | `string` |
-| data     | Stringified plaintext representation of the verified data        | `string` |
-| nonce    | Unique hex string used to obfuscate the hashed form of this data | `string` |
-| version  | Semantic version used to keep track of attestation data formats  | `string` |
+| Name              | Description                                                          | Type               |
+| ----------------- | -------------------------------------------------------------------- | ------------------ |
+| attestationNode   | Object representing the attestation data, type, and revocation links | `IAttestationNode` |
+| signedAttestation | Root hash of Attestation tree signed by attester                     | `string`           |
+
+### IAttestationNode
+
+Format of attestation node
+
+| Name | Description                                                                      | Type               |
+| ---- | -------------------------------------------------------------------------------- | ------------------ |
+| data | Object containing the data, nonce, and version of the attestation                | `IAttestationData` |
+| type | Object containing he type, nonce, and optionally a provider of the attestation   | `IAttestationType` |
+| aux  | String containing a hash of an `IAuxSig` object or just a padding node hash      | `string`           |
+| link | Object containing the information used in the event of an attestation revocation | `IRevocationLinks` |
 
 #### Proof
 
@@ -169,70 +181,40 @@ Format of proof object used to perform merkle proof
 
 ```json
 {
-  "bloom_id": 299,
-  "token": "a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf",
-  "signature": "0x4ee64886332a9d4fb480dfea0308264c1b56eb8293792d47696f6df2f1c36e1836deab53c46954fdcf0dc1f7ff7a6e7f6ac83039b597cc0f99192d1e8455b11b1b"
-  "data": [
-    {
-      "tx": "0xe1f7b9603bd8d71927b9aabf88be14342964b4f4abc673a5e0f8dcbbd7c610e8",
-      "stage": "mainnet",
-      "rootHash": "0xc13405b3de1d86d0e23ee749779dc4dc90166d1f74a4e76cf1cf84f3de15902f",
-      "target": {
-        "type": "phone",
-        "data": "+16195550587",
-        "nonce": "c3877038-79a9-477d-8037-9826032e6af5",
-        "version": "1.0.0"
+  "tx": "0xf1d6b6b64e63737a4ef023fadc57e16793cfae5d931a3c301d14e375e54fabf6",
+  "layer2Hash": "0x6cca42a6266f647be85fba506fccc9925a995fee74fe08fe619c6a37cfbcb9ca",
+  "rootHash": "0xfa0147ea749ba09f692162665de44b74801cfbeb16308aaf5788e87d0e1a09a1",
+  "rootHashNonce": "0xa6a7d2b6d495bb12c0bb79d82bf5952ea8d5f14ceb948d5bf076b5b4c5f16517",
+  "proof": [
+    {"position": "right", "data": "0x31b5a691edcba21a4fda7cc9383f954f129a4c5e97fe5c038e9f4c6e93cda22e"},
+    {"position": "left", "data": "0xe603ad9d223c4191398921f64d1d53b772ead5e80876ff8fdb696ae782a2db33"},
+    {"position": "right", "data": "0x280ed30d54e36a0be8c709e2adc774fda8856a6868b575c2aed4b96f581ea9f5"},
+    {"position": "right", "data": "0x56ccc8e4f38590f85c8196579b438058768324254d10f237f21368331a209fa7"}
+  ],
+  "stage": "mainnet",
+  "target": {
+    "attestationNode": {
+      "aux": "0x480f7971777eda1e6e6804f35435f5ae163623bf1404bda8f1018600f89d757f",
+      "data": {
+        "data": "eddiehedges@gmail.com",
+        "nonce": "5ee82099c52e30dc801131e12972fff1b8f90230dd268b04665c7385d959984b",
+        "version": "2.0.0"
       },
-      "proof": [
-        {
-          "position": "right",
-          "data": "0x662a74ce03d761ab066d0fc8306f474534fa5fdb087ad88baf067caefe1c026f"
-        },
-        {
-          "position": "right",
-          "data": "0xdb7d23746b0e8cbb81762bdce521cee4abdd4232bd63f017d136f24a751d0a5b"
-        }
-      ]
-    },
-    {
-      "tx": "0xe1f7b9603bd8d71927b9aabf88be14342964b4f4abc673a5e0f8dcbbd7c610e8",
-      "stage": "mainnet",
-      "rootHash": "0xc13405b3de1d86d0e23ee749779dc4dc90166d1f74a4e76cf1cf84f3de15902f",
-      "target": {
+      "link": {
+        "local": "0xdb81eabcbd65153a64b8c0e843e822c9c1f64bfbe5bf2481734a73288798b1b0",
+        "global": "0x97e9ad0b20ba0f0528efef244c4fe6ef11f5a6b0c7b2667064080cd6d81ca5ca",
+        "dataHash": "0xfd6a015fccf1a4140a40b939fc8755841324e3b3cc09cf02d325fb378aa72cbf",
+        "typeHash": "0xb98d14777c16823502b7c962bf576b00b6f9f23d12c2c8a3bc11699a2dcfe8da"
+      },
+      "type": {
         "type": "email",
-        "data": "test@bloom.co",
-        "nonce": "b3877038-79a9-477d-8037-9826032e6af4",
-        "version": "1.0.0"
-      },
-      "proof": [
-        {
-          "position": "left",
-          "data": "0x2b81050468ea28d94e5db2ee6ae59e3cf03ab6f2da8c5f79c10e4d982af86844"
-        }
-      ]
+        "nonce": "fe11a2cb674207c0120e0058de3f5c60935ffa0abbb62c22c439ffa07c409022",
+        "provider": "Bloom"
+      }
     },
-    {
-      "tx": "0xe1f7b9603bd8d71927b9aabf88be14342964b4f4abc673a5e0f8dcbbd7c610e8",
-      "stage": "mainnet",
-      "rootHash": "0xc13405b3de1d86d0e23ee749779dc4dc90166d1f74a4e76cf1cf84f3de15902f",
-      "target": {
-        "type": "full-name",
-        "data": "John Bloom",
-        "nonce": "c3877038-79a9-477d-8037-9826032e6af5",
-        "version": "1.0.0"
-      },
-      "proof": [
-        {
-          "position": "left",
-          "data": "0x07b51789d6bbe5cb084c502b03168adafbbb58ad5fff2af9f612b2b9cf54c31f"
-        },
-        {
-          "position": "right",
-          "data": "0xdb7d23746b0e8cbb81762bdce521cee4abdd4232bd63f017d136f24a751d0a5b"
-        }
-      ]
-    }
-  ]
+    "signedAttestation": "0x4181089dad636fd35985e77a29c9b634bdf23254336bba6507ea0e2d75959bc71edb5c9265e91eeaf274ba1c7f992f4e802125ce02b02203e11704243f49235b1c"
+  },
+  "attester": "0x40b469b080c4b034091448d0e59880d823b2fc18"
 }
 ```
 
@@ -241,6 +223,7 @@ Format of proof object used to perform merkle proof
 The endpoint specified in the QR code should be configured to accept data in the format shown in [ResponseData](#responsedata).
 
 ```javascript
+  const shareKitUtil = require('@bloomprotocol/share-kit/src/util')
   const ethUtil = require('ethereumjs-util')
 
   export const recoverHashSigner = (hash: Buffer, sig: string): string => {
@@ -275,8 +258,14 @@ The endpoint specified in the QR code should be configured to accept data in the
       // Recover address of wallet that signed the payload
       const qrToken = (req.body.token as string).trim()
       const signature: string = req.body.signature
-      const parsedData: IShareData[] = req.body.data
+      const parsedData: IVerifiedData[] = req.body.data
       const sortedData = parsedData.map(d => sortObject(d))
+
+      // Verify off chain data integrity
+      if (!sortedData.every(d => shareKitUtil.verifyOffChainDataIntegrity(d).length === 0)) {
+        throw Error('Unable to verify the layer2Hash, attester address, and merkle proof with the provided data.')
+      }
+
       const sortedDataJSON = JSON.stringify(
         sortObject({
           data: sortedData,
