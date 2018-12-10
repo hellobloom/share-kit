@@ -127,7 +127,7 @@ This is the shape of the object that will be POSTed to the provided URL
 
 | Name       | Description                                                             | Type           |
 | ---------- | ----------------------------------------------------------------------- | -------------- |
-| bloom_id   | The user's BloomID                                                      | `number`       |
+| subject    | The Ethereum address of the user sharing their data                     | `string`       |
 | token      | Unique string to identify this data request                             | `string`       |
 | signature  | Signature of `packedData` by the user with their mnemonic.              | `string`       |
 | data       | Array of VerifiedData objects                                           | `VerifiedData` |
@@ -236,8 +236,8 @@ The endpoint specified in the QR code should be configured to accept data in the
 
   app.post('/api/receiveData', async (req, res) => {
     try {
-      if (typeof req.body.bloom_id !== 'number') {
-        throw Error('Missing expected `bloom_id` of type `number` field in request.')
+      if (typeof req.body.subject !== 'string') {
+        throw Error('Missing expected `subject` of type `string` field in request.')
       }
       if (!(req.body.data instanceof Array)) {
         throw Error(

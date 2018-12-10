@@ -99,9 +99,9 @@ interface IVerifiedData {
 
 type ResponseData = {
   /**
-   * The bloom id of the user sharing data via share-kit
+   * The Ethereum address of the user sharing their data
    */
-  bloom_id: number
+  subject: string
 
   /**
    * Data shared to the receiving endpoint requested by the share-kit QR code.
