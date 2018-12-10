@@ -1,4 +1,5 @@
-import {AttestationTypeID} from '@bloomprotocol/attestations-lib'
+import {AttestationTypeID, HashingLogic} from '@bloomprotocol/attestations-lib'
+import {IProof} from 'merkletreejs'
 
 // Request Types
 
@@ -39,68 +40,89 @@ type Options = {
 
 // Response Types
 
-type NonceData = {
-  nonce: string
+/**
+ * Based on IProof from `merkletreejs`, but the data property is a string
+ * which should contain the hex string representation of a Buffer for
+ * compatibility when serializing / deserializing.
+ */
+interface IProofShare {
+  position: 'left' | 'right'
   data: string
+}
+
+/**
+ * Represents the data shared by a user, which has been attested on the Bloom Protocol.
+ * Receivers of this data can / should verity this data hasn't been tampered with.
+ */
+interface IVerifiedData {
+  /**
+   * Blockchain transaction hash which emits the layer2Hash property
+   */
   tx: string
-  hashes: string[]
-}
 
-export interface IAttestationData {
   /**
-   * The type of attestation (phone, email, etc.)
+   * Attestation hash that lives on chain and is formed by hashing the merkle
+   * tree root hash with a nonce.
    */
-  type: keyof typeof AttestationTypeID
-  /**
-   * Optionally identifies service used to perform attestation
-   */
-  provider?: string
-  // tslint:disable:max-line-length
-  /**
-   * String representation of the attestations data.
-   *
-   * ### Examples ###
-   * email: "test@bloom.co"
-   * sanction-screen: {\"firstName\":\"FIRSTNAME\",\"middleName\":\"MIDDLENAME\",\"lastName\":\"LASTNAME\",\"birthMonth\":1,\"birthDay\":1,\"birthYear\":1900,\"id\":\"a1a1a1a...\"}
-   *
-   * Any attestation that isn't a single string value will be
-   * a JSON string representing the attestation data.
-   */
-  // tslint:enable:max-line-length
-  data: string
-  /**
-   * Attestation type nonce
-   */
-  nonce: string
-  /**
-   * Semantic version used to keep track of attestation versions
-   */
-  version: string
-}
+  layer2Hash: string
 
-export interface IProofShare {
-  position: 'left' | 'right'
-  data: string
-}
+  /**
+   * Merkle tree root hash
+   */
+  rootHash: string
 
-export interface IProof {
-  position: 'left' | 'right'
-  data: Buffer
-}
+  /**
+   * Nonce used to hash the `rootHash` to create the `layer2Hash`
+   */
+  rootHashNonce: string
 
-export interface IVerifiedData {
-  tx: string // Blockchain transaction hash which emitted the specified root hash
-  stage: 'mainnet' | 'rinkeby' | 'local' // Network on which the tx can be found
-  rootHash: string // Root hash of data merkle tree emitted by attestation event in specified transaction
-  target: IAttestationData
+  /**
+   * Merkle tree leaf proof
+   */
   proof: IProofShare[]
-}
 
-type Nonces = {[P in keyof typeof AttestationTypeID]?: NonceData[]}
+  /**
+   * Network on which the tx can be found
+   */
+  stage: 'mainnet' | 'rinkeby' | 'local'
+
+  /**
+   * Data node containing the raw verified data that was requested
+   */
+  target: HashingLogic.IDataNode
+
+  /**
+   * Etherum address of the attester that performed the attestation
+   */
+  attester: string
+}
 
 type ResponseData = {
+  /**
+   * The bloom id of the user sharing data via share-kit
+   */
   bloom_id: number
+
+  /**
+   * Data shared to the receiving endpoint requested by the share-kit QR code.
+   * This data can be verified by the receiver via functions in utils.ts.
+   */
   data: IVerifiedData[]
+
+  /**
+   * Hex string representation of the `data` being keccak256 hashed
+   */
+  packedData: string
+
+  /**
+   * Signature of `packedData` by the user with their mnemonic.
+   */
+  signature: string
+
+  /**
+   * Token that should match the one provided to the share-kit QR code.
+   */
+  token: string
 }
 
-export {Action, RequestData, ErrorCorrectionLevel, Options, NonceData, Nonces, ResponseData}
+export {Action, RequestData, ErrorCorrectionLevel, Options, IProof, IProofShare, IVerifiedData, ResponseData}
