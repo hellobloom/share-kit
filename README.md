@@ -2,7 +2,11 @@
 
 # Share Kit
 
-Easily allow your users to share their verified personal information directly with your application by scanning a QR code.
+Share Kit enables users to share their verified personal information to any other user, any other application just by scanning a QR code.
+
+If a user wants to request data from another user (subject), he’ll just generate a QR code through this kit by mentioning suitable parameters, actions. After that subject will scan the code and give permission to share data, data will then be sent to the url which is configured in the generated QR code.
+
+Share Kit eases the process of sharing data with another user and instead of various POST and GET requests users just have to generate and scan QR code now.
 
 - [Share Kit](#share-kit)
   - [Installation](#installation)
@@ -46,20 +50,20 @@ First you have to request data from the user.
 
 ```typescript
 import * as React from 'react'
-import {RequestQRCode, RequestData} from '@bloomprotocol/share-kit'
+import { RequestQRCode, RequestData } from '@bloomprotocol/share-kit'
 
 const MyComponent: React.SFC = props => {
-  const requestData: RequestData = {...}
-  return <RequestQRCode requestData={requestData} size={200} />
+  const requestData: RequestData = { ... }
+  return <RequestQRCode requestData={ requestData } size={ 200 } />
 }
 ```
 
 #### Plain
 
 ```typescript
-import {generateRequestQRCode} from '@bloomprotocol/share-kit'
+import { generateRequestQRCode } from '@bloomprotocol/share-kit'
 
-const requestData: RequestData = {...}
+const requestData: RequestData = { ... }
 const options = {
   size: 200,
 }
@@ -289,6 +293,7 @@ The endpoint specified in the QR code should be configured to accept data in the
         signature
       )
       console.log(`signerEthAddress = '${signerEthAddress}'`)
+      
       // Check that the recovered address matches the subject of the attestation
       // ...
       // ...
@@ -315,14 +320,14 @@ The endpoint specified in the QR code should be configured to accept data in the
   })
 ```
 
-The recipient can perform several verifications to ensure the data and attestation are valid.
+The recipient can perform several verifications to ensure the data and the attestation are valid.
 
 ### 1. Perform Merkle Proof
 
 Verify that the plaintext data belongs to the merkle tree with the specified rootHash.
 
-```javascript
-import {verifyProof} from @bloomprotocol/share-kit
+```typescript
+import { verifyProof } from @bloomprotocol/share-kit
 const verified = responseData.data.every(data => {
   return verifyProof(data)
 })
@@ -342,7 +347,7 @@ Recover the Ethereum address that signed the request body.
 
 Read the BloomID for the recovered address using Bloom's Account Registry contract.
 
-```javascript
+```typescript
 // Web3
 const accountRegistry = AccountRegistry.at('[address of registry contract]')
 const BloomID = accountRegistry.accountIdForAddress.call(address)
@@ -356,7 +361,7 @@ Read the event logs from the attestation that occured in the specified transacti
 
 Read the attestation status from attestation repo. Confirm the attestation exists and has not been revoked. An attestation with a non-zero `completedAt` should be considered valid.
 
-```javascript
+```typescript
 // Web3
   const attestationRepo = AttestationRepo.at("[address of attestation repo contract]")
   const attestationId = 0 ... // increments for each attestation. Retrieve from attestation event
