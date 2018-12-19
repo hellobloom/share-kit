@@ -33,7 +33,7 @@ Easily allow your users to share their verified personal information directly wi
 ## Installation
 
 ```
-yarn add @bloomprotocol/share-kit
+npm install --save @bloomprotocol/share-kit
 ```
 
 ## Request
