@@ -9,7 +9,7 @@ class Updating extends React.Component {
     counter: 0,
     action: Action.attestation,
     token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
-    url: 'https://bloom.co/api/receiveData',
+    url: 'https://receive-kit.bloom.co/api/receive',
     org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
     org_name: `Bloom ${this.state.counter}`,
     org_usage_policy_url: 'https://bloom.co/legal/terms',
