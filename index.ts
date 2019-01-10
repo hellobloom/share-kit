@@ -1,3 +1,4 @@
+import {renderRequestElement} from './src/renderRequestElement'
 import {generateRequestQRCode} from './src/generateRequestQRCode'
 import {createRequestQRCode, updateRequestQRCode, removeRequestQRCode} from './src/manageRequestQRCode'
 import {RequestQRCode} from './src/RequestQRCode'
@@ -6,6 +7,7 @@ import {BloomLogo} from './src/BloomLogo'
 import * as util from './src/util'
 
 export {
+  renderRequestElement,
   createRequestQRCode,
   updateRequestQRCode,
   removeRequestQRCode,

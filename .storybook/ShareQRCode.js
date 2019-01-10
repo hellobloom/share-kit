@@ -4,6 +4,7 @@ import {storiesOf} from '@storybook/react'
 import {RequestQRCode, Action} from '../index'
 import {Logo} from './Logo'
 import {Updating} from './Updating'
+import {RequestElement} from './RequestElement'
 
 const defaultData = {
   action: Action.attestation,
@@ -22,3 +23,4 @@ storiesOf('RequestQRCode', module)
   .add('Logo', () => <Logo requestData={defaultData} />)
   .add('Size', () => <RequestQRCode requestData={defaultData} size={300} />)
   .add('Updating', () => <Updating />)
+  .add('RequestElement', () => <RequestElement requestData={defaultData} size={300} />)

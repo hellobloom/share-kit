@@ -1,3 +1,29 @@
+## Unreleased
+
+**New Features**:
+
+- `renderRequestElement`: Renderer that dynamically renders a "Tap To Share" button or QR code based on the client's user agent.
+  - On mobile it will render a button that opens the Bloom app
+  - On desktop it will render a QR code that the user will scan with the Bloom app
+
+**Upcoming Release**:
+
+- The 3.0.0 release will be here soon here are the proposed changes. We are open to feedback!
+
+- `share-kit` 3.0.0 will be 100% react free, and instead we will provide a `share-kit-react` library that has a React component for `renderRequestElement`
+
+  **BREAKING**
+
+  - `generateRequestQRCOde`, `manageRequestQRCode`, and `RequestQRCode` will be removed
+    - Replacements:
+      - `generateRequestQRCOde` => `renderRequestElement`
+      - `manageRequestQRCode` => `renderRequestElement`
+      - `RequestQRCode` => `RequestElement` (from share-kit-react coming soon!!)
+
+**Notes**
+
+- `share-kit-react` will
+
 ## 2.2.0
 
 **Improvements**:
