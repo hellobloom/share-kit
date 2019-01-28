@@ -1,5 +1,5 @@
 import {IProofShare, IVerifiedData, IProof, ResponseData} from './types'
-import {HashingLogic} from '@bloomprotocol/attestations-lib'
+import {HashingLogic, AttestationTypeID} from '@bloomprotocol/attestations-lib'
 import _ from 'lodash'
 import {keccak256} from 'js-sha3'
 import {TDecodedLog, getDecodedTxEventLogs, getDecodedLogValueByName} from './txUtils'
@@ -76,10 +76,8 @@ export const verifyProof = (data: IVerifiedData): boolean => {
  * @return If all verifications succeed an empty array is returned, otherwise any verification
  * issues are reported back as an array of `TVerificationError` objects.
  */
-export const verifyOffChainDataIntegrity = (
-  data: IVerifiedData,
-  verificationErrors: TVerificationError[]
-): TVerificationError[] => {
+export const verifyOffChainDataIntegrity = (data: IVerifiedData): TVerificationError[] => {
+  const errors: TVerificationError[] = []
   // confirm root hash becomes layer 2 hash - hash(rootHash, rootHashnonce)
   const recoveredLayer2Hash = HashingLogic.hashMessage(
     HashingLogic.orderedStringify({
@@ -88,7 +86,7 @@ export const verifyOffChainDataIntegrity = (
     })
   )
   if (data.layer2Hash !== recoveredLayer2Hash) {
-    verificationErrors.push({
+    errors.push({
       key: 'layer2Hash',
       error:
         "The provided 'layer2Hash' doesn't match the value" +
@@ -102,7 +100,7 @@ export const verifyOffChainDataIntegrity = (
     data.target.signedAttestation
   )
   if (data.attester !== recoveredAttesterAddress) {
-    verificationErrors.push({
+    errors.push({
       key: 'attester',
       error:
         "The provided 'attester' doesn't match the value" +
@@ -112,16 +110,17 @@ export const verifyOffChainDataIntegrity = (
 
   // verify merkle proof
   if (!verifyProof(data)) {
-    verificationErrors.push({
+    errors.push({
       key: 'proof',
       error: "The provided 'proof' is invalid for the given 'signedAttestation' and 'rootHash'.",
     })
   }
 
-  return verificationErrors
+  return errors
 }
 
-export const verifySender = (responseData: ResponseData, errors: TVerificationError[]): TVerificationError[] => {
+export const verifySender = (responseData: ResponseData): TVerificationError[] => {
+  const errors: TVerificationError[] = []
   const signerEthAddress = HashingLogic.recoverHashSigner(toBuffer(responseData.packedData), responseData.signature)
   // Here is where chained authorizations would be checked if present
   if (responseData.subject !== signerEthAddress) {
@@ -137,7 +136,8 @@ export const verifySender = (responseData: ResponseData, errors: TVerificationEr
   return errors
 }
 
-export const verifyPackedData = (responseData: ResponseData, errors: TVerificationError[]): TVerificationError[] => {
+export const verifyPackedData = (responseData: ResponseData): TVerificationError[] => {
+  const errors: TVerificationError[] = []
   const recoveredPackedData =
     '0x' +
     keccak256(
@@ -165,6 +165,13 @@ export interface IDecodedDataAndLogs {
   logs: TDecodedLog[]
 }
 
+export interface IConsumableData {
+  data: string
+  type: keyof typeof AttestationTypeID
+  version: string
+  logs?: TDecodedLog[]
+}
+
 export interface IValidatedPayloadData {
   data: IVerifiedData
   errors: TVerificationError[]
@@ -172,8 +179,8 @@ export interface IValidatedPayloadData {
 }
 
 export interface IValidateResponseDataOutput {
-  payloadErrors: TVerificationError[]
-  payloadData: IValidatedPayloadData[]
+  errors: TVerificationError[]
+  data: IConsumableData[]
 }
 
 export interface IValidateResponseDataOptions {
@@ -181,59 +188,61 @@ export interface IValidateResponseDataOptions {
   web3Provider: string
 }
 
-export const verifyDataNodes = (responseData: ResponseData): IValidatedPayloadData[] => {
-  const validatedPayloadData = responseData.data.map(d => {
-    return {
-      data: d,
-      errors: verifyOffChainDataIntegrity(d, []),
-    }
-  })
-  return validatedPayloadData
+export interface IRetrieveTxDataOutput {
+  logs: TDecodedLog[]
+  errors: TVerificationError[]
 }
 
 export const retreiveTxData = async (
-  validatedPayload: IValidatedPayloadData,
+  payloadData: IVerifiedData,
   web3Provider: string
-): Promise<IValidatedPayloadData> => {
-  const txHash = validatedPayload.data.tx
+): Promise<IRetrieveTxDataOutput> => {
+  const txHash = payloadData.tx
+  let logs: TDecodedLog[] = []
+  const errors: TVerificationError[] = []
   if (isNullOrWhiteSpace(txHash) || txHash === '0x') {
-    validatedPayload.errors.push({
+    errors.push({
       key: 'tx',
-      error: `tx is missing in payload for node with hash ${validatedPayload.data.layer2Hash}`,
+      error: `tx is missing in payload for node with hash ${payloadData.layer2Hash}`,
     })
   } else {
     try {
-      validatedPayload.logs = await getDecodedTxEventLogs(web3Provider, txHash)
+      logs = await getDecodedTxEventLogs(web3Provider, txHash)
     } catch (err) {
-      validatedPayload.errors.push({
+      errors.push({
         key: 'getDecodedLogsFailed',
         error: `${err}`,
       })
     }
   }
-  return validatedPayload
+  return {
+    logs,
+    errors,
+  }
 }
 
-const validateOnChainProperties = (subject: string, validatedPayload: IValidatedPayloadData): IValidatedPayloadData => {
+const validateOnChainProperties = (
+  subject: string,
+  payloadData: IVerifiedData,
+  logs: TDecodedLog[]
+): TVerificationError[] => {
+  const errors: TVerificationError[] = []
   // verify subject shared dataHash matches chain by using it as a part of the find logic
   const matchingTraitAttestedLogs =
-    validatedPayload.logs &&
-    validatedPayload.logs.find(
-      l => l.name === 'TraitAttested' && getDecodedLogValueByName(l, 'dataHash') === validatedPayload.data.layer2Hash
-    )
+    logs &&
+    logs.find(l => l.name === 'TraitAttested' && getDecodedLogValueByName(l, 'dataHash') === payloadData.layer2Hash)
   if (!matchingTraitAttestedLogs) {
-    validatedPayload.errors.push({
+    errors.push({
       key: 'TraitAttested',
-      error:
-        "Unable to find 'TraitAttested' event logs with a" + ` 'dataHash' of '${validatedPayload.data.layer2Hash}'.`,
+      error: "Unable to find 'TraitAttested' event logs with a" + ` 'dataHash' of '${payloadData.layer2Hash}'.`,
     })
-    return validatedPayload
+    return errors
   }
 
   // verify shared subject address matches chain
   const onChainSubjectAddress = getDecodedLogValueByName(matchingTraitAttestedLogs, 'subject')
   if (subject !== onChainSubjectAddress) {
-    validatedPayload.errors.push({
+    errors.push({
       key: 'subject',
       error:
         'The on chain subject address does not match what was shared.' +
@@ -244,57 +253,63 @@ const validateOnChainProperties = (subject: string, validatedPayload: IValidated
 
   // verify shared attester address matches chain
   const onChainAttesterAddress = getDecodedLogValueByName(matchingTraitAttestedLogs, 'attester')
-  if (validatedPayload.data.attester !== onChainAttesterAddress) {
-    validatedPayload.errors.push({
+  if (payloadData.attester !== onChainAttesterAddress) {
+    errors.push({
       key: 'attester',
       error:
         'The on chain attester address does not match what was shared.' +
-        `\nShared attester address: '${validatedPayload.data.attester}'` +
+        `\nShared attester address: '${payloadData.attester}'` +
         `\nOn chain attester address: '${onChainAttesterAddress}'`,
     })
   }
 
-  return validatedPayload
+  return errors
 }
 
 export const validateResponseData = async (
   responseData: ResponseData,
   options: IValidateResponseDataOptions
 ): Promise<IValidateResponseDataOutput> => {
-  let payloadErrors: TVerificationError[] = []
+  const errors: TVerificationError[] = []
 
   // Sort payload to ensure it was properly formatted
   const shareKitPayload: ResponseData = sortObject(responseData)
   shareKitPayload.data = shareKitPayload.data.map(d => sortObject(d))
 
   // Validate the integrity of basic off-chain properties (subject, packedData)
-  payloadErrors = verifySender(shareKitPayload, payloadErrors)
-  payloadErrors = verifyPackedData(shareKitPayload, payloadErrors)
+  errors.push(...verifySender(shareKitPayload))
+  errors.push(...verifyPackedData(shareKitPayload))
 
-  const validatedPayloadData: IValidatedPayloadData[] = []
+  const consumableData: IConsumableData[] = []
 
   await Promise.all(
     shareKitPayload.data.map(async d => {
       // Verify the off-chain data integrity of each data node
-      let dTemp = {
-        data: d,
-        errors: verifyOffChainDataIntegrity(d, []),
+      let dTemp: IConsumableData = {
+        data: d.target.attestationNode.data.data,
+        type: d.target.attestationNode.type.type,
+        version: d.target.attestationNode.data.version,
       }
       if (options.validateOnChain) {
         // Verify the on-chain data integrity
         try {
-          dTemp = await retreiveTxData(dTemp, options.web3Provider)
-          dTemp = validateOnChainProperties(responseData.subject, dTemp)
+          const retreiveTxDataOutput = await retreiveTxData(d, options.web3Provider)
+          errors.push(...retreiveTxDataOutput.errors)
+          dTemp.logs = retreiveTxDataOutput.logs
+          errors.push(...validateOnChainProperties(responseData.subject, d, dTemp.logs))
         } catch (err) {
-          dTemp.errors.push({key: 'onChainValidation', error: 'Failed to validate on chain data integrity'})
+          errors.push({
+            key: 'onChainValidationFailed',
+            error: `Failed to validate on chain data integrity for node with hash ${d.layer2Hash}`,
+          })
         }
       }
-      validatedPayloadData.push(dTemp)
+      consumableData.push(dTemp)
     })
   )
 
   return {
-    payloadErrors: payloadErrors,
-    payloadData: validatedPayloadData,
+    errors: errors,
+    data: consumableData,
   }
 }
