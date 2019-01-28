@@ -62,6 +62,11 @@ enum CornerType {
   bottomLeft,
 }
 
+enum EyePart {
+  inner,
+  outer,
+}
+
 const makeCorner = (ctx: CanvasRenderingContext2D, info: CellInfo, type: CornerType, part: EyePart) => {
   const outerRadius = part === EyePart.outer ? info.size : info.size / 4
   const innerRadius = outerRadius / 2
@@ -142,11 +147,6 @@ class ConnectionType {
   static readonly right = 1 << 1
   static readonly top = 1 << 2
   static readonly bottom = 1 << 4
-}
-
-enum EyePart {
-  inner,
-  outer,
 }
 
 const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionType: number, part: EyePart) => {
