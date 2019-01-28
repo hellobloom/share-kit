@@ -1,5 +1,5 @@
 import {IProofShare, IVerifiedData, IProof, ResponseData} from './types'
-import {HashingLogic, AttestationTypeID} from '@bloomprotocol/attestations-lib'
+import {HashingLogic, TAttestationTypeNames} from '@bloomprotocol/attestations-lib'
 import _ from 'lodash'
 import {keccak256} from 'js-sha3'
 import {TDecodedLog, getDecodedTxEventLogs, getDecodedLogValueByName} from './txUtils'
@@ -167,7 +167,7 @@ export interface IDecodedDataAndLogs {
 
 export interface IConsumableData {
   data: string
-  type: keyof typeof AttestationTypeID
+  type: TAttestationTypeNames
   version: string
   logs?: TDecodedLog[]
 }
