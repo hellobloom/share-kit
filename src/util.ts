@@ -271,18 +271,27 @@ export const validateResponseData = async (
   payloadErrors = verifySender(shareKitPayload, payloadErrors)
   payloadErrors = verifyPackedData(shareKitPayload, payloadErrors)
 
-  // Verify the off-chain data integrity of each data node
-  let validatedPayloadData = verifyDataNodes(shareKitPayload)
+  const validatedPayloadData: IValidatedPayloadData[] = []
 
-  // Verify the on-chain data integrity
-  if (options.validateOnChain) {
-    for (let d of validatedPayloadData) {
-      d = await retreiveTxData(d, options.web3Provider)
-    }
-    validatedPayloadData.forEach(d => {
-      d = validateOnChainProperties(responseData.subject, d)
+  await Promise.all(
+    shareKitPayload.data.map(async d => {
+      // Verify the off-chain data integrity of each data node
+      let dTemp = {
+        data: d,
+        errors: verifyOffChainDataIntegrity(d, []),
+      }
+      if (options.validateOnChain) {
+        // Verify the on-chain data integrity
+        try {
+          dTemp = await retreiveTxData(dTemp, options.web3Provider)
+          dTemp = validateOnChainProperties(responseData.subject, dTemp)
+        } catch (err) {
+          dTemp.errors.push({key: 'onChainValidation', error: 'Failed to validate on chain data integrity'})
+        }
+      }
+      validatedPayloadData.push(dTemp)
     })
-  }
+  )
 
   return {
     payloadErrors: payloadErrors,
