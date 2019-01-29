@@ -184,7 +184,7 @@ export interface IValidateResponseDataOutput {
 }
 
 export interface IValidateResponseDataOptions {
-  validateOnChain: true
+  validateOnChain: boolean
   web3Provider: string
 }
 
