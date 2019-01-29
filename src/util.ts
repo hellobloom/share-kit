@@ -185,7 +185,7 @@ export interface IValidateResponseDataOutput {
 
 export interface IValidateResponseDataOptions {
   validateOnChain: boolean
-  web3Provider: string
+  web3Provider?: string
 }
 
 export interface IRetrieveTxDataOutput {
@@ -270,6 +270,10 @@ export const validateResponseData = async (
   responseData: ResponseData,
   options: IValidateResponseDataOptions
 ): Promise<IValidateResponseDataOutput> => {
+  if (options.validateOnChain && isNullOrWhiteSpace(options.web3Provider)) {
+    throw new Error('Unable to `validateOnChain` without a `web3Provider`.')
+  }
+
   const errors: TVerificationError[] = []
 
   // Sort payload to ensure it was properly formatted
@@ -293,7 +297,7 @@ export const validateResponseData = async (
       if (options.validateOnChain) {
         // Verify the on-chain data integrity
         try {
-          const retreiveTxDataOutput = await retreiveTxData(d, options.web3Provider)
+          const retreiveTxDataOutput = await retreiveTxData(d, options.web3Provider!)
           errors.push(...retreiveTxDataOutput.errors)
           dTemp.logs = retreiveTxDataOutput.logs
           errors.push(...validateOnChainProperties(responseData.subject, d, dTemp.logs))
