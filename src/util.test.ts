@@ -73,5 +73,5 @@ test('Verifying layer2Hash, attester address, and merkle proof', () => {
     attester: '0x40b469b080c4b034091448d0e59880d823b2fc18',
   }
 
-  expect(util.verifyOffChainDataIntegrity(emailShareData, [])).toHaveLength(0)
+  expect(util.verifyOffChainDataIntegrity(emailShareData)).toHaveLength(0)
 })
