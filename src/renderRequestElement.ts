@@ -32,11 +32,11 @@ type PlatformDetails = {
 const renderRequestElement = (
   container: HTMLElement,
   data: RequestData,
-  options: Partial<Options>,
+  qrOptions: Partial<Options>,
   shouldRenderButton?: (parsedBrowser: ParsedResult) => boolean
 ) => {
   if (shouldRenderButton === undefined) {
-    shouldRenderButton = (parsedBrowser: ParsedResult) => {
+    shouldRenderButton = parsedBrowser => {
       const isMobile = parsedBrowser.platform.type === 'mobile' || parsedBrowser.platform.type === 'tablet'
       const isIOS = () => parsedBrowser.os.name === 'iOS'
 
@@ -45,9 +45,9 @@ const renderRequestElement = (
   }
 
   if (shouldRenderButton(bowser.parse(window.navigator.userAgent))) {
-    renderRequestButton(container, data, options)
+    return renderRequestButton(container, data)
   } else {
-    renderRequestQRCode(container, data, options)
+    return renderRequestQRCode(container, data, qrOptions)
   }
 }
 

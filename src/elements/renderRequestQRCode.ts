@@ -1,3 +1,4 @@
+import {generateId} from './utils'
 import {Options, RequestData, ErrorCorrectionLevel} from '../types'
 import {BloomLogo} from '../BloomLogo'
 
@@ -192,7 +193,7 @@ const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionTyp
   }
 }
 
-const renderRequestQRCode = (container: HTMLElement, data: RequestData, options: Partial<Options>) => {
+const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, options: Partial<Options>) => {
   const defaultedOptions = {...defaultOptions, ...options}
 
   const {ecLevel, size, bgColor, fgColor, padding} = defaultedOptions
@@ -201,8 +202,8 @@ const renderRequestQRCode = (container: HTMLElement, data: RequestData, options:
   qr.addData(JSON.stringify(data))
   qr.make()
 
-  const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')!
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   const scale = window.devicePixelRatio || 1
   const cells: [boolean[]] = qr.modules
@@ -297,8 +298,36 @@ const renderRequestQRCode = (container: HTMLElement, data: RequestData, options:
     }
     image.src = logoImage
   }
+}
+
+const renderRequestQRCode = (container: HTMLElement, data: RequestData, options: Partial<Options>) => {
+  const id = generateId()
+
+  const canvas = document.createElement('canvas')
+  canvas.id = id
+
+  drawCanvas(canvas, data, options)
 
   container.append(canvas)
+
+  return {
+    update: updateRequestQRCode(id),
+    remove: removeRequestQRCode(id),
+  }
+}
+
+const updateRequestQRCode = (id: string) => (data: RequestData, options: Partial<Options>) => {
+  const canvas = document.querySelector<HTMLCanvasElement>(`#${id}`)
+
+  if (!canvas) return
+
+  drawCanvas(canvas, data, options)
+}
+
+const removeRequestQRCode = (id: string) => () => {
+  const canvas = document.querySelector(`#${id}`)
+
+  if (canvas) canvas.remove()
 }
 
 export {renderRequestQRCode}
