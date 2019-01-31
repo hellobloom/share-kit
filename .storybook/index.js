@@ -1,10 +1,10 @@
 import React from 'react'
 import {storiesOf} from '@storybook/react'
 
-import {RequestQRCode, Action} from '../index'
+import {Base} from './Base'
 import {Logo} from './Logo'
 import {Updating} from './Updating'
-import {RequestElement} from './RequestElement'
+import {Action} from '../index'
 
 const defaultData = {
   action: Action.attestation,
@@ -17,10 +17,9 @@ const defaultData = {
   types: ['phone', 'email'],
 }
 
-storiesOf('RequestQRCode', module)
-  .add('Default', () => <RequestQRCode requestData={defaultData} />)
-  .add('Colors', () => <RequestQRCode requestData={defaultData} bgColor={'#EBF0F1'} fgColor={'#3C3C3D'} />)
+storiesOf('renderRequestElement', module)
+  .add('Base', () => <Base requestData={defaultData} />)
+  .add('Colors', () => <Base requestData={defaultData} bgColor={'#EBF0F1'} fgColor={'#3C3C3D'} />)
   .add('Logo', () => <Logo requestData={defaultData} />)
-  .add('Size', () => <RequestQRCode requestData={defaultData} size={300} />)
+  .add('Size', () => <Base requestData={defaultData} size={300} />)
   .add('Updating', () => <Updating />)
-  .add('RequestElement', () => <RequestElement size={300} />)

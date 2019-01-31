@@ -67,21 +67,21 @@ const renderRequestButton = (container: HTMLElement, data: RequestData) => {
   container.append(anchor)
 
   return {
-    update: updateRequestButton(id),
-    remove: removeRequestButton(id),
+    update: updateRequestButton(id, container),
+    remove: removeRequestButton(id, container),
   }
 }
 
-const updateRequestButton = (id: string) => (data: RequestData) => {
-  const button = document.querySelector<HTMLAnchorElement>(`#${id}`)
+const updateRequestButton = (id: string, container: HTMLElement) => (data: RequestData) => {
+  const button = container.querySelector<HTMLAnchorElement>(`#${id}`)
 
   if (!button) return
 
   button.href = getLink(data)
 }
 
-const removeRequestButton = (id: string) => () => {
-  const button = document.querySelector(`#${id}`)
+const removeRequestButton = (id: string, container: HTMLElement) => () => {
+  const button = container.querySelector(`#${id}`)
 
   if (button) button.remove()
 }

@@ -1,4 +1,4 @@
-import {Options, RequestData} from './types'
+import {QROptions, RequestData} from './types'
 import {renderRequestButton} from './elements/renderRequestButton'
 import {renderRequestQRCode} from './elements/renderRequestQRCode'
 
@@ -32,11 +32,12 @@ type PlatformDetails = {
 const renderRequestElement = (
   container: HTMLElement,
   data: RequestData,
-  qrOptions: Partial<Options>,
+  qrOptions: Partial<QROptions>,
   shouldRenderButton?: (parsedBrowser: ParsedResult) => boolean
 ) => {
   if (shouldRenderButton === undefined) {
     shouldRenderButton = parsedBrowser => {
+      console.log({parsedBrowser})
       const isMobile = parsedBrowser.platform.type === 'mobile' || parsedBrowser.platform.type === 'tablet'
       const isIOS = () => parsedBrowser.os.name === 'iOS'
 

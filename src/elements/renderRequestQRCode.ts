@@ -1,10 +1,9 @@
-import {generateId} from './utils'
-import {Options, RequestData, ErrorCorrectionLevel} from '../types'
-import {BloomLogo} from '../BloomLogo'
+import {generateId, getBloomLogo} from './utils'
+import {QROptions, RequestData, ErrorCorrectionLevel} from '../types'
 
 const QRCodeImpl = require('qr.js/lib/QRCode')
 
-const defaultOptions: Options = {
+const defaultOptions: QROptions = {
   hideLogo: false,
   ecLevel: 'L',
   size: 128,
@@ -193,7 +192,7 @@ const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionTyp
   }
 }
 
-const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, options: Partial<Options>) => {
+const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, options: Partial<QROptions>) => {
   const defaultedOptions = {...defaultOptions, ...options}
 
   const {ecLevel, size, bgColor, fgColor, padding} = defaultedOptions
@@ -276,7 +275,7 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, options: Parti
   // Otherwise display the provided logo
   if (!options.hideLogo) {
     const logoImage =
-      options.logoImage === undefined ? BloomLogo.getLogo({fgColor: fgColor, bgColor: bgColor}) : options.logoImage
+      options.logoImage === undefined ? getBloomLogo({fgColor: fgColor, bgColor: bgColor}) : options.logoImage
 
     const image = new Image()
     image.onload = () => {
@@ -300,7 +299,7 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, options: Parti
   }
 }
 
-const renderRequestQRCode = (container: HTMLElement, data: RequestData, options: Partial<Options>) => {
+const renderRequestQRCode = (container: HTMLElement, data: RequestData, options: Partial<QROptions>) => {
   const id = generateId()
 
   const canvas = document.createElement('canvas')
@@ -311,21 +310,24 @@ const renderRequestQRCode = (container: HTMLElement, data: RequestData, options:
   container.append(canvas)
 
   return {
-    update: updateRequestQRCode(id),
-    remove: removeRequestQRCode(id),
+    update: updateRequestQRCode(id, container),
+    remove: removeRequestQRCode(id, container),
   }
 }
 
-const updateRequestQRCode = (id: string) => (data: RequestData, options: Partial<Options>) => {
-  const canvas = document.querySelector<HTMLCanvasElement>(`#${id}`)
+const updateRequestQRCode = (id: string, container: HTMLElement) => (
+  data: RequestData,
+  options: Partial<QROptions>
+) => {
+  const canvas = container.querySelector<HTMLCanvasElement>(`#${id}`)
 
   if (!canvas) return
 
   drawCanvas(canvas, data, options)
 }
 
-const removeRequestQRCode = (id: string) => () => {
-  const canvas = document.querySelector(`#${id}`)
+const removeRequestQRCode = (id: string, container: HTMLElement) => () => {
+  const canvas = container.querySelector(`#${id}`)
 
   if (canvas) canvas.remove()
 }

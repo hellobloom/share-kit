@@ -25,7 +25,7 @@ enum ErrorCorrectionLevel {
   'H' = 2,
 }
 
-type Options = {
+type QROptions = {
   ecLevel: keyof typeof ErrorCorrectionLevel
   size: number
   bgColor: string
@@ -125,4 +125,4 @@ type ResponseData = {
   token: string
 }
 
-export {Action, RequestData, ErrorCorrectionLevel, Options, IProof, IProofShare, IVerifiedData, ResponseData}
+export {Action, RequestData, ErrorCorrectionLevel, QROptions, IProof, IProofShare, IVerifiedData, ResponseData}

@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renderRequestButton renders a button 1`] = `"<a id=\\"bloom-request-element-\\" href=\\"https://bloom.co/download?request=eyJhY3Rpb24iOiJyZXF1ZXN0X2F0dGVzdGF0aW9uX2RhdGEiLCJ0b2tlbiI6InRva2VuIiwidXJsIjoiaHR0cHM6Ly9yZWNlaXZlLWtpdC5ibG9vbS5jby9hcGkvcmVjZWl2ZSIsIm9yZ19sb2dvX3VybCI6Imh0dHBzOi8vYmxvb20uY28vaW1hZ2VzL25vdGlmL2Jsb29tLWxvZ28ucG5nIiwib3JnX25hbWUiOiJCbG9vbSIsIm9yZ191c2FnZV9wb2xpY3lfdXJsIjoiaHR0cHM6Ly9ibG9vbS5jby9sZWdhbC90ZXJtcyIsIm9yZ19wcml2YWN5X3BvbGljeV91cmwiOiJodHRwczovL2Jsb29tLmNvL2xlZ2FsL3ByaXZhY3kiLCJ0eXBlcyI6WyJwaG9uZSIsImVtYWlsIl19\\" target=\\"_blank\\" rel=\\"norefferer noopener\\"><style>#bloom-request-element- { background-image: linear-gradient(#7A7CF3, #6262F6); color: #fff; text-decoration: none; display: inline-flex; align-items: center; border-radius: 4px; padding: 16px; }</style><svg viewBox=\\"0 0 15 20\\" width=\\"20px\\" height=\\"15px\\"><g transform=\\"translate(-5, -2)\\" fill=\\"\\"><path d=\\"M19.5833203,9.5 L18.3333203,9.5 L18.3333203,7.83332031 C18.3333203,4.61679687 15.7165625,2 12.5,2 C9.2834375,2 6.66667969,4.61679687 6.66667969,7.83332031 L6.66667969,9.5 L5.41667969,9.5 C5.18636719,9.5 5,9.68636719 5,9.91667969 L5,20.3333594 C5,21.2525391 5.74746094,22 6.66667969,22 L18.3333594,22 C19.2525391,22 20,21.2525391 20,20.3333203 L20,9.91667969 C20,9.68636719 19.8136328,9.5 19.5833203,9.5 Z M13.7475781,18.2040234 C13.7605859,18.3216016 13.7227734,18.4396094 13.6438281,18.5279297 C13.5648828,18.6162109 13.4517578,18.6666797 13.3333594,18.6666797 L11.6666797,18.6666797 C11.5482813,18.6666797 11.4351563,18.6162109 11.3562109,18.5279297 C11.2772656,18.4396484 11.2394141,18.3216406 11.2524609,18.2040234 L11.5153125,15.8403516 C11.0884766,15.5298828 10.8333594,15.03875 10.8333594,14.5 C10.8333594,13.5808203 11.5808203,12.8333203 12.5000391,12.8333203 C13.4192578,12.8333203 14.1667188,13.5807812 14.1667188,14.5 C14.1667188,15.03875 13.9116016,15.5298828 13.4847656,15.8403516 L13.7475781,18.2040234 Z M15.8333203,9.5 L9.16667969,9.5 L9.16667969,7.83332031 C9.16667969,5.99535156 10.6620313,4.5 12.5,4.5 C14.3379688,4.5 15.8333203,5.99535156 15.8333203,7.83332031 L15.8333203,9.5 Z\\"></path></g></svg>Tap to share!</a>"`;
+
+exports[`renderRequestButton renders a button 2`] = `
+Object {
+  "action": "request_attestation_data",
+  "org_logo_url": "https://bloom.co/images/notif/bloom-logo.png",
+  "org_name": "Bloom",
+  "org_privacy_policy_url": "https://bloom.co/legal/privacy",
+  "org_usage_policy_url": "https://bloom.co/legal/terms",
+  "token": "token",
+  "types": Array [
+    "phone",
+    "email",
+  ],
+  "url": "https://receive-kit.bloom.co/api/receive",
+}
+`;
+
+exports[`renderRequestButton updates the button 1`] = `
+Object {
+  "action": "request_attestation_data",
+  "org_logo_url": "https://bloom.co/images/notif/bloom-logo.png",
+  "org_name": "Bloom",
+  "org_privacy_policy_url": "https://bloom.co/legal/privacy",
+  "org_usage_policy_url": "https://bloom.co/legal/terms",
+  "token": "token 2",
+  "types": Array [
+    "phone",
+    "email",
+  ],
+  "url": "https://receive-kit.bloom.co/api/receive",
+}
+`;

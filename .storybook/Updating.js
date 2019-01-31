@@ -1,6 +1,7 @@
 import React from 'react'
 
-import {RequestQRCode, Action} from '../index'
+import {Base} from './Base'
+import {Action} from '../index'
 
 class Updating extends React.Component {
   state = {counter: 0}
@@ -21,9 +22,7 @@ class Updating extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div>
-          <RequestQRCode requestData={this.getData()} />
-        </div>
+        <Base requestData={this.getData()} />
         <button onClick={this.handleUpdate}>Update RequestQRCode</button>
       </React.Fragment>
     )

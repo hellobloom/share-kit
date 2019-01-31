@@ -2,7 +2,7 @@
 
 # Share Kit
 
-Easily allow your users to share their verified personal information directly with your application by scanning a QR code.
+Easily allow your users to share their verified personal information directly with your application.
 
 - [Share Kit](#share-kit)
   - [Installation](#installation)
@@ -11,7 +11,7 @@ Easily allow your users to share their verified personal information directly wi
       - [React](#react)
       - [Plain](#plain)
       - [RequestData](#requestdata)
-      - [Options](#options)
+      - [QROptions](#qr-options)
   - [Response](#response)
     - [ResponseData](#responsedata)
     - [VerifiedData](#verifieddata)
@@ -42,31 +42,23 @@ First you have to request data from the user.
 
 ### Usage
 
-#### React
-
 ```typescript
-import * as React from 'react'
-import {RequestQRCode, RequestData} from '@bloomprotocol/share-kit'
-
-const MyComponent: React.SFC = props => {
-  const requestData: RequestData = {...}
-  return <RequestQRCode requestData={requestData} size={200} />
-}
-```
-
-#### Plain
-
-```typescript
-import {generateRequestQRCode} from '@bloomprotocol/share-kit'
+import {renderRequestElement, RequestData, QROptions} from '@bloomprotocol/share-kit'
 
 const requestData: RequestData = {...}
-const options = {
+const qrOptions: QROptions = {
   size: 200,
 }
 
-const canvas = document.createElement('canvas')
+const container = document.createElement('div')
 
-generateRequestQRCode(canvas, requestData, options)
+const {update, remove} = renderRequestElement(container, requestData, qrOptions)
+
+// Update the element
+update(newRequestData, newQROptions)
+
+// Remove the element
+remove()
 ```
 
 <h3 id="request-types">Types</h3>
@@ -102,10 +94,13 @@ Data to be rendered into the RequestQRCode.
 ```
 
 ![Sample QR](https://github.com/hellobloom/share-kit/raw/master/images/sampleQR.png)
+![Sample Button](https://github.com/hellobloom/share-kit/raw/master/images/sampleButton.png)
 
-#### Options
+#### QROptions
 
-Display options for the RequestQRCode.
+Display options for the rendered QR code.
+
+_NOTE:_ Does not apply to the rendered button
 
 | Name      | Description                                      | Type      | Default    |
 | --------- | ------------------------------------------------ | --------- | ---------- |
