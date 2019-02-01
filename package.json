@@ -6,7 +6,7 @@
   "description": "Easily allow your users to share their verified personal information directly with your application.",
   "repository": "https://github.com/hellobloom/share-kit",
   "author": "Bloom Team <team@bloom.co>",
-  "license": "GPL-3.0-only",
+  "license": "Apache-2.0",
   "lint-staged": {
     "src/**/*.{ts,tsx,json,css}": [
       "prettier --write",
