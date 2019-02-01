@@ -1,5 +1,5 @@
 import {generateId, getBloomLogo} from './utils'
-import {QROptions, RequestData, ErrorCorrectionLevel} from '../types'
+import {QROptions, RequestData, ErrorCorrectionLevel, RequestQRCodeResult} from '../types'
 
 const QRCodeImpl = require('qr.js/lib/QRCode')
 
@@ -299,7 +299,11 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, options: Parti
   }
 }
 
-const renderRequestQRCode = (container: HTMLElement, data: RequestData, options: Partial<QROptions>) => {
+const renderRequestQRCode = (
+  container: HTMLElement,
+  data: RequestData,
+  options: Partial<QROptions>
+): RequestQRCodeResult => {
   const id = generateId()
 
   const canvas = document.createElement('canvas')

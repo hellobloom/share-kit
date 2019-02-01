@@ -38,6 +38,45 @@ type QROptions = {
   logoOpacity?: number
 }
 
+// START - DO NOT EXPORT
+// These are temporary until bowser defines types
+type ParsedResult = {
+  browser: Details
+  os: OSDetails
+  platform: PlatformDetails
+  engine: Details
+}
+
+type Details = {
+  name?: string
+  version?: Array<{index: number; input: string} | boolean | string | any>
+}
+
+type OSDetails = Details & {
+  versionName?: string
+}
+
+type PlatformDetails = {
+  type?: string
+  vendor?: string
+  model?: string
+}
+// END - DO NOT EXPORT
+
+type ShouldRenderButton = (parsedResult: ParsedResult) => boolean
+
+type RequestButtonResult = {
+  update: (data: RequestData) => void
+  remove: () => void
+}
+
+type RequestQRCodeResult = {
+  update: (data: RequestData, qrOptions: Partial<QROptions>) => void
+  remove: () => void
+}
+
+type RequestElementResult = RequestButtonResult | RequestQRCodeResult
+
 // Response Types
 
 /**
@@ -125,4 +164,17 @@ type ResponseData = {
   token: string
 }
 
-export {Action, RequestData, ErrorCorrectionLevel, QROptions, IProof, IProofShare, IVerifiedData, ResponseData}
+export {
+  Action,
+  RequestData,
+  ErrorCorrectionLevel,
+  QROptions,
+  ShouldRenderButton,
+  RequestButtonResult,
+  RequestQRCodeResult,
+  RequestElementResult,
+  IProof,
+  IProofShare,
+  IVerifiedData,
+  ResponseData,
+}

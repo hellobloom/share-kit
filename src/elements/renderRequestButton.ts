@@ -1,7 +1,7 @@
 import {oneLine, stripIndents} from 'common-tags'
 
 import {generateId} from './utils'
-import {RequestData} from '../types'
+import {RequestData, RequestButtonResult} from '../types'
 
 /* tslint:disable:max-line-length */
 const backgroundPattern =
@@ -175,7 +175,7 @@ const renderTextAndLogo = (id: string) => {
 
 const getLink = (data: RequestData) => `https://bloom.co/download?request=${window.btoa(JSON.stringify(data))}`
 
-const renderRequestButton = (container: HTMLElement, data: RequestData) => {
+const renderRequestButton = (container: HTMLElement, data: RequestData): RequestButtonResult => {
   const id = generateId()
 
   const anchor = document.createElement('a')
