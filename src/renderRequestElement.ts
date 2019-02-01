@@ -4,14 +4,14 @@ import {renderRequestQRCode} from './elements/renderRequestQRCode'
 
 const bowser = require('bowser')
 
-const renderRequestElement = (
-  container: HTMLElement,
-  data: RequestData,
-  qrOptions: Partial<QROptions>,
+const renderRequestElement = (config: {
+  container: HTMLElement
+  requestData: RequestData
+  qrOptions?: Partial<QROptions>
   shouldRenderButton?: ShouldRenderButton
-): RequestElementResult => {
-  if (shouldRenderButton === undefined) {
-    shouldRenderButton = parsedResult => {
+}): RequestElementResult => {
+  if (config.shouldRenderButton === undefined) {
+    config.shouldRenderButton = parsedResult => {
       const isMobile = parsedResult.platform.type === 'mobile' || parsedResult.platform.type === 'tablet'
       const isIOS = () => parsedResult.os.name === 'iOS'
 
@@ -19,10 +19,10 @@ const renderRequestElement = (
     }
   }
 
-  if (shouldRenderButton(bowser.parse(window.navigator.userAgent))) {
-    return renderRequestButton(container, data)
+  if (config.shouldRenderButton(bowser.parse(window.navigator.userAgent))) {
+    return renderRequestButton(config)
   } else {
-    return renderRequestQRCode(container, data, qrOptions)
+    return renderRequestQRCode(config)
   }
 }
 

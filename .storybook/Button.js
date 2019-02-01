@@ -11,7 +11,12 @@ class Button extends React.Component {
 
   componentDidMount() {
     const {requestData, ...qrOptions} = this.props
-    this.requestElement = renderRequestElement(this.containerRef.current, requestData, qrOptions, () => true)
+    this.requestElement = renderRequestElement({
+      container: this.containerRef.current,
+      requestData,
+      qrOptions,
+      shouldRenderButton: () => true,
+    })
   }
 
   componentDidUpdate(prevProps) {
@@ -19,7 +24,7 @@ class Button extends React.Component {
     const {requestData, ...qrOptions} = this.props
 
     if (prevRequestData !== requestData || prevQROptions !== requestData) {
-      this.requestElement.update(requestData, qrOptions)
+      this.requestElement.update({requestData, qrOptions})
     }
   }
 

@@ -9,7 +9,7 @@ jest.mock('./utils', () => {
 })
 
 describe('renderRequestButton', () => {
-  let requestButton: {update: (data: RequestData) => void; remove: () => void}
+  let requestButton: {update: (config: {requestData: RequestData}) => void; remove: () => void}
   let container: HTMLDivElement
 
   beforeAll(() => {
@@ -21,15 +21,18 @@ describe('renderRequestButton', () => {
   })
 
   beforeEach(() => {
-    requestButton = renderRequestButton(container, {
-      action: Action.attestation,
-      token: 'token',
-      url: 'https://receive-kit.bloom.co/api/receive',
-      org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
-      org_name: 'Bloom',
-      org_usage_policy_url: 'https://bloom.co/legal/terms',
-      org_privacy_policy_url: 'https://bloom.co/legal/privacy',
-      types: ['phone', 'email'],
+    requestButton = renderRequestButton({
+      container,
+      requestData: {
+        action: Action.attestation,
+        token: 'token',
+        url: 'https://receive-kit.bloom.co/api/receive',
+        org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
+        org_name: 'Bloom',
+        org_usage_policy_url: 'https://bloom.co/legal/terms',
+        org_privacy_policy_url: 'https://bloom.co/legal/privacy',
+        types: ['phone', 'email'],
+      },
     })
   })
 
@@ -49,14 +52,16 @@ describe('renderRequestButton', () => {
 
   test('updates the button', () => {
     requestButton.update({
-      action: Action.attestation,
-      token: 'token 2',
-      url: 'https://receive-kit.bloom.co/api/receive',
-      org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
-      org_name: 'Bloom',
-      org_usage_policy_url: 'https://bloom.co/legal/terms',
-      org_privacy_policy_url: 'https://bloom.co/legal/privacy',
-      types: ['phone', 'email'],
+      requestData: {
+        action: Action.attestation,
+        token: 'token 2',
+        url: 'https://receive-kit.bloom.co/api/receive',
+        org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
+        org_name: 'Bloom',
+        org_usage_policy_url: 'https://bloom.co/legal/terms',
+        org_privacy_policy_url: 'https://bloom.co/legal/privacy',
+        types: ['phone', 'email'],
+      },
     })
 
     const href = container.querySelector('a')!.href

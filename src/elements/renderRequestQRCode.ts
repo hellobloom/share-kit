@@ -192,8 +192,10 @@ const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionTyp
   }
 }
 
-const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, options: Partial<QROptions>) => {
-  const defaultedOptions = {...defaultOptions, ...options}
+const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Partial<QROptions>) => {
+  const defaultedOptions = {...defaultOptions, ...qrOptions}
+
+  console.log({defaultedOptions})
 
   const {ecLevel, size, bgColor, fgColor, padding} = defaultedOptions
 
@@ -273,17 +275,19 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, options: Parti
   // If hideLogo is true then don't render any logo
   // If logoImage is not set default to BloomLogo with colors matching the rest of the QR code
   // Otherwise display the provided logo
-  if (!options.hideLogo) {
+  if (!defaultedOptions.hideLogo) {
     const logoImage =
-      options.logoImage === undefined ? getBloomLogo({fgColor: fgColor, bgColor: bgColor}) : options.logoImage
+      defaultedOptions.logoImage === undefined
+        ? getBloomLogo({fgColor: fgColor, bgColor: bgColor})
+        : defaultedOptions.logoImage
 
     const image = new Image()
     image.onload = () => {
       const numberOfCellsToCover = Math.floor(cells.length * 0.2)
       const addExtra = numberOfCellsToCover % 2 === 0
       const defaultWidth = numberOfCellsToCover * cellSize + (addExtra ? cellSize : 0)
-      const dwidth = options.logoWidth || defaultWidth
-      const dheight = options.logoHeight || dwidth
+      const dwidth = defaultedOptions.logoWidth || defaultWidth
+      const dheight = defaultedOptions.logoHeight || dwidth
       // Add 1 to accomodate for the 1 shift of the cells
       const dx = (size - dwidth) / 2 + 1
       const dy = (size - dheight) / 2 + 1
@@ -291,7 +295,7 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, options: Parti
       image.height = dheight
 
       ctx.save()
-      ctx.globalAlpha = options.logoOpacity || 1
+      ctx.globalAlpha = defaultedOptions.logoOpacity || 1
       ctx.drawImage(image, dx, dy, dwidth, dheight)
       ctx.restore()
     }
@@ -299,35 +303,35 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, options: Parti
   }
 }
 
-const renderRequestQRCode = (
-  container: HTMLElement,
-  data: RequestData,
-  options: Partial<QROptions>
-): RequestQRCodeResult => {
+const renderRequestQRCode = (config: {
+  container: HTMLElement
+  requestData: RequestData
+  qrOptions?: Partial<QROptions>
+}): RequestQRCodeResult => {
   const id = generateId()
 
   const canvas = document.createElement('canvas')
   canvas.id = id
 
-  drawCanvas(canvas, data, options)
+  drawCanvas(canvas, config.requestData, config.qrOptions)
 
-  container.append(canvas)
+  config.container.append(canvas)
 
   return {
-    update: updateRequestQRCode(id, container),
-    remove: removeRequestQRCode(id, container),
+    update: updateRequestQRCode(id, config.container),
+    remove: removeRequestQRCode(id, config.container),
   }
 }
 
-const updateRequestQRCode = (id: string, container: HTMLElement) => (
-  data: RequestData,
-  options: Partial<QROptions>
-) => {
+const updateRequestQRCode = (id: string, container: HTMLElement) => (config: {
+  requestData: RequestData
+  qrOptions?: Partial<QROptions>
+}) => {
   const canvas = container.querySelector<HTMLCanvasElement>(`#${id}`)
 
   if (!canvas) return
 
-  drawCanvas(canvas, data, options)
+  drawCanvas(canvas, config.requestData, config.qrOptions)
 }
 
 const removeRequestQRCode = (id: string, container: HTMLElement) => () => {

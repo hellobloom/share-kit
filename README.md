@@ -62,7 +62,7 @@ const qrOptions: Partial<QROptions> = {
 
 const container = document.createElement('div')
 
-const {update, remove} = renderRequestElement(container, requestData, qrOptions)
+const {update, remove} = renderRequestElement({container, requestData, qrOptions})
 
 // Update the element
 update(newRequestData, newQROptions)
@@ -431,7 +431,7 @@ const requestData: RequestData = {
 }
 
 const container = document.createElement('div')
-const {update, remove} = renderRequestElement(container, requestData, {size: 200})
+const {update, remove} = renderRequestElement({container, requestData, qrOptions: {size: 200}})
 ```
 
 ### 3. Add verification to the endpoint

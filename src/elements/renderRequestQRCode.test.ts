@@ -10,7 +10,10 @@ jest.mock('./utils', () => {
 })
 
 describe('renderRequestQRCode', () => {
-  let requestQRCode: {update: (data: RequestData, options: Partial<QROptions>) => void; remove: () => void}
+  let requestQRCode: {
+    update: (config: {requestData: RequestData; options?: Partial<QROptions>}) => void
+    remove: () => void
+  }
   let container: HTMLDivElement
 
   beforeAll(() => {
@@ -22,9 +25,9 @@ describe('renderRequestQRCode', () => {
   })
 
   beforeEach(() => {
-    requestQRCode = renderRequestQRCode(
+    requestQRCode = renderRequestQRCode({
       container,
-      {
+      requestData: {
         action: Action.attestation,
         token: 'token',
         url: 'https://receive-kit.bloom.co/api/receive',
@@ -34,8 +37,7 @@ describe('renderRequestQRCode', () => {
         org_privacy_policy_url: 'https://bloom.co/legal/privacy',
         types: ['phone', 'email'],
       },
-      {}
-    )
+    })
   })
 
   afterEach(() => {

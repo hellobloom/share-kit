@@ -66,12 +66,12 @@ type PlatformDetails = {
 type ShouldRenderButton = (parsedResult: ParsedResult) => boolean
 
 type RequestButtonResult = {
-  update: (data: RequestData) => void
+  update: (config: {requestData: RequestData}) => void
   remove: () => void
 }
 
 type RequestQRCodeResult = {
-  update: (data: RequestData, qrOptions: Partial<QROptions>) => void
+  update: (config: {requestData: RequestData; qrOptions?: Partial<QROptions>}) => void
   remove: () => void
 }
 

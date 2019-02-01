@@ -33,9 +33,9 @@ describe('renderRequestElement', () => {
 
   const renderElem = (userAgent: string, shouldRenderButton?: () => boolean) => {
     Object.defineProperty(window.navigator, 'userAgent', {value: userAgent, writable: true})
-    const requestElement = renderRequestElement(
+    const requestElement = renderRequestElement({
       container,
-      {
+      requestData: {
         action: Action.attestation,
         token: 'token',
         url: 'https://receive-kit.bloom.co/api/receive',
@@ -45,9 +45,8 @@ describe('renderRequestElement', () => {
         org_privacy_policy_url: 'https://bloom.co/legal/privacy',
         types: ['phone', 'email'],
       },
-      {},
-      shouldRenderButton
-    )
+      shouldRenderButton,
+    })
 
     return requestElement
   }
