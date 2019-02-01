@@ -53,10 +53,10 @@ First you have to request data from the user.
 `renderRequestElement` will render a QR code or button based on the client's platform. By defualt it will render a button when the client is mobile or tablet and on iOS.
 
 ```typescript
-import {renderRequestElement, types} from '@bloomprotocol/share-kit'
+import {renderRequestElement, RequestData, QROptions} from '@bloomprotocol/share-kit'
 
-const requestData: types.RequestData = {...}
-const qrOptions: Partial<types.QROptions> = {
+const requestData: RequestData = {...}
+const qrOptions: Partial<QROptions> = {
   size: 200,
 }
 
@@ -267,7 +267,7 @@ The endpoint specified in the QR code should be configured to accept data in the
       const sortedData = parsedData.map(d => sortObject(d))
 
       // Verify off chain data integrity
-      if (!sortedData.every(d => shareKit.util.verifyOffChainDataIntegrity(d).length === 0)) {
+      if (!sortedData.every(d => shareKit.verifyOffChainDataIntegrity(d).length === 0)) {
         throw Error('Unable to verify the layer2Hash, attester address, and merkle proof with the provided data.')
       }
 
@@ -327,9 +327,9 @@ The recipient can perform several verifications to ensure the data and attestati
 Verify that the plaintext data belongs to the merkle tree with the specified rootHash.
 
 ```javascript
-import {util} from '@bloomprotocol/share-kit'
+import {verifyProof} from '@bloomprotocol/share-kit'
 const verified = responseData.data.every(data => {
-  return util.verifyProof(data)
+  return verifyProof(data)
 })
 
 if (verified) {
@@ -387,14 +387,14 @@ Integrate the Bloom Protocol Share-Kit into your application to allow users to s
 We will add functionality to this endpoint later. For now just receive the data
 
 ```typescript
-import {types} from '@bloomprotocol/share-kit'
+import {IVerifiedData} from '@bloomprotocol/share-kit'
 
 export default (app: express.Application) => {
   // NOTE: This endpoint is public
   app.post('/api/receiveData', async (req, res) => {
     try {
       console.log(`Received data for request token ${req.body.token}`)
-      const parsedData: types.IVerifiedData[] = req.body.data
+      const parsedData: IVerifiedData[] = req.body.data
       parsedData.forEach(dataToVerify => {
         console.log(`Attempting to verify ${JSON.stringify(dataToVerify)}`)
         // Perform addition verifications on the data
@@ -417,10 +417,10 @@ export default (app: express.Application) => {
 
 ```typescript
 import * as React from 'react'
-import {renderRequestElement, types} from '@bloomprotocol/share-kit'
+import {renderRequestElement, RequestData, Action} from '@bloomprotocol/share-kit'
 
-const requestData: types.RequestData = {
-  action: <Action>'... action type',
+const requestData: RequestData = {
+  action: Action.attestation,
   token: '... generate a unique id string for this request',
   url: 'https://Acme.app/api/receiveData',
   org_logo_url: 'https://.../logo.png',

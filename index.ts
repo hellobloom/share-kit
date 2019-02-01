@@ -1,5 +1,3 @@
-import * as util from './src/util'
-import * as types from './src/types'
-
-export {util, types}
+export * from './src/types'
+export * from './src/util'
 export {renderRequestElement} from './src/renderRequestElement'
