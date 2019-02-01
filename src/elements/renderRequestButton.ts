@@ -36,7 +36,7 @@ const renderStyle = (id: string) => {
       margin-left: -24px;
     }
 
-    #${id}-text {
+    #${id}-text-and-logo {
       display: flex;
       width: 100%;
       align-items: center;
@@ -80,7 +80,7 @@ const renderLockIcon = (id: string) => {
   const container = document.createElement('span')
   container.id = `${id}-lock-container`
 
-  container.append(svg)
+  container.appendChild(svg)
 
   return container
 }
@@ -106,28 +106,28 @@ const renderBloomLogo = (id: string) => {
 
   const firstLeaf = document.createElementNS('http://www.w3.org/2000/svg', 'g')
   firstLeaf.setAttribute('transform', 'translate(260.000000, -27.000000)')
-  firstLeaf.append(renderLeafPath())
+  firstLeaf.appendChild(renderLeafPath())
 
   const secondLeaf = document.createElementNS('http://www.w3.org/2000/svg', 'g')
   secondLeaf.setAttribute(
     'transform',
     'translate(357.500000, 576.000000) scale(1, -1) translate(-357.500000, -576.000000) translate(260.000000, 420.000000)'
   )
-  secondLeaf.append(renderLeafPath())
+  secondLeaf.appendChild(renderLeafPath())
 
   const thirdLeaf = document.createElementNS('http://www.w3.org/2000/svg', 'g')
   thirdLeaf.setAttribute(
     'transform',
     'translate(563.000000, 352.500000) scale(1, -1) rotate(90.000000) translate(-563.000000, -352.500000) translate(465.500000, 196.500000)'
   )
-  thirdLeaf.append(renderLeafPath())
+  thirdLeaf.appendChild(renderLeafPath())
 
   const fourthLeaf = document.createElementNS('http://www.w3.org/2000/svg', 'g')
   fourthLeaf.setAttribute(
     'transform',
     'translate(147.000000, 351.500000) scale(-1, -1) rotate(90.000000) translate(-147.000000, -351.500000) translate(49.500000, 195.500000)'
   )
-  fourthLeaf.append(renderLeafPath())
+  fourthLeaf.appendChild(renderLeafPath())
 
   const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
   g.setAttribute('fill', '#fff')
@@ -137,7 +137,28 @@ const renderBloomLogo = (id: string) => {
   g.appendChild(thirdLeaf)
   g.appendChild(fourthLeaf)
 
-  svg.append(g)
+  svg.appendChild(g)
+
+  return svg
+}
+/* tslint:enable:max-line-length */
+
+/* tslint:disable:max-line-length */
+const renderText = (id: string) => {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  svg.id = `${id}-text`
+  svg.setAttribute('viewBox', '0 0 111 15')
+  svg.setAttribute('width', '111px')
+  svg.setAttribute('height', '15px')
+
+  const text = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  text.setAttribute(
+    'd',
+    'M.35 1.354h1.554l2.058 7.168 2.072-7.168h1.54L4.662 11H3.276L.35 1.354zM15.148 7.71c0 .154 0 .392-.014.532H9.94c.14 1.008.952 1.638 2.002 1.638.728 0 1.442-.336 1.778-.938.364.168.798.35 1.176.518-.574 1.148-1.792 1.68-3.024 1.68-1.862 0-3.36-1.358-3.36-3.43s1.498-3.388 3.36-3.388c1.862 0 3.276 1.316 3.276 3.388zM9.94 7.192h3.794c-.14-1.022-.882-1.61-1.862-1.61-1.008 0-1.792.602-1.932 1.61zm8.176 1.456V11h-1.442V4.462h1.442V5.96c.336-1.162.98-1.638 1.792-1.638.462 0 .952.112 1.162.252l-.238 1.33c-.364-.182-.686-.224-.966-.224-1.232 0-1.75 1.232-1.75 2.968zM23.688 11H22.26V4.462h1.428V11zm-1.68-9.184c0-.518.448-.91.966-.91.532 0 .952.392.952.91s-.42.91-.952.91c-.518 0-.966-.392-.966-.91zm7.616-.91v1.386h-.714c-.952 0-1.162.742-1.162 1.568v.602h1.47v1.19h-1.47V11h-1.456V5.652h-1.246v-1.19h1.246V3.86c0-1.792.826-2.954 2.618-2.954h.714zm6.846 3.556l-4.046 9.73h-1.512l1.414-3.5-2.59-6.23h1.54l1.82 4.48 1.834-4.48h1.54zm14.434 0L48.51 11h-1.19l-1.666-4.634L44.058 11h-1.176l-2.464-6.538h1.54l1.512 4.41 1.512-4.41h1.344l1.512 4.41 1.526-4.41h1.54zM53.592 11h-1.428V4.462h1.428V11zm-1.68-9.184c0-.518.448-.91.966-.91.532 0 .952.392.952.91s-.42.91-.952.91c-.518 0-.966-.392-.966-.91zm5.656.168v2.478h1.386v1.19h-1.386V11h-1.442V5.652H54.95v-1.19h1.176V1.984h1.442zm4.186 5.502V11h-1.442V.906h1.442v4.55c.364-.798 1.386-1.134 2.072-1.134 1.666 0 2.646 1.092 2.646 2.954V11H65.03V7.36c0-1.022-.644-1.624-1.456-1.624-.826 0-1.82.462-1.82 1.75zm16.828-3.584c0 .756-.308 1.596-1.246 1.96 1.134.252 1.764 1.386 1.764 2.31C79.1 9.698 78.022 11 76.202 11h-3.99V1.354h3.696c1.638 0 2.674.98 2.674 2.548zM73.71 5.316h2.142c.784 0 1.19-.63 1.19-1.358 0-.784-.49-1.246-1.288-1.246H73.71v2.604zm2.38 1.274h-2.38v3.052h2.422c.896 0 1.414-.742 1.414-1.484 0-.714-.532-1.568-1.456-1.568zM80.766 11V.906h1.442V11h-1.442zm6.44-1.26c1.092 0 1.988-.798 1.988-2.03 0-1.204-.896-1.974-1.988-1.974-1.078 0-1.974.77-1.974 1.974 0 1.232.896 2.03 1.974 2.03zm0 1.4c-1.848 0-3.402-1.358-3.402-3.43s1.554-3.388 3.402-3.388c1.862 0 3.43 1.316 3.43 3.388s-1.568 3.43-3.43 3.43zm8.008-1.4c1.092 0 1.988-.798 1.988-2.03 0-1.204-.896-1.974-1.988-1.974-1.078 0-1.974.77-1.974 1.974 0 1.232.896 2.03 1.974 2.03zm0 1.4c-1.848 0-3.402-1.358-3.402-3.43s1.554-3.388 3.402-3.388c1.862 0 3.43 1.316 3.43 3.388s-1.568 3.43-3.43 3.43zm12.474-5.404c-.952 0-1.582.7-1.582 1.75V11h-1.442V7.332c-.014-1.008-.56-1.596-1.33-1.596-.84 0-1.652.476-1.652 1.75V11h-1.442V4.462h1.442v.98c.434-.91 1.54-1.12 2.058-1.12 1.036 0 1.694.476 2.058 1.302.616-1.134 1.596-1.302 2.198-1.302 1.61 0 2.52 1.05 2.52 2.912V11h-1.442V7.36c0-1.022-.546-1.624-1.386-1.624z'
+  )
+  text.setAttribute('fill', '#fff')
+
+  svg.appendChild(text)
 
   return svg
 }
@@ -145,9 +166,9 @@ const renderBloomLogo = (id: string) => {
 
 const renderTextAndLogo = (id: string) => {
   const textAndLogo = document.createElement('span')
-  textAndLogo.id = `${id}-text`
+  textAndLogo.id = `${id}-text-and-logo`
   textAndLogo.appendChild(renderBloomLogo(id))
-  textAndLogo.append('Verify with Bloom')
+  textAndLogo.appendChild(renderText(id))
 
   return textAndLogo
 }
@@ -168,7 +189,7 @@ const renderRequestButton = (container: HTMLElement, data: RequestData) => {
   anchor.appendChild(renderLockIcon(id))
   anchor.appendChild(renderTextAndLogo(id))
 
-  container.append(anchor)
+  container.appendChild(anchor)
 
   return {
     update: updateRequestButton(id, container),
