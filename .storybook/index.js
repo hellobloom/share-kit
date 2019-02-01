@@ -4,6 +4,7 @@ import {storiesOf} from '@storybook/react'
 import {Base} from './Base'
 import {Logo} from './Logo'
 import {Updating} from './Updating'
+import {Button} from './Button'
 import {Action} from '../index'
 
 const defaultData = {
@@ -23,3 +24,4 @@ storiesOf('renderRequestElement', module)
   .add('Logo', () => <Logo requestData={defaultData} />)
   .add('Size', () => <Base requestData={defaultData} size={300} />)
   .add('Updating', () => <Updating />)
+  .add('Button', () => <Button />)
