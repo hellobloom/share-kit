@@ -53,10 +53,10 @@ First you have to request data from the user.
 `renderRequestElement` will render a QR code or button based on the client's platform. By defualt it will render a button when the client is mobile or tablet and on iOS.
 
 ```typescript
-import {renderRequestElement, RequestData, QROptions} from '@bloomprotocol/share-kit'
+import {renderRequestElement, types} from '@bloomprotocol/share-kit'
 
-const requestData: RequestData = {...}
-const qrOptions: Partial<QROptions> = {
+const requestData: types.RequestData = {...}
+const qrOptions: Partial<types.QROptions> = {
   size: 200,
 }
 
@@ -327,9 +327,9 @@ The recipient can perform several verifications to ensure the data and attestati
 Verify that the plaintext data belongs to the merkle tree with the specified rootHash.
 
 ```javascript
-import {verifyProof} from @bloomprotocol/share-kit
+import {util} from '@bloomprotocol/share-kit'
 const verified = responseData.data.every(data => {
-  return verifyProof(data)
+  return util.verifyProof(data)
 })
 
 if (verified) {
@@ -387,12 +387,14 @@ Integrate the Bloom Protocol Share-Kit into your application to allow users to s
 We will add functionality to this endpoint later. For now just receive the data
 
 ```typescript
+import {types} from '@bloomprotocol/share-kit'
+
 export default (app: express.Application) => {
   // NOTE: This endpoint is public
   app.post('/api/receiveData', async (req, res) => {
     try {
       console.log(`Received data for request token ${req.body.token}`)
-      const parsedData: IVerifiedData[] = req.body.data
+      const parsedData: types.IVerifiedData[] = req.body.data
       parsedData.forEach(dataToVerify => {
         console.log(`Attempting to verify ${JSON.stringify(dataToVerify)}`)
         // Perform addition verifications on the data
@@ -414,7 +416,10 @@ export default (app: express.Application) => {
 ### 2. Embed a QR code with a link to your endpoint and the verified data you would like to receive
 
 ```typescript
-const requestData = {
+import * as React from 'react'
+import {renderRequestElement, types} from '@bloomprotocol/share-kit'
+
+const requestData: types.RequestData = {
   action: <Action>'... action type',
   token: '... generate a unique id string for this request',
   url: 'https://Acme.app/api/receiveData',
@@ -425,12 +430,8 @@ const requestData = {
   types: ['email'],
 }
 
-import * as React from 'react'
-import {RequestQRCode, RequestData} from '@bloomprotocol/share-kit'
-
-const MyComponent: React.SFC = props => {
-  return <RequestQRCode requestData={requestData} size={200} />
-}
+const container = document.createElement('div')
+const {update, remove} = renderRequestElement(container, requestData, {size: 200})
 ```
 
 ### 3. Add verification to the endpoint
@@ -438,7 +439,7 @@ const MyComponent: React.SFC = props => {
 Perform the Merkle Proof and confirm the Merkle root matches the dataHash from the attestaion event.
 
 ```javascript
-import {verifyProof} from @bloomprotocol/share-kit
+import {verifyProof} from '@bloomprotocol/share-kit'
 const verified = responseData.data.every(data => {
   return verifyProof(data)
 })
