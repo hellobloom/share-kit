@@ -6,6 +6,7 @@ Easily allow your users to share their verified personal information directly wi
 
 - [Share Kit](#share-kit)
   - [Installation](#installation)
+  - [Implementations](#implementations)
   - [Request](#request)
     - [Usage](#usage)
       - [React](#react)
@@ -36,7 +37,7 @@ Easily allow your users to share their verified personal information directly wi
 npm install --save @bloomprotocol/share-kit
 ```
 
-## Other Implementations
+## Implementations
 
 | Name                                                             | Description                            | Status            |
 | ---------------------------------------------------------------- | -------------------------------------- | ----------------- |
