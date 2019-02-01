@@ -55,8 +55,6 @@ describe('renderRequestElement', () => {
   test('renders a button on mobile', () => {
     const element = renderElem(userAgents.iOS)
 
-    console.log(container.innerHTML)
-
     expect(container.querySelector('a')).not.toBeNull()
     expect(container.querySelector('canvas')).toBeNull()
 

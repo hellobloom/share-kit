@@ -37,7 +37,6 @@ const renderRequestElement = (
 ) => {
   if (shouldRenderButton === undefined) {
     shouldRenderButton = parsedBrowser => {
-      console.log({parsedBrowser})
       const isMobile = parsedBrowser.platform.type === 'mobile' || parsedBrowser.platform.type === 'tablet'
       const isIOS = () => parsedBrowser.os.name === 'iOS'
 

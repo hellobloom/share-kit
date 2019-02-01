@@ -36,9 +36,6 @@ describe('renderRequestQRCode', () => {
       },
       {}
     )
-
-    console.log('Before Each')
-    console.log({requestQRCode})
   })
 
   afterEach(() => {
