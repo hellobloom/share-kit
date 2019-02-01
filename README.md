@@ -50,11 +50,13 @@ First you have to request data from the user.
 
 ### Usage
 
+`renderRequestElement` will render a QR code or button based on the client's platform. By defualt it will render a button when the client is mobile or tablet and on iOS.
+
 ```typescript
 import {renderRequestElement, RequestData, QROptions} from '@bloomprotocol/share-kit'
 
 const requestData: RequestData = {...}
-const qrOptions: QROptions = {
+const qrOptions: Partial<QROptions> = {
   size: 200,
 }
 
