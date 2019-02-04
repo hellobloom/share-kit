@@ -19,7 +19,6 @@
   "scripts": {
     "build": "npm run clean && ./bin/build",
     "clean": "rimraf dist",
-    "prepack": "npm run build",
     "prepare": "npm run build",
     "test": "node_modules/.bin/jest --watch",
     "storybook": "start-storybook -p 9001 -c .storybook"

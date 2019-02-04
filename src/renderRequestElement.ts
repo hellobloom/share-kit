@@ -13,9 +13,9 @@ const renderRequestElement = (config: {
   if (config.shouldRenderButton === undefined) {
     config.shouldRenderButton = parsedResult => {
       const isMobile = parsedResult.platform.type === 'mobile' || parsedResult.platform.type === 'tablet'
-      const isIOS = () => parsedResult.os.name === 'iOS'
+      const isIOS = parsedResult.os.name === 'iOS'
 
-      return isMobile && isIOS()
+      return isMobile && isIOS
     }
   }
 
