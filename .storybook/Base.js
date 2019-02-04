@@ -11,7 +11,6 @@ class Base extends React.Component {
 
   componentDidMount() {
     const {requestData, ...qrOptions} = this.props
-    console.log({qrOptions})
     this.requestElement = renderRequestElement({container: this.containerRef.current, requestData, qrOptions})
   }
 

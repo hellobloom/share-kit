@@ -195,8 +195,6 @@ const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionTyp
 const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Partial<QROptions>) => {
   const defaultedOptions = {...defaultOptions, ...qrOptions}
 
-  console.log({defaultedOptions})
-
   const {ecLevel, size, bgColor, fgColor, padding} = defaultedOptions
 
   const qr = new QRCodeImpl(-1, ErrorCorrectionLevel[ecLevel])
