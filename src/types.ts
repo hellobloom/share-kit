@@ -65,17 +65,10 @@ type PlatformDetails = {
 
 type ShouldRenderButton = (parsedResult: ParsedResult) => boolean
 
-type RequestButtonResult = {
-  update: (config: {requestData: RequestData; buttonCallbackUrl: string}) => void
+type RequestElementResult = {
+  update: (config: {requestData: RequestData; buttonCallbackUrl: string; qrOptions?: Partial<QROptions>}) => void
   remove: () => void
 }
-
-type RequestQRCodeResult = {
-  update: (config: {requestData: RequestData; qrOptions?: Partial<QROptions>}) => void
-  remove: () => void
-}
-
-type RequestElementResult = RequestButtonResult & RequestQRCodeResult
 
 // Response Types
 
@@ -170,8 +163,6 @@ export {
   ErrorCorrectionLevel,
   QROptions,
   ShouldRenderButton,
-  RequestButtonResult,
-  RequestQRCodeResult,
   RequestElementResult,
   IProof,
   IProofShare,

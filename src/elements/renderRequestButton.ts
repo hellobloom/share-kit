@@ -1,7 +1,7 @@
 import {oneLine, stripIndents} from 'common-tags'
 
 import {generateId} from './utils'
-import {RequestData, RequestButtonResult} from '../types'
+import {RequestData, RequestElementResult} from '../types'
 
 /* tslint:disable:max-line-length */
 const backgroundPattern =
@@ -180,7 +180,7 @@ const renderRequestButton = (config: {
   container: HTMLElement
   requestData: RequestData
   buttonCallbackUrl: string
-}): RequestButtonResult => {
+}): RequestElementResult => {
   const id = generateId()
 
   const anchor = document.createElement('a')
