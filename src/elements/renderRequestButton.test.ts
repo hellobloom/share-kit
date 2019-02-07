@@ -33,6 +33,7 @@ describe('renderRequestButton', () => {
         org_privacy_policy_url: 'https://bloom.co/legal/privacy',
         types: ['phone', 'email'],
       },
+      buttonCallbackUrl: 'https://bloom.co/callback-url',
     })
   })
 

@@ -10,16 +10,26 @@ class Base extends React.Component {
   }
 
   componentDidMount() {
-    const {requestData, ...qrOptions} = this.props
-    this.requestElement = renderRequestElement({container: this.containerRef.current, requestData, qrOptions})
+    const {requestData, qrOptions, buttonCallbackUrl, shouldRenderButton} = this.props
+    this.requestElement = renderRequestElement({
+      container: this.containerRef.current,
+      requestData,
+      qrOptions,
+      buttonCallbackUrl,
+      shouldRenderButton,
+    })
   }
 
   componentDidUpdate(prevProps) {
-    const {requestData: prevRequestData, ...prevQROptions} = prevProps
-    const {requestData, ...qrOptions} = this.props
+    const {requestData: prevRequestData, qrOptions: prevQROptions, buttonCallbackUrl: prevButtonCallbackUrl} = prevProps
+    const {requestData, qrOptions, buttonCallbackUrl} = this.props
 
-    if (prevRequestData !== requestData || prevQROptions !== requestData) {
-      this.requestElement.update({requestData, qrOptions})
+    if (
+      prevRequestData !== requestData ||
+      prevQROptions !== requestData ||
+      prevButtonCallbackUrl !== buttonCallbackUrl
+    ) {
+      this.requestElement.update({requestData, qrOptions, buttonCallbackUrl})
     }
   }
 

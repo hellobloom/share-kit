@@ -173,15 +173,20 @@ const renderTextAndLogo = (id: string) => {
   return textAndLogo
 }
 
-const getLink = (data: RequestData) => `https://bloom.co/download?request=${window.btoa(JSON.stringify(data))}`
+const getLink = (data: RequestData, callbackUrl: string) =>
+  `https://bloom.co/download?request=${window.btoa(JSON.stringify(data))}&callback-url=${callbackUrl}`
 
-const renderRequestButton = (config: {container: HTMLElement; requestData: RequestData}): RequestButtonResult => {
+const renderRequestButton = (config: {
+  container: HTMLElement
+  requestData: RequestData
+  buttonCallbackUrl: string
+}): RequestButtonResult => {
   const id = generateId()
 
   const anchor = document.createElement('a')
   anchor.id = id
 
-  anchor.href = getLink(config.requestData)
+  anchor.href = getLink(config.requestData, config.buttonCallbackUrl)
   anchor.target = '_blank'
   anchor.rel = 'norefferer noopener'
 
@@ -197,12 +202,15 @@ const renderRequestButton = (config: {container: HTMLElement; requestData: Reque
   }
 }
 
-const updateRequestButton = (id: string, container: HTMLElement) => (config: {requestData: RequestData}) => {
+const updateRequestButton = (id: string, container: HTMLElement) => (config: {
+  requestData: RequestData
+  buttonCallbackUrl: string
+}) => {
   const button = container.querySelector<HTMLAnchorElement>(`#${id}`)
 
   if (!button) return
 
-  button.href = getLink(config.requestData)
+  button.href = getLink(config.requestData, config.buttonCallbackUrl)
 }
 
 const removeRequestButton = (id: string, container: HTMLElement) => () => {

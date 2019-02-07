@@ -9,6 +9,7 @@ const renderRequestElement = (config: {
   requestData: RequestData
   qrOptions?: Partial<QROptions>
   shouldRenderButton?: ShouldRenderButton
+  buttonCallbackUrl: string
 }): RequestElementResult => {
   if (config.shouldRenderButton === undefined) {
     config.shouldRenderButton = parsedResult => {

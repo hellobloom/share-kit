@@ -13,6 +13,7 @@ Easily allow your users to share their verified personal information directly wi
       - [Plain](#plain)
       - [RequestData](#requestdata)
       - [QROptions](#qr-options)
+      - [Button Callback URl](#button-callback-url)
   - [Response](#response)
     - [ResponseData](#responsedata)
     - [VerifiedData](#verifieddata)
@@ -59,13 +60,13 @@ const requestData: RequestData = {...}
 const qrOptions: Partial<QROptions> = {
   size: 200,
 }
-
+const callbackUrl = 'https://mysite.com/bloom-callback'
 const container = document.createElement('div')
 
-const {update, remove} = renderRequestElement({container, requestData, qrOptions})
+const {update, remove} = renderRequestElement({container, requestData, qrOptions, callbackUrl})
 
 // Update the element
-update(newRequestData, newQROptions)
+update({requestData: newRequestData, qrOptions: newQROptions, callbackUrl: newCallbackUrl})
 
 // Remove the element
 remove()
@@ -92,7 +93,7 @@ Data to be rendered into the RequestQRCode.
 
 ```ts
 {
-  action: <Action>"request_attestation_data",
+  action: Action.attestation,
   token: '0x8f31e48a585fd12ba58e70e03292cac712cbae39bc7eb980ec189aa88e24d043',
   url: 'https://receive-kit.bloom.co/api/receive',
   org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
@@ -119,6 +120,27 @@ _NOTE:_ Does not apply to the rendered button
 | fgColor   | The foreground color of the QR code.             | `string`  | `#6067f1`  |
 | logoImage | The `<img />` src to displayed over the QR code. | `string`  | Bloom logo |
 | hideLogo  | Whether the `logoImage` should be rendered.      | `boolean` | `false`    |
+
+#### Button Callback URL
+
+_NOTE:_ this is only used with the rendered button.
+
+The `buttonCallbackUrl` parameter will be used to send the user back to your app after they share their data. The url will be appened with `?token={requestData.token}`
+
+Example:
+
+```typescript
+const requestData: RequestData = {
+  ...
+  token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf'
+}
+const buttonCallbackUrl = 'https://mysite.com/bloom-callback'
+const container = document.createElement('div')
+
+renderRequestElement({container, requestData, buttonCallbackUrl})
+```
+
+After sharing their data the user will be redirected to `https://mysite.com/bloom-callback?token=a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf`
 
 ## Response
 

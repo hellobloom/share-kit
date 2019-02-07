@@ -46,6 +46,7 @@ describe('renderRequestElement', () => {
         types: ['phone', 'email'],
       },
       shouldRenderButton,
+      buttonCallbackUrl: 'https://bloom.co/callback-url',
     })
 
     return requestElement

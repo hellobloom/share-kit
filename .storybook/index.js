@@ -4,7 +4,6 @@ import {storiesOf} from '@storybook/react'
 import {Base} from './Base'
 import {Logo} from './Logo'
 import {Updating} from './Updating'
-import {Button} from './Button'
 import {Action} from '../index'
 
 const defaultData = {
@@ -20,8 +19,20 @@ const defaultData = {
 
 storiesOf('renderRequestElement', module)
   .add('Base', () => <Base requestData={defaultData} />)
-  .add('Colors', () => <Base requestData={defaultData} bgColor={'#EBF0F1'} fgColor={'#3C3C3D'} />)
+  .add('Colors', () => (
+    <Base
+      requestData={defaultData}
+      qrOptions={{
+        bgColor: '#EBF0F1',
+        fgColor: '#3C3C3D',
+      }}
+    />
+  ))
   .add('Logo', () => <Logo requestData={defaultData} />)
-  .add('Size', () => <Base requestData={defaultData} size={300} />)
+  .add('Size', () => <Base requestData={defaultData} qrOptions={{size: 300}} />)
   .add('Updating', () => <Updating />)
-  .add('Button', () => <Button requestData={defaultData} />)
+  .add('Button', () => (
+    <div style={{width: '335px'}}>
+      <Base requestData={defaultData} shouldRenderButton={() => true} />
+    </div>
+  ))
