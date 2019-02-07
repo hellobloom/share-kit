@@ -1,6 +1,9 @@
 import {renderRequestElement} from './renderRequestElement'
 import {Action} from './types'
 
+import * as qr from './elements/renderRequestQRCode'
+import * as btn from './elements/renderRequestButton'
+
 jest.mock('./elements/utils', () => {
   return {
     ...jest.requireActual('./elements/utils'),
@@ -31,21 +34,21 @@ describe('renderRequestElement', () => {
     Object.defineProperty(window.navigator, 'userAgent', {value: prevUserAgent, writable: false})
   })
 
-  const renderElem = (userAgent: string, shouldRenderButton?: () => boolean) => {
-    Object.defineProperty(window.navigator, 'userAgent', {value: userAgent, writable: true})
+  const renderElem = (config: {userAgent: string; shouldRenderButton?: () => boolean; url?: string}) => {
+    Object.defineProperty(window.navigator, 'userAgent', {value: config.userAgent, writable: true})
     const requestElement = renderRequestElement({
       container,
       requestData: {
         action: Action.attestation,
         token: 'token',
-        url: 'https://receive-kit.bloom.co/api/receive',
+        url: config.url || 'https://receive-kit.bloom.co/api/receive',
         org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
         org_name: 'Bloom',
         org_usage_policy_url: 'https://bloom.co/legal/terms',
         org_privacy_policy_url: 'https://bloom.co/legal/privacy',
         types: ['phone', 'email'],
       },
-      shouldRenderButton,
+      shouldRenderButton: config.shouldRenderButton,
       buttonCallbackUrl: 'https://bloom.co/callback-url',
     })
 
@@ -53,7 +56,7 @@ describe('renderRequestElement', () => {
   }
 
   test('renders a button on mobile', () => {
-    const element = renderElem(userAgents.iOS)
+    const element = renderElem({userAgent: userAgents.iOS})
 
     expect(container.querySelector('a')).not.toBeNull()
     expect(container.querySelector('canvas')).toBeNull()
@@ -62,7 +65,7 @@ describe('renderRequestElement', () => {
   })
 
   test('renders a QR code on desktop', () => {
-    const element = renderElem(userAgents.macOs)
+    const element = renderElem({userAgent: userAgents.macOs})
 
     expect(container.querySelector('canvas')).not.toBeNull()
     expect(container.querySelector('a')).toBeNull()
@@ -71,7 +74,7 @@ describe('renderRequestElement', () => {
   })
 
   test('renders a QR code on mobile with an overriden check', () => {
-    const element = renderElem(userAgents.iOS, () => false)
+    const element = renderElem({userAgent: userAgents.iOS, shouldRenderButton: () => false})
 
     expect(container.querySelector('canvas')).not.toBeNull()
     expect(container.querySelector('a')).toBeNull()
@@ -80,11 +83,71 @@ describe('renderRequestElement', () => {
   })
 
   test('renders a button on desktop with an overriden check', () => {
-    const element = renderElem(userAgents.macOs, () => true)
+    const element = renderElem({userAgent: userAgents.macOs, shouldRenderButton: () => true})
 
     expect(container.querySelector('a')).not.toBeNull()
     expect(container.querySelector('canvas')).toBeNull()
 
     element.remove()
+  })
+
+  describe('appends the share-kit-from query correctly', () => {
+    describe('on desktop when', () => {
+      test('there are no existing query params', () => {
+        const qrSpy = jest.spyOn(qr, 'renderRequestQRCode')
+
+        renderElem({userAgent: userAgents.macOs})
+
+        expect(qrSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            requestData: expect.objectContaining({url: 'https://receive-kit.bloom.co/api/receive?share-kit-from=qr'}),
+          })
+        )
+      })
+
+      test('there are existing query params', () => {
+        const qrSpy = jest.spyOn(qr, 'renderRequestQRCode')
+
+        renderElem({userAgent: userAgents.macOs, url: 'https://receive-kit.bloom.co/api/receive?test='})
+
+        expect(qrSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            requestData: expect.objectContaining({
+              url: 'https://receive-kit.bloom.co/api/receive?test=&share-kit-from=qr',
+            }),
+          })
+        )
+      })
+    })
+
+    describe('on mobile when', () => {
+      test('there are no existing query params', () => {
+        const btnSpy = jest.spyOn(btn, 'renderRequestButton')
+
+        renderElem({userAgent: userAgents.iOS})
+
+        expect(btnSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            requestData: expect.objectContaining({
+              url: 'https://receive-kit.bloom.co/api/receive?share-kit-from=button',
+            }),
+          })
+        )
+      })
+
+      test('there are existing query params', () => {
+        const btnSpy = jest.spyOn(btn, 'renderRequestButton')
+
+        renderElem({userAgent: userAgents.iOS, url: 'https://receive-kit.bloom.co/api/receive?test='})
+
+        expect(btnSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            requestData: expect.objectContaining({
+              url: 'https://receive-kit.bloom.co/api/receive?test=&share-kit-from=button',
+            }),
+          })
+        )
+      })
+    })
   })
 })

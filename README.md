@@ -12,6 +12,7 @@ Easily allow your users to share their verified personal information directly wi
       - [React](#react)
       - [Plain](#plain)
       - [RequestData](#requestdata)
+        - [Appending to URL](#appending-to-url)
       - [QROptions](#qr-options)
       - [Button Callback URl](#button-callback-url)
   - [Response](#response)
@@ -78,16 +79,40 @@ remove()
 
 Data to be rendered into the RequestQRCode.
 
-| Name                   | Description                                                        | Type                                                                                   |
-| ---------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| action                 | Action type                                                        | `Action`                                                                               |
-| token                  | Unique string to identify this data request                        | `string`                                                                               |
-| url                    | The API endpoint to POST the `ResponseData` to                     | `string`                                                                               |
-| org_logo_url           | A url of the logo to display to the user when requesting data      | `string`                                                                               |
-| org_name               | The name of the organization requesting data                       | `string`                                                                               |
-| types                  | The type of attestions required and the amount needed              | [`(keyof typeof AttestationTypeID)[]`](https://github.com/hellobloom/attestations-lib) |
-| org_usage_policy_url   | The url of the usage policy for the organization requesting data   | `string`                                                                               |
-| org_privacy_policy_url | The url of the privacy policy for the organization requesting data | `string`                                                                               |
+| Name                   | Description                                                                                     | Type                                                                                   |
+| ---------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| action                 | Action type                                                                                     | `Action`                                                                               |
+| token                  | Unique string to identify this data request                                                     | `string`                                                                               |
+| url                    | The API endpoint to POST the `ResponseData` to.<br/> See [below](#appending-to-URL) for details | `string`                                                                               |
+| org_logo_url           | A url of the logo to display to the user when requesting data                                   | `string`                                                                               |
+| org_name               | The name of the organization requesting data                                                    | `string`                                                                               |
+| types                  | The type of attestions required and the amount needed                                           | [`(keyof typeof AttestationTypeID)[]`](https://github.com/hellobloom/attestations-lib) |
+| org_usage_policy_url   | The url of the usage policy for the organization requesting data                                | `string`                                                                               |
+| org_privacy_policy_url | The url of the privacy policy for the organization requesting data                              | `string`                                                                               |
+
+##### Appending to URL
+
+The user can share by tapping a button or scanning a QR code, sometimes you'll need to know the difference so the query param `share-kit-from` is appended to your url.
+
+The param will either be `share-kit-from=qr` OR `share-kit-from=button`.
+
+```
+// Input
+'https://receive-kit.bloom.co/api/receive'
+
+// Output
+'https://receive-kit.bloom.co/api/receive?share-kit-from=qr'
+```
+
+Works if your url already has a query param too!
+
+```
+// Input
+'https://receive-kit.bloom.co/api/receive?my-param',
+
+// Input
+'https://receive-kit.bloom.co/api/receive?my-param&share-kit-from=qr',
+```
 
 <h4 id="request-example">Example</h4>
 
