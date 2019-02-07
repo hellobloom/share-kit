@@ -66,7 +66,7 @@ type PlatformDetails = {
 type ShouldRenderButton = (parsedResult: ParsedResult) => boolean
 
 type RequestButtonResult = {
-  update: (config: {requestData: RequestData}) => void
+  update: (config: {requestData: RequestData; buttonCallbackUrl: string}) => void
   remove: () => void
 }
 
@@ -75,7 +75,7 @@ type RequestQRCodeResult = {
   remove: () => void
 }
 
-type RequestElementResult = RequestButtonResult | RequestQRCodeResult
+type RequestElementResult = RequestButtonResult & RequestQRCodeResult
 
 // Response Types
 

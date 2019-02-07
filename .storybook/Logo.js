@@ -16,7 +16,7 @@ class Logo extends React.Component {
         />
         <label>Hide center logo</label>
         <br />
-        <Base requestData={this.props.requestData} qrOptions={{hideLogo: this.state.hideLogo}} />
+        <Base qrOptions={{...(props.qrOptions || {}), hideLogo: this.state.hideLogo}} {...props} />
       </div>
     )
   }

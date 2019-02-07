@@ -17,8 +17,10 @@ const defaultData = {
   types: ['phone', 'email'],
 }
 
+const buttonCallbackUrl = 'https://mysite.com/bloom-callback'
+
 storiesOf('renderRequestElement', module)
-  .add('Base', () => <Base requestData={defaultData} />)
+  .add('Base', () => <Base requestData={defaultData} buttonCallbackUrl={buttonCallbackUrl} />)
   .add('Colors', () => (
     <Base
       requestData={defaultData}
@@ -26,13 +28,14 @@ storiesOf('renderRequestElement', module)
         bgColor: '#EBF0F1',
         fgColor: '#3C3C3D',
       }}
+      buttonCallbackUrl={buttonCallbackUrl}
     />
   ))
-  .add('Logo', () => <Logo requestData={defaultData} />)
-  .add('Size', () => <Base requestData={defaultData} qrOptions={{size: 300}} />)
+  .add('Logo', () => <Logo requestData={defaultData} buttonCallbackUrl={buttonCallbackUrl} />)
+  .add('Size', () => <Base requestData={defaultData} qrOptions={{size: 300}} buttonCallbackUrl={buttonCallbackUrl} />)
   .add('Updating', () => <Updating />)
   .add('Button', () => (
     <div style={{width: '335px'}}>
-      <Base requestData={defaultData} shouldRenderButton={() => true} />
+      <Base requestData={defaultData} shouldRenderButton={() => true} buttonCallbackUrl={buttonCallbackUrl} />
     </div>
   ))
