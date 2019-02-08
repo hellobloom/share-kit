@@ -52,7 +52,7 @@ First you have to request data from the user.
 
 ### Usage
 
-`renderRequestElement` will render a QR code or button based on the client's platform. By defualt it will render a button when the client is mobile or tablet and on iOS.
+`renderRequestElement` will render a QR code or button based on the client's platform. By default it will render a button when the client is mobile or tablet and on iOS.
 
 ```typescript
 import {renderRequestElement, RequestData, QROptions} from '@bloomprotocol/share-kit'
@@ -108,10 +108,10 @@ Works if your url already has a query param too!
 
 ```
 // Input
-'https://receive-kit.bloom.co/api/receive?my-param',
+'https://receive-kit.bloom.co/api/receive?my-param=',
 
-// Input
-'https://receive-kit.bloom.co/api/receive?my-param&share-kit-from=qr',
+// Output
+'https://receive-kit.bloom.co/api/receive?my-param=&share-kit-from=qr',
 ```
 
 <h4 id="request-example">Example</h4>
