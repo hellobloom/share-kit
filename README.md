@@ -9,8 +9,6 @@ Easily allow your users to share their verified personal information directly wi
   - [Implementations](#implementations)
   - [Request](#request)
     - [Usage](#usage)
-      - [React](#react)
-      - [Plain](#plain)
       - [RequestData](#requestdata)
         - [Appending to URL](#appending-to-url)
       - [QROptions](#qr-options)
@@ -41,10 +39,10 @@ npm install --save @bloomprotocol/share-kit
 
 ## Implementations
 
-| Name                                                             | Description                            | Status            |
-| ---------------------------------------------------------------- | -------------------------------------- | ----------------- |
-| [share-kit](https://github.com/hellobloom/share-kit)             | Plain DOM implementation               | :whte_check_mark: |
-| [share-kit-react](https://github.com/hellobloom/share-kit-react) | React wrapper for renderRequestElement | :construction:    |
+| Name                                                             | Description                            | Status             |
+| ---------------------------------------------------------------- | -------------------------------------- | ------------------ |
+| [share-kit](https://github.com/hellobloom/share-kit)             | Plain DOM implementation               | :white_check_mark: |
+| [share-kit-react](https://github.com/hellobloom/share-kit-react) | React wrapper for renderRequestElement | :construction:     |
 
 ## Request
 
@@ -130,6 +128,7 @@ Works if your url already has a query param too!
 ```
 
 ![Sample QR](https://github.com/hellobloom/share-kit/raw/master/images/sampleQR.png)
+
 ![Sample Button](https://github.com/hellobloom/share-kit/raw/master/images/sampleButton.png)
 
 #### QROptions
