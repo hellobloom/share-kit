@@ -25,7 +25,7 @@ enum ErrorCorrectionLevel {
   'H' = 2,
 }
 
-type Options = {
+type QROptions = {
   ecLevel: keyof typeof ErrorCorrectionLevel
   size: number
   bgColor: string
@@ -36,6 +36,38 @@ type Options = {
   logoWidth?: number
   logoHeight?: number
   logoOpacity?: number
+}
+
+// START - DO NOT EXPORT
+// These are temporary until bowser defines types
+type ParsedResult = {
+  browser: Details
+  os: OSDetails
+  platform: PlatformDetails
+  engine: Details
+}
+
+type Details = {
+  name?: string
+  version?: Array<{index: number; input: string} | boolean | string | any>
+}
+
+type OSDetails = Details & {
+  versionName?: string
+}
+
+type PlatformDetails = {
+  type?: string
+  vendor?: string
+  model?: string
+}
+// END - DO NOT EXPORT
+
+type ShouldRenderButton = (parsedResult: ParsedResult) => boolean
+
+type RequestElementResult = {
+  update: (config: {requestData: RequestData; buttonCallbackUrl: string; qrOptions?: Partial<QROptions>}) => void
+  remove: () => void
 }
 
 // Response Types
@@ -125,4 +157,15 @@ type ResponseData = {
   token: string
 }
 
-export {Action, RequestData, ErrorCorrectionLevel, Options, IProof, IProofShare, IVerifiedData, ResponseData}
+export {
+  Action,
+  RequestData,
+  ErrorCorrectionLevel,
+  QROptions,
+  ShouldRenderButton,
+  RequestElementResult,
+  IProof,
+  IProofShare,
+  IVerifiedData,
+  ResponseData,
+}

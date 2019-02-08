@@ -1,5 +1,5 @@
 import React from 'react'
-import {RequestQRCode} from '../index'
+import {Base} from './Base'
 
 class Logo extends React.Component {
   state = {
@@ -16,7 +16,7 @@ class Logo extends React.Component {
         />
         <label>Hide center logo</label>
         <br />
-        <RequestQRCode requestData={this.props.requestData} hideLogo={this.state.hideLogo} />
+        <Base qrOptions={{...(props.qrOptions || {}), hideLogo: this.state.hideLogo}} {...props} />
       </div>
     )
   }

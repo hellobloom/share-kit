@@ -1,7 +1,7 @@
 import {configure} from '@storybook/react'
 
 function loadStories() {
-  require('./ShareQRCode')
+  require('./index')
 }
 
 configure(loadStories, module)

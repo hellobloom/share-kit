@@ -2,16 +2,17 @@
 
 # Share Kit
 
-Easily allow your users to share their verified personal information directly with your application by scanning a QR code.
+Easily allow your users to share their verified personal information directly with your application.
 
 - [Share Kit](#share-kit)
   - [Installation](#installation)
+  - [Implementations](#implementations)
   - [Request](#request)
     - [Usage](#usage)
-      - [React](#react)
-      - [Plain](#plain)
       - [RequestData](#requestdata)
-      - [Options](#options)
+        - [Appending to URL](#appending-to-url)
+      - [QROptions](#qr-options)
+      - [Button Callback URl](#button-callback-url)
   - [Response](#response)
     - [ResponseData](#responsedata)
     - [VerifiedData](#verifieddata)
@@ -24,11 +25,6 @@ Easily allow your users to share their verified personal information directly wi
     - [4. Retrieve dataHash and attestation ID from attestation in specified transaction](#4-retrieve-datahash-and-attestation-id-from-attestation-in-specified-transaction)
     - [5. Confirm attestation status](#5-confirm-attestation-status)
 - [Using Share-Kit for BloomID Sign-In](#using-share-kit-for-bloomid-sign-in)
-  - [1. Configure an endpoint to receive data](#1-configure-an-endpoint-to-receive-data)
-  - [2. Embed a QR code with a link to your endpoint and the verified data you would like to receive](#2-embed-a-qr-code-with-a-link-to-your-endpoint-and-the-verified-data-you-would-like-to-receive)
-  - [3. Add verification to the endpoint](#3-add-verification-to-the-endpoint)
-  - [4. Listen for a login over a websocket connection to the server](#4-listen-for-a-login-over-a-websocket-connection-to-the-server)
-  - [5. Authorize the user to log in to the account matching the verified email](#5-authorize-the-user-to-log-in-to-the-account-matching-the-verified-email)
 
 ## Installation
 
@@ -36,37 +32,38 @@ Easily allow your users to share their verified personal information directly wi
 npm install --save @bloomprotocol/share-kit
 ```
 
+## Implementations
+
+| Name                                                             | Description                            | Status             |
+| ---------------------------------------------------------------- | -------------------------------------- | ------------------ |
+| [share-kit](https://github.com/hellobloom/share-kit)             | Plain DOM implementation               | :white_check_mark: |
+| [share-kit-react](https://github.com/hellobloom/share-kit-react) | React wrapper for renderRequestElement | :construction:     |
+
 ## Request
 
 First you have to request data from the user.
 
 ### Usage
 
-#### React
+`renderRequestElement` will render a QR code or button based on the client's platform. By default it will render a button when the client is mobile or tablet and on iOS.
 
 ```typescript
-import * as React from 'react'
-import {RequestQRCode, RequestData} from '@bloomprotocol/share-kit'
-
-const MyComponent: React.SFC = props => {
-  const requestData: RequestData = {...}
-  return <RequestQRCode requestData={requestData} size={200} />
-}
-```
-
-#### Plain
-
-```typescript
-import {generateRequestQRCode} from '@bloomprotocol/share-kit'
+import {renderRequestElement, RequestData, QROptions} from '@bloomprotocol/share-kit'
 
 const requestData: RequestData = {...}
-const options = {
+const qrOptions: Partial<QROptions> = {
   size: 200,
 }
+const callbackUrl = 'https://mysite.com/bloom-callback'
+const container = document.createElement('div')
 
-const canvas = document.createElement('canvas')
+const {update, remove} = renderRequestElement({container, requestData, qrOptions, callbackUrl})
 
-generateRequestQRCode(canvas, requestData, options)
+// Update the element
+update({requestData: newRequestData, qrOptions: newQROptions, callbackUrl: newCallbackUrl})
+
+// Remove the element
+remove()
 ```
 
 <h3 id="request-types">Types</h3>
@@ -75,22 +72,46 @@ generateRequestQRCode(canvas, requestData, options)
 
 Data to be rendered into the RequestQRCode.
 
-| Name                   | Description                                                        | Type                                                                                   |
-| ---------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| action                 | Action type                                                        | `Action`                                                                               |
-| token                  | Unique string to identify this data request                        | `string`                                                                               |
-| url                    | The API endpoint to POST the `ResponseData` to                     | `string`                                                                               |
-| org_logo_url           | A url of the logo to display to the user when requesting data      | `string`                                                                               |
-| org_name               | The name of the organization requesting data                       | `string`                                                                               |
-| types                  | The type of attestions required and the amount needed              | [`(keyof typeof AttestationTypeID)[]`](https://github.com/hellobloom/attestations-lib) |
-| org_usage_policy_url   | The url of the usage policy for the organization requesting data   | `string`                                                                               |
-| org_privacy_policy_url | The url of the privacy policy for the organization requesting data | `string`                                                                               |
+| Name                   | Description                                                                                     | Type                                                                                   |
+| ---------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| action                 | Action type                                                                                     | `Action`                                                                               |
+| token                  | Unique string to identify this data request                                                     | `string`                                                                               |
+| url                    | The API endpoint to POST the `ResponseData` to.<br/> See [below](#appending-to-URL) for details | `string`                                                                               |
+| org_logo_url           | A url of the logo to display to the user when requesting data                                   | `string`                                                                               |
+| org_name               | The name of the organization requesting data                                                    | `string`                                                                               |
+| types                  | The type of attestions required and the amount needed                                           | [`(keyof typeof AttestationTypeID)[]`](https://github.com/hellobloom/attestations-lib) |
+| org_usage_policy_url   | The url of the usage policy for the organization requesting data                                | `string`                                                                               |
+| org_privacy_policy_url | The url of the privacy policy for the organization requesting data                              | `string`                                                                               |
+
+##### Appending to URL
+
+The user can share by tapping a button or scanning a QR code, sometimes you'll need to know the difference so the query param `share-kit-from` is appended to your url.
+
+The param will either be `share-kit-from=qr` OR `share-kit-from=button`.
+
+```
+// Input
+'https://receive-kit.bloom.co/api/receive'
+
+// Output
+'https://receive-kit.bloom.co/api/receive?share-kit-from=qr'
+```
+
+Works if your url already has a query param too!
+
+```
+// Input
+'https://receive-kit.bloom.co/api/receive?my-param=',
+
+// Output
+'https://receive-kit.bloom.co/api/receive?my-param=&share-kit-from=qr',
+```
 
 <h4 id="request-example">Example</h4>
 
 ```ts
 {
-  action: <Action>"request_attestation_data",
+  action: Action.attestation,
   token: '0x8f31e48a585fd12ba58e70e03292cac712cbae39bc7eb980ec189aa88e24d043',
   url: 'https://receive-kit.bloom.co/api/receive',
   org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
@@ -103,9 +124,13 @@ Data to be rendered into the RequestQRCode.
 
 ![Sample QR](https://github.com/hellobloom/share-kit/raw/master/images/sampleQR.png)
 
-#### Options
+![Sample Button](https://github.com/hellobloom/share-kit/raw/master/images/sampleButton.png)
 
-Display options for the RequestQRCode.
+#### QROptions
+
+Display options for the rendered QR code.
+
+_NOTE:_ Does not apply to the rendered button
 
 | Name      | Description                                      | Type      | Default    |
 | --------- | ------------------------------------------------ | --------- | ---------- |
@@ -114,6 +139,12 @@ Display options for the RequestQRCode.
 | fgColor   | The foreground color of the QR code.             | `string`  | `#6067f1`  |
 | logoImage | The `<img />` src to displayed over the QR code. | `string`  | Bloom logo |
 | hideLogo  | Whether the `logoImage` should be rendered.      | `boolean` | `false`    |
+
+#### Button Callback URL
+
+_NOTE:_ This is only used with the rendered button and not the QR code.
+
+The `buttonCallbackUrl` parameter will be used to send the user back to your app after they share their data.
 
 ## Response
 
@@ -262,7 +293,7 @@ The endpoint specified in the QR code should be configured to accept data in the
       const sortedData = parsedData.map(d => sortObject(d))
 
       // Verify off chain data integrity
-      if (!sortedData.every(d => shareKit.util.verifyOffChainDataIntegrity(d).length === 0)) {
+      if (!sortedData.every(d => shareKit.verifyOffChainDataIntegrity(d).length === 0)) {
         throw Error('Unable to verify the layer2Hash, attester address, and merkle proof with the provided data.')
       }
 
@@ -322,7 +353,7 @@ The recipient can perform several verifications to ensure the data and attestati
 Verify that the plaintext data belongs to the merkle tree with the specified rootHash.
 
 ```javascript
-import {verifyProof} from @bloomprotocol/share-kit
+import {verifyProof} from '@bloomprotocol/share-kit'
 const verified = responseData.data.every(data => {
   return verifyProof(data)
 })
@@ -375,76 +406,4 @@ Read the attestation status from attestation repo. Confirm the attestation exist
 
 # Using Share-Kit for BloomID Sign-In
 
-Integrate the Bloom Protocol Share-Kit into your application to allow users to sign into your website simply by scanning a QR code. No passwords required! The following steps will walk you through the basic configuration steps.
-
-### 1. Configure an endpoint to receive data
-
-We will add functionality to this endpoint later. For now just receive the data
-
-```typescript
-export default (app: express.Application) => {
-  // NOTE: This endpoint is public
-  app.post('/api/receiveData', async (req, res) => {
-    try {
-      console.log(`Received data for request token ${req.body.token}`)
-      const parsedData: IVerifiedData[] = req.body.data
-      parsedData.forEach(dataToVerify => {
-        console.log(`Attempting to verify ${JSON.stringify(dataToVerify)}`)
-        // Perform addition verifications on the data
-      })
-      return res.status(200).json({
-        success: true,
-        token: req.body.token,
-      })
-    } catch (error) {
-      console.log('Encountered an error while receiving data', {
-        error,
-      })
-      return renderError(req, res)(new ClientFacingError('Encountered an error while receiving data'))
-    }
-  })
-}
-```
-
-### 2. Embed a QR code with a link to your endpoint and the verified data you would like to receive
-
-```typescript
-const requestData = {
-  action: <Action>'... action type',
-  token: '... generate a unique id string for this request',
-  url: 'https://Acme.app/api/receiveData',
-  org_logo_url: 'https://.../logo.png',
-  org_name: 'Acme',
-  org_usage_policy_url: 'https://acme.co/legal/terms',
-  org_privacy_policy_url: 'https://acme.co/legal/privacy',
-  types: ['email'],
-}
-
-import * as React from 'react'
-import {RequestQRCode, RequestData} from '@bloomprotocol/share-kit'
-
-const MyComponent: React.SFC = props => {
-  return <RequestQRCode requestData={requestData} size={200} />
-}
-```
-
-### 3. Add verification to the endpoint
-
-Perform the Merkle Proof and confirm the Merkle root matches the dataHash from the attestaion event.
-
-```javascript
-import {verifyProof} from @bloomprotocol/share-kit
-const verified = responseData.data.every(data => {
-  return verifyProof(data)
-})
-
-if (verified) {
-  console.log('success')
-} else {
-  console.log('failed to verify merkle proof')
-}
-```
-
-### 4. Listen for a login over a websocket connection to the server
-
-### 5. Authorize the user to log in to the account matching the verified email
+Complete examples are available at [Bloom Starter](https://github.com/hellobloom/bloom-starter).

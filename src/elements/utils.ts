@@ -1,3 +1,14 @@
+const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+const generateId = () => {
+  let rand = ''
+  for (var i = 0; i < 4; i++) {
+    rand += possible.charAt(Math.floor(Math.random() * possible.length))
+  }
+
+  return 'bloom-request-element-' + rand
+}
+
 const logoWithColors = (config: {fgColor: string; bgColor: string}) =>
   `<svg width="25" height="25" viewBox="0 0 710 705" xmlns="http://www.w3.org/2000/svg">
     <rect x="0" y="0" width="710" height="705" fill="${config.bgColor}" />
@@ -47,20 +58,18 @@ const logoWithColors = (config: {fgColor: string; bgColor: string}) =>
     </g>
   </svg>`
 
-class BloomLogo {
-  static getLogo = (config?: {fgColor?: string; bgColor?: string}) => {
-    const defaultedConfig = Object.assign(
-      {
-        fgColor: '#6067f1',
-        bgColor: '#fff',
-      },
-      config || {}
-    )
-    defaultedConfig.fgColor = encodeURIComponent(defaultedConfig.fgColor)
-    defaultedConfig.bgColor = encodeURIComponent(defaultedConfig.bgColor)
+const getBloomLogo = (config?: {fgColor?: string; bgColor?: string}) => {
+  const defaultedConfig = Object.assign(
+    {
+      fgColor: '#6067f1',
+      bgColor: '#fff',
+    },
+    config || {}
+  )
+  defaultedConfig.fgColor = encodeURIComponent(defaultedConfig.fgColor)
+  defaultedConfig.bgColor = encodeURIComponent(defaultedConfig.bgColor)
 
-    return `data:image/svg+xml;utf8,${logoWithColors(defaultedConfig)}`
-  }
+  return `data:image/svg+xml;utf8,${logoWithColors(defaultedConfig)}`
 }
 
-export {BloomLogo}
+export {generateId, getBloomLogo}

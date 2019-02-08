@@ -1,9 +1,9 @@
-import {Options, RequestData, ErrorCorrectionLevel} from './types'
-import {BloomLogo} from './BloomLogo'
+import {generateId, getBloomLogo} from './utils'
+import {QROptions, RequestData, ErrorCorrectionLevel, RequestElementResult} from '../types'
 
 const QRCodeImpl = require('qr.js/lib/QRCode')
 
-const defaultOptions: Options = {
+const defaultOptions: QROptions = {
   hideLogo: false,
   ecLevel: 'L',
   size: 128,
@@ -60,11 +60,6 @@ enum CornerType {
   topRight,
   bottomRight,
   bottomLeft,
-}
-
-enum EyePart {
-  inner,
-  outer,
 }
 
 const makeCorner = (ctx: CanvasRenderingContext2D, info: CellInfo, type: CornerType, part: EyePart) => {
@@ -149,6 +144,11 @@ class ConnectionType {
   static readonly bottom = 1 << 4
 }
 
+enum EyePart {
+  inner,
+  outer,
+}
+
 const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionType: number, part: EyePart) => {
   const centerX = info.left + info.size / 2
   const centerY = info.top + info.size / 2
@@ -192,16 +192,17 @@ const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionTyp
   }
 }
 
-const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, options: Partial<Options>) => {
-  const defaultedOptions = {...defaultOptions, ...options}
+const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Partial<QROptions>) => {
+  const options = {...defaultOptions, ...qrOptions}
 
-  const {ecLevel, size, bgColor, fgColor, padding} = defaultedOptions
+  const {ecLevel, size, bgColor, fgColor, padding} = options
 
   const qr = new QRCodeImpl(-1, ErrorCorrectionLevel[ecLevel])
   qr.addData(JSON.stringify(data))
   qr.make()
 
   const ctx = canvas.getContext('2d')!
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   const scale = window.devicePixelRatio || 1
   const cells: [boolean[]] = qr.modules
@@ -274,7 +275,7 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
   // Otherwise display the provided logo
   if (!options.hideLogo) {
     const logoImage =
-      options.logoImage === undefined ? BloomLogo.getLogo({fgColor: fgColor, bgColor: bgColor}) : options.logoImage
+      options.logoImage === undefined ? getBloomLogo({fgColor: fgColor, bgColor: bgColor}) : options.logoImage
 
     const image = new Image()
     image.onload = () => {
@@ -296,8 +297,43 @@ const generateRequestQRCode = (canvas: HTMLCanvasElement, data: RequestData, opt
     }
     image.src = logoImage
   }
-
-  return canvas
 }
 
-export {generateRequestQRCode}
+const renderRequestQRCode = (config: {
+  container: HTMLElement
+  requestData: RequestData
+  qrOptions?: Partial<QROptions>
+}): RequestElementResult => {
+  const id = generateId()
+
+  const canvas = document.createElement('canvas')
+  canvas.id = id
+
+  drawCanvas(canvas, config.requestData, config.qrOptions)
+
+  config.container.append(canvas)
+
+  return {
+    update: updateRequestQRCode(id, config.container),
+    remove: removeRequestQRCode(id, config.container),
+  }
+}
+
+const updateRequestQRCode = (id: string, container: HTMLElement) => (config: {
+  requestData: RequestData
+  qrOptions?: Partial<QROptions>
+}) => {
+  const canvas = container.querySelector<HTMLCanvasElement>(`#${id}`)
+
+  if (!canvas) return
+
+  drawCanvas(canvas, config.requestData, config.qrOptions)
+}
+
+const removeRequestQRCode = (id: string, container: HTMLElement) => () => {
+  const canvas = container.querySelector(`#${id}`)
+
+  if (canvas) canvas.remove()
+}
+
+export {renderRequestQRCode}

@@ -1,12 +1,12 @@
 import React from 'react'
 
-import {RequestQRCode, Action} from '../index'
+import {Base} from './Base'
+import {Action} from '../index'
 
 class Updating extends React.Component {
   state = {counter: 0}
 
   getData = () => ({
-    counter: 0,
     action: Action.attestation,
     token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
     url: 'https://receive-kit.bloom.co/api/receive',
@@ -22,9 +22,7 @@ class Updating extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div>
-          <RequestQRCode requestData={this.getData()} />
-        </div>
+        <Base requestData={this.getData()} />
         <button onClick={this.handleUpdate}>Update RequestQRCode</button>
       </React.Fragment>
     )
