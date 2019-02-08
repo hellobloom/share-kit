@@ -25,11 +25,6 @@ Easily allow your users to share their verified personal information directly wi
     - [4. Retrieve dataHash and attestation ID from attestation in specified transaction](#4-retrieve-datahash-and-attestation-id-from-attestation-in-specified-transaction)
     - [5. Confirm attestation status](#5-confirm-attestation-status)
 - [Using Share-Kit for BloomID Sign-In](#using-share-kit-for-bloomid-sign-in)
-  - [1. Configure an endpoint to receive data](#1-configure-an-endpoint-to-receive-data)
-  - [2. Embed a QR code with a link to your endpoint and the verified data you would like to receive](#2-embed-a-qr-code-with-a-link-to-your-endpoint-and-the-verified-data-you-would-like-to-receive)
-  - [3. Add verification to the endpoint](#3-add-verification-to-the-endpoint)
-  - [4. Listen for a login over a websocket connection to the server](#4-listen-for-a-login-over-a-websocket-connection-to-the-server)
-  - [5. Authorize the user to log in to the account matching the verified email](#5-authorize-the-user-to-log-in-to-the-account-matching-the-verified-email)
 
 ## Installation
 
@@ -147,24 +142,9 @@ _NOTE:_ Does not apply to the rendered button
 
 #### Button Callback URL
 
-_NOTE:_ this is only used with the rendered button.
+_NOTE:_ This is only used with the rendered button and not the QR code.
 
-The `buttonCallbackUrl` parameter will be used to send the user back to your app after they share their data. The url will be appened with `?token={requestData.token}`
-
-Example:
-
-```typescript
-const requestData: RequestData = {
-  ...
-  token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf'
-}
-const buttonCallbackUrl = 'https://mysite.com/bloom-callback'
-const container = document.createElement('div')
-
-renderRequestElement({container, requestData, buttonCallbackUrl})
-```
-
-After sharing their data the user will be redirected to `https://mysite.com/bloom-callback?token=a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf`
+The `buttonCallbackUrl` parameter will be used to send the user back to your app after they share their data.
 
 ## Response
 
@@ -426,77 +406,4 @@ Read the attestation status from attestation repo. Confirm the attestation exist
 
 # Using Share-Kit for BloomID Sign-In
 
-Integrate the Bloom Protocol Share-Kit into your application to allow users to sign into your website simply by scanning a QR code. No passwords required! The following steps will walk you through the basic configuration steps.
-
-### 1. Configure an endpoint to receive data
-
-We will add functionality to this endpoint later. For now just receive the data
-
-```typescript
-import {IVerifiedData} from '@bloomprotocol/share-kit'
-
-export default (app: express.Application) => {
-  // NOTE: This endpoint is public
-  app.post('/api/receiveData', async (req, res) => {
-    try {
-      console.log(`Received data for request token ${req.body.token}`)
-      const parsedData: IVerifiedData[] = req.body.data
-      parsedData.forEach(dataToVerify => {
-        console.log(`Attempting to verify ${JSON.stringify(dataToVerify)}`)
-        // Perform addition verifications on the data
-      })
-      return res.status(200).json({
-        success: true,
-        token: req.body.token,
-      })
-    } catch (error) {
-      console.log('Encountered an error while receiving data', {
-        error,
-      })
-      return renderError(req, res)(new ClientFacingError('Encountered an error while receiving data'))
-    }
-  })
-}
-```
-
-### 2. Embed a QR code with a link to your endpoint and the verified data you would like to receive
-
-```typescript
-import * as React from 'react'
-import {renderRequestElement, RequestData, Action} from '@bloomprotocol/share-kit'
-
-const requestData: RequestData = {
-  action: Action.attestation,
-  token: '... generate a unique id string for this request',
-  url: 'https://Acme.app/api/receiveData',
-  org_logo_url: 'https://.../logo.png',
-  org_name: 'Acme',
-  org_usage_policy_url: 'https://acme.co/legal/terms',
-  org_privacy_policy_url: 'https://acme.co/legal/privacy',
-  types: ['email'],
-}
-
-const container = document.createElement('div')
-const {update, remove} = renderRequestElement({container, requestData, qrOptions: {size: 200}})
-```
-
-### 3. Add verification to the endpoint
-
-Perform the Merkle Proof and confirm the Merkle root matches the dataHash from the attestaion event.
-
-```javascript
-import {verifyProof} from '@bloomprotocol/share-kit'
-const verified = responseData.data.every(data => {
-  return verifyProof(data)
-})
-
-if (verified) {
-  console.log('success')
-} else {
-  console.log('failed to verify merkle proof')
-}
-```
-
-### 4. Listen for a login over a websocket connection to the server
-
-### 5. Authorize the user to log in to the account matching the verified email
+Complete examples are available at [Bloom Starter](https://github.com/hellobloom/bloom-starter).
