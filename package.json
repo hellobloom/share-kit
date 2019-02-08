@@ -33,7 +33,7 @@
     "common-tags": "^1.8.0",
     "lodash": "^4.17.11",
     "qr.js": "0.0.0",
-    "web3x-es": "^1.2.3"
+    "web3x": "^1.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

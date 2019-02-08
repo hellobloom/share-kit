@@ -1,5 +1,5 @@
-import {HttpProvider} from 'web3x-es/providers'
-import {Eth} from 'web3x-es/eth'
+import {HttpProvider} from 'web3x/providers'
+import {Eth} from 'web3x/eth'
 import AttestationLogicABI from './AttestationLogicABI'
 
 const abiDecoder = require('abi-decoder')
