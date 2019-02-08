@@ -9,7 +9,10 @@ jest.mock('./utils', () => {
 })
 
 describe('renderRequestButton', () => {
-  let requestButton: {update: (config: {requestData: RequestData}) => void; remove: () => void}
+  let requestButton: {
+    update: (config: {requestData: RequestData; buttonCallbackUrl: string}) => void
+    remove: () => void
+  }
   let container: HTMLDivElement
 
   beforeAll(() => {
@@ -44,11 +47,14 @@ describe('renderRequestButton', () => {
   test('renders a button', () => {
     expect(container.innerHTML).toMatchSnapshot()
 
-    const href = container.querySelector('a')!.href
+    const search = container.querySelector('a')!.href.replace('https://bloom.co/download', '')
+    const urlParams = new URLSearchParams(search)
 
-    const requestQuery = href.replace('https://bloom.co/download?request=', '')
+    const requestQuery = urlParams.get('request')!
+    const callbackUrlQuery = urlParams.get('callback-url')!
 
     expect(JSON.parse(window.atob(requestQuery))).toMatchSnapshot()
+    expect(callbackUrlQuery).toMatchSnapshot()
   })
 
   test('updates the button', () => {
@@ -63,13 +69,17 @@ describe('renderRequestButton', () => {
         org_privacy_policy_url: 'https://bloom.co/legal/privacy',
         types: ['phone', 'email'],
       },
+      buttonCallbackUrl: 'https://bloom.co/callback-url-2',
     })
 
-    const href = container.querySelector('a')!.href
+    const search = container.querySelector('a')!.href.replace('https://bloom.co/download', '')
+    const urlParams = new URLSearchParams(search)
 
-    const requestQuery = href.replace('https://bloom.co/download?request=', '')
+    const requestQuery = urlParams.get('request')!
+    const callbackUrlQuery = urlParams.get('callback-url')!
 
     expect(JSON.parse(window.atob(requestQuery))).toMatchSnapshot()
+    expect(callbackUrlQuery).toMatchSnapshot()
   })
 
   test('removes the button', () => {

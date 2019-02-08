@@ -174,7 +174,9 @@ const renderTextAndLogo = (id: string) => {
 }
 
 const getLink = (data: RequestData, callbackUrl: string) =>
-  `https://bloom.co/download?request=${window.btoa(JSON.stringify(data))}&callback-url=${callbackUrl}`
+  `https://bloom.co/download?request=${window.btoa(JSON.stringify(data))}&callback-url=${encodeURIComponent(
+    callbackUrl
+  )}`
 
 const renderRequestButton = (config: {
   container: HTMLElement
