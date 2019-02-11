@@ -1,3 +1,10 @@
+## 4.0.1
+
+**Improvements**:
+
+- Bump to web3x@3.0.0
+  - This removed
+
 ## 4.0.0
 
 **New Features**:
