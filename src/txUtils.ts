@@ -18,7 +18,7 @@ export type TDecodedLog = {
 
 export const getDecodedTxEventLogs = async (provider: string, txHash: string): Promise<TDecodedLog[]> => {
   const httpProvider = new HttpProvider(provider)
-  const ethClient = Eth.fromProvider(httpProvider)
+  const ethClient = new Eth(httpProvider)
   const txReceipt = await ethClient.getTransactionReceipt(txHash)
   if (!txReceipt) {
     throw Error(`Unable to retrieve transaction receipt for hash: '${txHash}'`)

@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/share-kit",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Easily allow your users to share their verified personal information directly with your application.",
@@ -33,7 +33,7 @@
     "common-tags": "^1.8.0",
     "lodash": "^4.17.11",
     "qr.js": "0.0.0",
-    "web3x": "^1.2.3"
+    "web3x": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
