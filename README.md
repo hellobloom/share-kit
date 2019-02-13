@@ -72,16 +72,43 @@ remove()
 
 Data to be rendered into the RequestQRCode.
 
-| Name                   | Description                                                                                     | Type                                                                                   |
-| ---------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| action                 | Action type                                                                                     | `Action`                                                                               |
-| token                  | Unique string to identify this data request                                                     | `string`                                                                               |
-| url                    | The API endpoint to POST the `ResponseData` to.<br/> See [below](#appending-to-URL) for details | `string`                                                                               |
-| org_logo_url           | A url of the logo to display to the user when requesting data                                   | `string`                                                                               |
-| org_name               | The name of the organization requesting data                                                    | `string`                                                                               |
-| types                  | The type of attestions required and the amount needed                                           | [`(keyof typeof AttestationTypeID)[]`](https://github.com/hellobloom/attestations-lib) |
-| org_usage_policy_url   | The url of the usage policy for the organization requesting data                                | `string`                                                                               |
-| org_privacy_policy_url | The url of the privacy policy for the organization requesting data                              | `string`                                                                               |
+| Name                   | Description                                                                                     | Type                                              |
+| ---------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| action                 | Action type                                                                                     | `Action`                                          |
+| token                  | Unique string to identify this data request                                                     | `string`                                          |
+| url                    | The API endpoint to POST the `ResponseData` to.<br/> See [below](#appending-to-URL) for details | `string`                                          |
+| org_logo_url           | A url of the logo to display to the user when requesting data                                   | `string`                                          |
+| org_name               | The name of the organization requesting data                                                    | `string`                                          |
+| types                  | The type of attestions required and the amount needed                                           | [`TAttestationTypeNames`](#TAttestationTypeNames) |
+| org_usage_policy_url   | The url of the usage policy for the organization requesting data                                | `string`                                          |
+| org_privacy_policy_url | The url of the privacy policy for the organization requesting data                              | `string`                                          |
+
+#### TAttestationTypeNames
+
+| Type              | Description                       | Source     | Platforms |
+| ----------------- | --------------------------------- | ---------- | --------- |
+| 'phone'           | SMS verification                  | Twilio     | iOS, Web  |
+| 'email'           | Email verification                | Mailgun    | iOS, Web  |
+| 'facebook'        | Facebook verification             | Facebook   | iOS, Web  |
+| 'google'          | Google verification               | Google     | iOS, Web  |
+| 'linkedin'        | LinkedIn verification             | LinkedIn   | iOS, Web  |
+| 'twitter'         | Twitter verification              | Twitter    | iOS, Web  |
+| 'id-document'     | Identity document verification    | Acuant     | Web       |
+| 'sanction-screen' | Sanction person screening         | BlockScore | iOS, Web  |
+| 'pep-screen'      | Politically exposed person screen | KYC2020    | iOS, Web  |
+| 'income'          | Income verification               | Quovo      | Web       |
+| 'assets'          | Assets verification               | Quovo      | Web       |
+
+##### TAttestationTypeNames Subtypes
+
+| Type           | Description                                                                                       | Platforms |
+| -------------- | ------------------------------------------------------------------------------------------------- | --------- |
+| 'full-name'    | Subtype of 'facebook', 'linkedin', 'sanction-screen', 'pep-screen', and 'id-document' attestation | iOS, Web  |
+| 'birth-date'   | Subtype of 'sanction-screen', 'pep-screen', and 'id-document' attestations                        | iOS, Web  |
+| 'gender'       | Subtype of 'id-document' attestation                                                              | Web       |
+| 'supplemental' | Subtype of 'income' and 'assets' attestations                                                     | Web       |
+
+For more information, see the [full list of attestation types](https://github.com/hellobloom/attestations-lib/blob/8192e222f66c9c9ec8a57f6e0e135f21acf4677b/src/AttestationTypes.ts#L8) that are implemented / planned to be implemented.
 
 ##### Appending to URL
 
