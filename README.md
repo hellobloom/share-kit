@@ -37,7 +37,7 @@ npm install --save @bloomprotocol/share-kit
 | Name                                                             | Description                            | Status             |
 | ---------------------------------------------------------------- | -------------------------------------- | ------------------ |
 | [share-kit](https://github.com/hellobloom/share-kit)             | Plain DOM implementation               | :white_check_mark: |
-| [share-kit-react](https://github.com/hellobloom/share-kit-react) | React wrapper for renderRequestElement | :construction:     |
+| [share-kit-react](https://github.com/hellobloom/share-kit-react) | React wrapper for renderRequestElement | :white_check_mark: |
 
 ## Request
 
