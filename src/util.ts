@@ -339,38 +339,20 @@ export const validateUntypedResponseData = async (
 
   const errors: TVerificationError[] = []
 
-  if (isNullOrWhiteSpace(responseData.token)) {
-    errors.push({
-      key: 'ResponseData.token',
-      error: "Request body requires a non-whitespace 'token' property of type string.",
-    })
-  }
-
-  if (isNullOrWhiteSpace(responseData.subject)) {
-    errors.push({
-      key: 'ResponseData.subject',
-      error: "Request body requires a non-whitespace 'subject' property of type string.",
-    })
-  }
+  let fields: Array<keyof ResponseData> = ['token', 'subject', 'packedData', 'signature']
+  fields.forEach((x: keyof ResponseData) => {
+    if (isNullOrWhiteSpace(responseData[x])) {
+      errors.push({
+        key: `ResponseData.${x}`,
+        error: `Request body requires a non-whitespace '${x}' property of type string.`,
+      })
+    }
+  })
 
   if (!(responseData.data instanceof Array) || !responseData.data.length) {
     errors.push({
       key: 'ResponseData.data',
       error: "Request body requires a non-empty 'data' property of type Array.",
-    })
-  }
-
-  if (isNullOrWhiteSpace(responseData.packedData)) {
-    errors.push({
-      key: 'ResponseData.packedData',
-      error: "Request body requires a non-whitespace 'packedData' property of type string.",
-    })
-  }
-
-  if (isNullOrWhiteSpace(responseData.signature)) {
-    errors.push({
-      key: 'ResponseData.signature',
-      error: "Request body requires a non-whitespace 'signature' property of type string.",
     })
   }
 
