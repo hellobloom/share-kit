@@ -271,7 +271,15 @@ export const validateResponseData = async (
   options: IValidateResponseDataOptions
 ): Promise<IValidateResponseDataOutput> => {
   if (options.validateOnChain && isNullOrWhiteSpace(options.web3Provider)) {
-    throw new Error('Unable to `validateOnChain` without a `web3Provider`.')
+    return {
+      data: [],
+      errors: [
+        {
+          key: 'invalidOptions',
+          error: 'Unable to `validateOnChain` without a `web3Provider`.',
+        },
+      ],
+    }
   }
 
   const errors: TVerificationError[] = []
@@ -316,4 +324,41 @@ export const validateResponseData = async (
     errors: errors,
     data: consumableData,
   }
+}
+
+export const validateUntypedResponseData = async (
+  responseData: any,
+  options: IValidateResponseDataOptions
+): Promise<IValidateResponseDataOutput> => {
+  if (!responseData) {
+    return {
+      errors: [{key: 'missingResponseData', error: 'Failed to validate falsey responseData'}],
+      data: [],
+    }
+  }
+
+  const errors: TVerificationError[] = []
+  const fields: Array<keyof ResponseData> = ['token', 'subject', 'packedData', 'signature']
+  fields.forEach((x: keyof ResponseData) => {
+    if (isNullOrWhiteSpace(responseData[x])) {
+      errors.push({
+        key: `ResponseData.${x}`,
+        error: `Request body requires a non-whitespace '${x}' property of type string.`,
+      })
+    }
+  })
+
+  if (!(responseData.data instanceof Array) || !responseData.data.length) {
+    errors.push({
+      key: 'ResponseData.data',
+      error: "Request body requires a non-empty 'data' property of type Array.",
+    })
+  }
+
+  if (errors.length > 0) {
+    return {errors, data: []}
+  }
+
+  const typedResponseData: ResponseData = responseData
+  return await validateResponseData(typedResponseData, options)
 }
