@@ -271,7 +271,15 @@ export const validateResponseData = async (
   options: IValidateResponseDataOptions
 ): Promise<IValidateResponseDataOutput> => {
   if (options.validateOnChain && isNullOrWhiteSpace(options.web3Provider)) {
-    throw new Error('Unable to `validateOnChain` without a `web3Provider`.')
+    return {
+      data: [],
+      errors: [
+        {
+          key: 'invalidOptions',
+          error: 'Unable to `validateOnChain` without a `web3Provider`.',
+        },
+      ],
+    }
   }
 
   const errors: TVerificationError[] = []
@@ -316,4 +324,60 @@ export const validateResponseData = async (
     errors: errors,
     data: consumableData,
   }
+}
+
+export const validateUntypedResponseData = async (
+  responseData: any,
+  options: IValidateResponseDataOptions
+): Promise<IValidateResponseDataOutput> => {
+  if (!responseData) {
+    return {
+      errors: [{key: 'missingResponseData', error: 'Failed to validate falsey responseData'}],
+      data: [],
+    }
+  }
+
+  const errors: TVerificationError[] = []
+
+  if (isNullOrWhiteSpace(responseData.token)) {
+    errors.push({
+      key: 'ResponseData.token',
+      error: "Request body requires a non-whitespace 'token' property of type string.",
+    })
+  }
+
+  if (isNullOrWhiteSpace(responseData.subject)) {
+    errors.push({
+      key: 'ResponseData.subject',
+      error: "Request body requires a non-whitespace 'subject' property of type string.",
+    })
+  }
+
+  if (!(responseData.data instanceof Array) || !responseData.data.length) {
+    errors.push({
+      key: 'ResponseData.data',
+      error: "Request body requires a non-empty 'data' property of type Array.",
+    })
+  }
+
+  if (isNullOrWhiteSpace(responseData.packedData)) {
+    errors.push({
+      key: 'ResponseData.packedData',
+      error: "Request body requires a non-whitespace 'packedData' property of type string.",
+    })
+  }
+
+  if (isNullOrWhiteSpace(responseData.signature)) {
+    errors.push({
+      key: 'ResponseData.signature',
+      error: "Request body requires a non-whitespace 'signature' property of type string.",
+    })
+  }
+
+  if (errors.length > 0) {
+    return {errors, data: []}
+  }
+
+  const typedResponseData: ResponseData = responseData
+  return await validateResponseData(typedResponseData, options)
 }

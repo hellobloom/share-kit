@@ -75,3 +75,41 @@ test('Verifying layer2Hash, attester address, and merkle proof', () => {
 
   expect(util.verifyOffChainDataIntegrity(emailShareData)).toHaveLength(0)
 })
+
+test('Verify ResponseData that is structured incorrectly does not validate.', async () => {
+  const options: util.IValidateResponseDataOptions = {validateOnChain: false}
+
+  const undefinedResponseData = await util.validateUntypedResponseData(undefined, options)
+  expect(undefinedResponseData.data).toHaveLength(0)
+  expect(undefinedResponseData.errors).toHaveLength(1)
+  expect(undefinedResponseData.errors.map(x => x.key)).toContain('missingResponseData')
+
+  const nullResponseData = await util.validateUntypedResponseData(null, options)
+  expect(nullResponseData.data).toHaveLength(0)
+  expect(nullResponseData.errors).toHaveLength(1)
+  expect(nullResponseData.errors.map(x => x.key)).toContain('missingResponseData')
+
+  const emptyObject = await util.validateUntypedResponseData({}, options)
+  expect(emptyObject.data).toHaveLength(0)
+  expect(emptyObject.errors).toHaveLength(5)
+  expect(emptyObject.errors.map(x => x.key)).toContain('ResponseData.token')
+  expect(emptyObject.errors.map(x => x.key)).toContain('ResponseData.subject')
+  expect(emptyObject.errors.map(x => x.key)).toContain('ResponseData.data')
+  expect(emptyObject.errors.map(x => x.key)).toContain('ResponseData.packedData')
+  expect(emptyObject.errors.map(x => x.key)).toContain('ResponseData.signature')
+
+  const badOptions = {validateOnChain: true}
+  const badOptionsValidate = await util.validateUntypedResponseData(
+    {
+      token: 'fake',
+      subject: '0x0',
+      data: [{}],
+      packedData: '0x0',
+      signature: '0x0',
+    },
+    badOptions
+  )
+  expect(badOptionsValidate.data).toHaveLength(0)
+  expect(badOptionsValidate.errors).toHaveLength(1)
+  expect(badOptionsValidate.errors.map(x => x.key)).toContain('invalidOptions')
+})
