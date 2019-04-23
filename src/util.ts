@@ -338,8 +338,7 @@ export const validateUntypedResponseData = async (
   }
 
   const errors: TVerificationError[] = []
-
-  let fields: Array<keyof ResponseData> = ['token', 'subject', 'packedData', 'signature']
+  const fields: Array<keyof ResponseData> = ['token', 'subject', 'packedData', 'signature']
   fields.forEach((x: keyof ResponseData) => {
     if (isNullOrWhiteSpace(responseData[x])) {
       errors.push({
