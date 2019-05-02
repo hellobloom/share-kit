@@ -1,17 +1,17 @@
 import {
-  IProofShare,
   TVerifiedData,
-  IProof,
-  TResponseData,
   DataVersions,
   IVerifiedDataLegacy,
   IVerifiedDataOnChain,
   IVerifiableCredential,
   IPresentationProof,
+  IVerifiablePresentation,
+  IMerkleProofNode,
+  IMerkleProofShare,
 } from './types'
-import {HashingLogic, TAttestationTypeNames, Validation} from '@bloomprotocol/attestations-lib'
+import {validateVerifiablePresentation} from './Validation'
+import {HashingLogic} from '@bloomprotocol/attestations-lib'
 import _ from 'lodash'
-import {keccak256} from 'js-sha3'
 import {TDecodedLog, getDecodedTxEventLogs, getDecodedLogValueByName} from './txUtils'
 
 export const stripHexPrefix = (hexStr: string): string => {
@@ -43,16 +43,7 @@ export function sortObject<T>(object: any): T {
   return sortedObj as T
 }
 
-export const formatProofForVerify = (proof: IProofShare[]): IProof[] => {
-  return proof.map(node => {
-    return {
-      position: node.position,
-      data: toBuffer(node.data),
-    }
-  })
-}
-
-export const formatProofForShare = (proof: IProof[]): IProofShare[] => {
+export const formatMerkleProofForShare = (proof: IMerkleProofNode[]): IMerkleProofShare[] => {
   return proof.map(node => {
     return {
       position: node.position,
@@ -66,145 +57,10 @@ export type TVerificationError = {
   error: string
 }
 
-export const verifyProof = (data: TVerifiedData): boolean => {
-  const proof = formatProofForVerify(data.proof)
-  const targetNode = toBuffer(HashingLogic.hashMessage(data.target.signedAttestation))
-  const root = toBuffer(data.rootHash)
-
-  return HashingLogic.verifyMerkleProof(proof, targetNode, root)
-}
-
-/**
- * Given an `IverifiedData` object this function will verify off chain data properties such as
- * - Verifies that when hashing the rootHash and rootHash nonce the layer2Hash that's recovered
- * matches what was provided
- * - Confirms that the attester addresses provided matches the recovered address when recovering
- * via `ecrecover` using the attestationNode and signature provided
- * - Verifies the merkle proof using the root hash and target node (signed attestation)
- *
- * @param data Object of type `IverifiedData` declared in `types.ts`
- * @return If all verifications succeed an empty array is returned, otherwise any verification
- * issues are reported back as an array of `TVerificationError` objects.
- */
-export const verifyOffChainDataIntegrity = (data: TVerifiedData): TVerificationError[] => {
-  const errors: TVerificationError[] = []
-  // confirm root hash becomes layer 2 hash - hash(rootHash, rootHashnonce)
-  const recoveredLayer2Hash = HashingLogic.hashMessage(
-    HashingLogic.orderedStringify({
-      rootHash: data.rootHash,
-      nonce: data.rootHashNonce,
-    })
-  )
-  if (data.layer2Hash !== recoveredLayer2Hash) {
-    errors.push({
-      key: 'layer2Hash',
-      error:
-        "The provided 'layer2Hash' doesn't match the value" +
-        " recovered for the given 'rootHash' and 'rootHashNonce'.",
-    })
-  }
-
-  // verify merkle proof
-  if (!verifyProof(data)) {
-    errors.push({
-      key: 'proof',
-      error: "The provided 'proof' is invalid for the given 'signedAttestation' and 'rootHash'.",
-    })
-  }
-
-  switch (data.version) {
-    case DataVersions.legacy:
-      console.log(data)
-      // confirm attester signature of target node
-      const legacyAttester = HashingLogic.recoverHashSigner(
-        HashingLogic.hashAttestationNode(data.target.attestationNode),
-        data.target.signedAttestation
-      )
-      if (data.attester !== legacyAttester) {
-        errors.push({
-          key: 'attester',
-          error:
-            "The provided 'attester' doesn't match the value" +
-            " recovered for the target 'attestationNode' and 'signedAttestation'.",
-        })
-      }
-      break
-    case DataVersions.onChain:
-    case DataVersions.batch:
-      // confirm attester signature of target node
-      const recoveredAttesterAddress = HashingLogic.recoverHashSigner(
-        HashingLogic.hashClaimTree(data.target.claimNode),
-        data.target.attesterSig
-      )
-      if (data.attester !== recoveredAttesterAddress) {
-        errors.push({
-          key: 'attester',
-          error:
-            "The provided 'attester' doesn't match the value" +
-            " recovered for the target 'attestationNode' and 'signedAttestation'.",
-        })
-      }
-      break
-  }
-
-  return errors
-}
-
-export const verifySender = (responseData: TResponseData): TVerificationError[] => {
-  const errors: TVerificationError[] = []
-  const signerEthAddress = HashingLogic.recoverHashSigner(toBuffer(responseData.packedData), responseData.signature)
-  // Here is where chained authorizations would be checked if present
-  if (responseData.subject !== signerEthAddress) {
-    errors.push({
-      key: 'subject',
-      error:
-        "The recovered subject address based on the 'packedData' and 'signature'" +
-        ' does not match the one that was shared.' +
-        `\nShared subject address: '${responseData.subject}'` +
-        `\nRecovered subject address: '${signerEthAddress}'`,
-    })
-  }
-  return errors
-}
-
-export const verifyPackedData = (responseData: TResponseData): TVerificationError[] => {
-  const errors: TVerificationError[] = []
-  const recoveredPackedData =
-    '0x' +
-    keccak256(
-      JSON.stringify({
-        data: responseData.data,
-        token: responseData.token,
-      })
-    )
-  if (responseData.packedData !== recoveredPackedData) {
-    errors.push({
-      key: 'packedData',
-      error:
-        "The recovered packed data hash computed by running 'keccak256' on an object" +
-        " containing the shared 'data' and 'token' does not match the 'packedData'" +
-        ' that was shared.' +
-        `\nShared packed data: '${responseData.packedData}'` +
-        `\nRecovered packed data: '${recoveredPackedData}'`,
-    })
-  }
-  return errors
-}
-
-export interface IDecodedDataAndLogs {
-  shareData: IVerifiedDataLegacy | IVerifiedDataOnChain
-  logs: TDecodedLog[]
-}
-
-export interface IValidatedPayloadData {
-  data: IVerifiedData
-  errors: TVerificationError[]
-  logs?: TDecodedLog[]
-}
-
 export interface IValidateResponseDataOutput {
   errors: TVerificationError[]
-  data: IConsumableData[]
+  data: IVerifiablePresentation
+  logs: TDecodedLog[]
 }
 
 export interface IValidateResponseDataOptions {
@@ -218,7 +74,7 @@ export interface IRetrieveTxDataOutput {
 }
 
 export const retreiveTxData = async (
-  payloadData: TVerifiedData,
+  payloadData: IVerifiedDataLegacy | IVerifiedDataOnChain,
   web3Provider: string
 ): Promise<IRetrieveTxDataOutput> => {
   const txHash = payloadData.tx
@@ -290,101 +146,66 @@ const validateOnChainProperties = (
   return errors
 }
 
-export const validateResponseData = async (
-  responseData: ResponseData,
-  options: IValidateResponseDataOptions
-): Promise<IValidateResponseDataOutput> => {
-  if (options.validateOnChain && isNullOrWhiteSpace(options.web3Provider)) {
-    return {
-      data: [],
-      errors: [
-        {
-          key: 'invalidOptions',
-          error: 'Unable to `validateOnChain` without a `web3Provider`.',
-        },
-      ],
-    }
-  }
-
-  const errors: TVerificationError[] = []
-
-  // Sort payload to ensure it was properly formatted
-  const shareKitPayload: ResponseData = sortObject(responseData)
-  shareKitPayload.data = shareKitPayload.data.map(d => sortObject(d))
-
-  // Validate the integrity of basic off-chain properties (subject, packedData)
-  errors.push(...verifySender(shareKitPayload))
-  errors.push(...verifyPackedData(shareKitPayload))
-
-  const consumableData: IConsumableData[] = []
-
-  await Promise.all(
-    shareKitPayload.data.map(async d => {
-      // Verify the off-chain data integrity of each data node
-      let dTemp: IConsumableData = {
-        data: d.target.attestationNode.data.data,
-        type: d.target.attestationNode.type.type,
-        version: d.target.attestationNode.data.version,
-      }
-      if (options.validateOnChain) {
-        // Verify the on-chain data integrity
-        try {
-          const retreiveTxDataOutput = await retreiveTxData(d, options.web3Provider!)
-          errors.push(...retreiveTxDataOutput.errors)
-          dTemp.logs = retreiveTxDataOutput.logs
-          errors.push(...validateOnChainProperties(responseData.subject, d, dTemp.logs))
-        } catch (err) {
-          errors.push({
-            key: 'onChainValidationFailed',
-            error: `Failed to validate on chain data integrity for node with hash ${d.layer2Hash}`,
-          })
-        }
-      }
-      consumableData.push(dTemp)
-    })
-  )
-
-  return {
-    errors: errors,
-    data: consumableData,
-  }
-}
-
 export const validateUntypedResponseData = async (
   responseData: any,
   options: IValidateResponseDataOptions
-): Promise<IValidateResponseDataOutput> => {
+): Promise<
+  | {kind: 'invalid'; errors: TVerificationError[]}
+  | {kind: 'validated'; data: IVerifiablePresentation; logs: TDecodedLog[]}
+> => {
   if (!responseData) {
     return {
+      kind: 'invalid',
       errors: [{key: 'missingResponseData', error: 'Failed to validate falsey responseData'}],
-      data: [],
     }
   }
 
   const errors: TVerificationError[] = []
-  const fields: Array<keyof ResponseData> = ['token', 'subject', 'packedData', 'signature']
-  fields.forEach((x: keyof ResponseData) => {
-    if (isNullOrWhiteSpace(responseData[x])) {
-      errors.push({
-        key: `ResponseData.${x}`,
-        error: `Request body requires a non-whitespace '${x}' property of type string.`,
-      })
-    }
-  })
-
-  if (!(responseData.data instanceof Array) || !responseData.data.length) {
-    errors.push({
-      key: 'ResponseData.data',
-      error: "Request body requires a non-empty 'data' property of type Array.",
-    })
+  const outcome = validateVerifiablePresentation(responseData)
+  if (outcome.kind === 'invalid_param') {
+    errors.push({key: outcome.kind, error: outcome.message})
   }
 
   if (errors.length > 0) {
-    return {errors, data: []}
+    return {kind: 'invalid', errors: errors}
   }
 
-  const typedResponseData: ResponseData = responseData
-  return await validateResponseData(typedResponseData, options)
+  const typedResponseData: IVerifiablePresentation = responseData
+  const logs: TDecodedLog[] = []
+  if (options.validateOnChain) {
+    await Promise.all(
+      typedResponseData.verifiableCredential.map(async d => {
+        // Verify the on-chain data integrity
+        switch (d.proof.data.version) {
+          case DataVersions.legacy:
+          case DataVersions.onChain:
+            try {
+              const retreiveTxDataOutput = await retreiveTxData(d.proof.data, options.web3Provider!)
+              errors.push(...retreiveTxDataOutput.errors)
+              logs.push(...retreiveTxDataOutput.logs)
+              errors.push(
+                ...validateOnChainProperties(d.credentialSubject.subject, d.proof.data, retreiveTxDataOutput.logs)
+              )
+            } catch (err) {
+              errors.push({
+                key: 'onChainValidationFailed',
+                error: `Failed to validate on chain data integrity for node with hash ${d.proof.data.layer2Hash}`,
+              })
+            }
+            break
+          case DataVersions.batch:
+            break
+          default:
+            break
+        }
+      })
+    )
+  }
+  return {
+    kind: 'validated',
+    data: typedResponseData,
+    logs: logs,
+  }
 }
 
 export const getPresentationProof = (

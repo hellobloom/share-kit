@@ -1,15 +1,16 @@
 import * as EthU from 'ethereumjs-util'
 import {genValidateFn, TUnvalidated} from './validator'
-const ethSigUtil = require('eth-sig-util')
-import {Validation as HashingValidation, HashingLogic, Validation} from '@bloomprotocol/attestations-lib'
+import {Validation as HashingValidation, HashingLogic} from '@bloomprotocol/attestations-lib'
 import {
   DataVersions,
   IVerifiableCredential,
   ICredentialProof,
   IPresentationProof,
   IVerifiablePresentation,
+  IMerkleProofShare,
+  IMerkleProofNode,
+  TVerifiedData,
 } from './types'
-import {getPresentationProof} from './util'
 
 export const isValidPositionString = (value: any): boolean => {
   return ['left', 'right'].indexOf(value) > -1
@@ -75,24 +76,6 @@ export const validateVerifiedDataBatch = genValidateFn([
   ['subject', EthU.isValidAddress, false],
 ])
 
-export const isValidArrayOfLegacyData = (value: any): boolean => {
-  if (!Array.isArray(value)) return false
-  if (value.length === 0) return false
-  return value.every(v => validateVerifiedDataLegacy(v).kind === 'validated')
-}
-
-export const isValidArrayOfOnChainData = (value: any): boolean => {
-  if (!Array.isArray(value)) return false
-  if (value.length === 0) return false
-  return value.every(v => validateVerifiedDataOnChain(v).kind === 'validated')
-}
-
-export const isValidArrayOfBatchData = (value: any): boolean => {
-  if (!Array.isArray(value)) return false
-  if (value.length === 0) return false
-  return value.every(v => validateVerifiedDataBatch(v).kind === 'validated')
-}
-
 export const isValidVerifiedData = (value: any): boolean => {
   if (validateVerifiedDataLegacy(value).kind === 'validated') return true
   if (validateVerifiedDataOnChain(value).kind === 'validated') return true
@@ -102,7 +85,36 @@ export const isValidVerifiedData = (value: any): boolean => {
 
 export const isOptionalArrayOfAuthorizations = (value: any): boolean => {
   if (!Array.isArray(value)) return false
+  return true
   // TODO add authorization validation
+}
+
+export const formatMerkleProofForVerify = (proof: IMerkleProofShare[]): IMerkleProofNode[] => {
+  return proof.map(node => {
+    return {
+      position: node.position,
+      data: EthU.toBuffer(node.data),
+    }
+  })
+}
+
+export const verifyCredentialMerkleProof = (value: TVerifiedData): boolean => {
+  const proof = formatMerkleProofForVerify(value.proof)
+  let targetNode: Buffer
+  switch (value.version) {
+    case DataVersions.legacy:
+      targetNode = EthU.toBuffer(HashingLogic.hashMessage(value.target.signedAttestation))
+      break
+    case DataVersions.onChain:
+    case DataVersions.batch:
+      targetNode = EthU.toBuffer(HashingLogic.hashMessage(value.target.attesterSig))
+      break
+    default:
+      return false
+  }
+  const root = EthU.toBuffer(value.rootHash)
+
+  return HashingLogic.verifyMerkleProof(proof, targetNode, root)
 }
 
 export const validateCredentialProof = genValidateFn([
@@ -110,6 +122,7 @@ export const validateCredentialProof = genValidateFn([
   ['created', HashingValidation.isValidRFC3339DateTime, false],
   ['creator', EthU.isValidAddress, false],
   ['data', isValidVerifiedData, false],
+  ['data', verifyCredentialMerkleProof, false],
 ])
 
 export const isValidCredentialProof = (value: any): boolean => validateCredentialProof(value).kind === 'validated'

@@ -70,14 +70,12 @@ type RequestElementResult = {
   remove: () => void
 }
 
-// Response Types
-
 /**
  * Based on IProof from `merkletreejs`, but the data property is a string
  * which should contain the hex string representation of a Buffer for
  * compatibility when serializing / deserializing.
  */
-interface IProofShare {
+interface IMerkleProofShare {
   position: 'left' | 'right'
   data: string
 }
@@ -119,7 +117,7 @@ interface IVerifiedDataLegacy {
   /**
    * Merkle tree leaf proof
    */
-  proof: IProofShare[]
+  proof: IMerkleProofShare[]
 
   /**
    * The Ethereum network name on which the tx can be found
@@ -164,7 +162,7 @@ interface IVerifiedDataOnChain {
   /**
    * Merkle tree leaf proof
    */
-  proof: IProofShare[]
+  proof: IMerkleProofShare[]
 
   /**
    * The Ethereum network name on which the tx can be found
@@ -223,7 +221,7 @@ interface IVerifiedDataBatch {
   /**
    * Merkle tree leaf proof
    */
-  proof: IProofShare[]
+  proof: IMerkleProofShare[]
 
   /**
    * The Ethereum network name on which the tx can be found
@@ -334,8 +332,8 @@ export {
   QROptions,
   ShouldRenderButton,
   RequestElementResult,
-  IProof,
-  IProofShare,
+  IProof as IMerkleProofNode,
+  IMerkleProofShare,
   IVerifiedDataLegacy,
   IVerifiedDataOnChain,
   IVerifiedDataBatch,

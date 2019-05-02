@@ -1,5 +1,5 @@
 import * as util from './util'
-import {IVerifiedDataLegacy, IVerifiedDataBatch} from './types'
+import {IVerifiedDataLegacy, IVerifiedDataBatch, DataVersions} from './types'
 import {HashingLogic} from '@bloomprotocol/attestations-lib'
 import {
   IBloomMerkleTreeComponents,
@@ -130,8 +130,9 @@ test('Verifying layer2Hash, attester address, and merkle proof', () => {
   // tslint:disable:max-line-length
   const signedAttestationHash = HashingLogic.hashMessage(validMerkleTreeComponentsLegacy.dataNodes[0].signedAttestation)
   const merkleTree = HashingLogic.getMerkleTreeFromComponentsLegacy(validMerkleTreeComponentsLegacy)
-  const proof = util.formatProofForShare(merkleTree.getProof(util.toBuffer(signedAttestationHash)))
+  const proof = util.formatMerkleProofForShare(merkleTree.getProof(util.toBuffer(signedAttestationHash)))
   const emailShareData: IVerifiedDataLegacy = {
+    version: DataVersions.legacy,
     tx: '0xf1d6b6b64e63737a4ef023fadc57e16793cfae5d931a3c301d14e375e54fabf6',
     layer2Hash: validMerkleTreeComponentsLegacy.layer2Hash,
     rootHash: validMerkleTreeComponentsLegacy.rootHash,
@@ -150,6 +151,7 @@ test('Verifying layer2Hash, attester address, and merkle proof', () => {
   const merkleTree = HashingLogic.getMerkleTreeFromComponents(validBatchMerkleTreeComponents)
   const proof = util.formatProofForShare(merkleTree.getProof(util.toBuffer(signedAttestationHash)))
   const twitterShareData: IVerifiedDataBatch = {
+    version: DataVersions.batch,
     batchLayer2Hash: validBatchMerkleTreeComponents.batchLayer2Hash,
     batchAttesterSig: validBatchMerkleTreeComponents.batchAttesterSig,
     subjectSig: validBatchMerkleTreeComponents.subjectSig,
