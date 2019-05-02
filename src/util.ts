@@ -1,5 +1,15 @@
-import {IProofShare, IVerifiedData, IProof, ResponseData} from './types'
-import {HashingLogic, TAttestationTypeNames} from '@bloomprotocol/attestations-lib'
+import {
+  IProofShare,
+  TVerifiedData,
+  IProof,
+  TResponseData,
+  DataVersions,
+  IVerifiedDataLegacy,
+  IVerifiedDataOnChain,
+  IVerifiableCredential,
+  IPresentationProof,
+} from './types'
+import {HashingLogic, TAttestationTypeNames, Validation} from '@bloomprotocol/attestations-lib'
 import _ from 'lodash'
 import {keccak256} from 'js-sha3'
 import {TDecodedLog, getDecodedTxEventLogs, getDecodedLogValueByName} from './txUtils'
@@ -56,7 +66,7 @@ export type TVerificationError = {
   error: string
 }
 
-export const verifyProof = (data: IVerifiedData): boolean => {
+export const verifyProof = (data: TVerifiedData): boolean => {
   const proof = formatProofForVerify(data.proof)
   const targetNode = toBuffer(HashingLogic.hashMessage(data.target.signedAttestation))
   const root = toBuffer(data.rootHash)
@@ -76,7 +86,7 @@ export const verifyProof = (data: IVerifiedData): boolean => {
  * @return If all verifications succeed an empty array is returned, otherwise any verification
  * issues are reported back as an array of `TVerificationError` objects.
  */
-export const verifyOffChainDataIntegrity = (data: IVerifiedData): TVerificationError[] => {
+export const verifyOffChainDataIntegrity = (data: TVerifiedData): TVerificationError[] => {
   const errors: TVerificationError[] = []
   // confirm root hash becomes layer 2 hash - hash(rootHash, rootHashnonce)
   const recoveredLayer2Hash = HashingLogic.hashMessage(
@@ -94,20 +104,6 @@ export const verifyOffChainDataIntegrity = (data: IVerifiedData): TVerificationE
     })
   }
 
-  // confirm attester signature of target node
-  const recoveredAttesterAddress = HashingLogic.recoverHashSigner(
-    HashingLogic.hashAttestationNode(data.target.attestationNode),
-    data.target.signedAttestation
-  )
-  if (data.attester !== recoveredAttesterAddress) {
-    errors.push({
-      key: 'attester',
-      error:
-        "The provided 'attester' doesn't match the value" +
-        " recovered for the target 'attestationNode' and 'signedAttestation'.",
-    })
-  }
-
   // verify merkle proof
   if (!verifyProof(data)) {
     errors.push({
@@ -116,10 +112,45 @@ export const verifyOffChainDataIntegrity = (data: IVerifiedData): TVerificationE
     })
   }
 
+  switch (data.version) {
+    case DataVersions.legacy:
+      console.log(data)
+      // confirm attester signature of target node
+      const legacyAttester = HashingLogic.recoverHashSigner(
+        HashingLogic.hashAttestationNode(data.target.attestationNode),
+        data.target.signedAttestation
+      )
+      if (data.attester !== legacyAttester) {
+        errors.push({
+          key: 'attester',
+          error:
+            "The provided 'attester' doesn't match the value" +
+            " recovered for the target 'attestationNode' and 'signedAttestation'.",
+        })
+      }
+      break
+    case DataVersions.onChain:
+    case DataVersions.batch:
+      // confirm attester signature of target node
+      const recoveredAttesterAddress = HashingLogic.recoverHashSigner(
+        HashingLogic.hashClaimTree(data.target.claimNode),
+        data.target.attesterSig
+      )
+      if (data.attester !== recoveredAttesterAddress) {
+        errors.push({
+          key: 'attester',
+          error:
+            "The provided 'attester' doesn't match the value" +
+            " recovered for the target 'attestationNode' and 'signedAttestation'.",
+        })
+      }
+      break
+  }
+
   return errors
 }
 
-export const verifySender = (responseData: ResponseData): TVerificationError[] => {
+export const verifySender = (responseData: TResponseData): TVerificationError[] => {
   const errors: TVerificationError[] = []
   const signerEthAddress = HashingLogic.recoverHashSigner(toBuffer(responseData.packedData), responseData.signature)
   // Here is where chained authorizations would be checked if present
@@ -136,7 +167,7 @@ export const verifySender = (responseData: ResponseData): TVerificationError[] =
   return errors
 }
 
-export const verifyPackedData = (responseData: ResponseData): TVerificationError[] => {
+export const verifyPackedData = (responseData: TResponseData): TVerificationError[] => {
   const errors: TVerificationError[] = []
   const recoveredPackedData =
     '0x' +
@@ -161,15 +192,8 @@ export const verifyPackedData = (responseData: ResponseData): TVerificationError
 }
 
 export interface IDecodedDataAndLogs {
-  shareData: IVerifiedData
+  shareData: IVerifiedDataLegacy | IVerifiedDataOnChain
   logs: TDecodedLog[]
-}
-
-export interface IConsumableData {
-  data: string
-  type: TAttestationTypeNames
-  version: string
-  logs?: TDecodedLog[]
 }
 
 export interface IValidatedPayloadData {
@@ -194,7 +218,7 @@ export interface IRetrieveTxDataOutput {
 }
 
 export const retreiveTxData = async (
-  payloadData: IVerifiedData,
+  payloadData: TVerifiedData,
   web3Provider: string
 ): Promise<IRetrieveTxDataOutput> => {
   const txHash = payloadData.tx
@@ -223,7 +247,7 @@ export const retreiveTxData = async (
 
 const validateOnChainProperties = (
   subject: string,
-  payloadData: IVerifiedData,
+  payloadData: TVerifiedData,
   logs: TDecodedLog[]
 ): TVerificationError[] => {
   const errors: TVerificationError[] = []
@@ -361,4 +385,20 @@ export const validateUntypedResponseData = async (
 
   const typedResponseData: ResponseData = responseData
   return await validateResponseData(typedResponseData, options)
+}
+
+export const getPresentationProof = (
+  subject: string,
+  token: string,
+  domain: string,
+  credential: IVerifiableCredential[]
+): IPresentationProof => {
+  return {
+    type: 'Bloom-Presentation-1.0.0',
+    created: new Date().toISOString(),
+    creator: subject,
+    nonce: token,
+    domain: domain,
+    credentialHash: HashingLogic.hashMessage(HashingLogic.orderedStringify(credential)),
+  }
 }
