@@ -1,8 +1,8 @@
 import * as util from './util'
+import * as validation from './Validation'
 import {IVerifiedDataLegacy, IVerifiedDataBatch, DataVersions} from './types'
 import {HashingLogic} from '@bloomprotocol/attestations-lib'
 import {
-  IBloomMerkleTreeComponents,
   IBloomMerkleTreeComponentsLegacy,
   IBloomBatchMerkleTreeComponents,
 } from '@bloomprotocol/attestations-lib/dist/src/HashingLogic'
@@ -143,13 +143,13 @@ test('Verifying layer2Hash, attester address, and merkle proof', () => {
     attester: '0x40b469b080c4b034091448d0e59880d823b2fc18',
   }
 
-  expect(util.verifyOffChainDataIntegrity(emailShareData)).toHaveLength(0)
+  expect(validation.validateVerifiedDataLegacy(emailShareData).kind).toBe('validated')
 })
 
 test('Verifying layer2Hash, attester address, and merkle proof', () => {
   const signedAttestationHash = HashingLogic.hashMessage(validBatchMerkleTreeComponents.claimNodes[0].attesterSig)
   const merkleTree = HashingLogic.getMerkleTreeFromComponents(validBatchMerkleTreeComponents)
-  const proof = util.formatProofForShare(merkleTree.getProof(util.toBuffer(signedAttestationHash)))
+  const proof = util.formatMerkleProofForShare(merkleTree.getProof(util.toBuffer(signedAttestationHash)))
   const twitterShareData: IVerifiedDataBatch = {
     version: DataVersions.batch,
     batchLayer2Hash: validBatchMerkleTreeComponents.batchLayer2Hash,
@@ -166,43 +166,18 @@ test('Verifying layer2Hash, attester address, and merkle proof', () => {
     subject: validBatchMerkleTreeComponents.attester,
   }
 
-  expect(util.verifyOffChainDataIntegrity(twitterShareData)).toHaveLength(0)
+  expect(validation.validateVerifiedDataBatch(twitterShareData).kind).toBe('validated')
 })
 
 test('Verify ResponseData that is structured incorrectly does not validate.', async () => {
   const options: util.IValidateResponseDataOptions = {validateOnChain: false}
 
   const undefinedResponseData = await util.validateUntypedResponseData(undefined, options)
-  expect(undefinedResponseData.data).toHaveLength(0)
-  expect(undefinedResponseData.errors).toHaveLength(1)
-  expect(undefinedResponseData.errors.map(x => x.key)).toContain('missingResponseData')
+  expect(undefinedResponseData.kind).toBe('invalid')
 
   const nullResponseData = await util.validateUntypedResponseData(null, options)
-  expect(nullResponseData.data).toHaveLength(0)
-  expect(nullResponseData.errors).toHaveLength(1)
-  expect(nullResponseData.errors.map(x => x.key)).toContain('missingResponseData')
+  expect(nullResponseData.kind).toBe('invalid')
 
   const emptyObject = await util.validateUntypedResponseData({}, options)
-  expect(emptyObject.data).toHaveLength(0)
-  expect(emptyObject.errors).toHaveLength(5)
-  expect(emptyObject.errors.map(x => x.key)).toContain('ResponseData.token')
-  expect(emptyObject.errors.map(x => x.key)).toContain('ResponseData.subject')
-  expect(emptyObject.errors.map(x => x.key)).toContain('ResponseData.data')
-  expect(emptyObject.errors.map(x => x.key)).toContain('ResponseData.packedData')
-  expect(emptyObject.errors.map(x => x.key)).toContain('ResponseData.signature')
-
-  const badOptions = {validateOnChain: true}
-  const badOptionsValidate = await util.validateUntypedResponseData(
-    {
-      token: 'fake',
-      subject: '0x0',
-      data: [{}],
-      packedData: '0x0',
-      signature: '0x0',
-    },
-    badOptions
-  )
-  expect(badOptionsValidate.data).toHaveLength(0)
-  expect(badOptionsValidate.errors).toHaveLength(1)
-  expect(badOptionsValidate.errors.map(x => x.key)).toContain('invalidOptions')
+  expect(emptyObject.kind).toBe('invalid')
 })
