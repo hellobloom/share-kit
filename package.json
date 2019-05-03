@@ -24,7 +24,7 @@
     "storybook": "start-storybook -p 9001 -c .storybook"
   },
   "dependencies": {
-    "@bloomprotocol/attestations-lib": "^4.1.4",
+    "@bloomprotocol/attestations-lib": "^4.1.7",
     "@types/common-tags": "^1.8.0",
     "@types/lodash": "^4.14.120",
     "abi-decoder": "^1.2.0",
@@ -41,6 +41,7 @@
     "@types/jest": "^23.3.3",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.0",
+    "ethereumjs-wallet": "^0.6.3",
     "jest": "^23.6.0",
     "jest-canvas-mock": "^2.0.0-alpha.1",
     "lint-staged": "^7.2.0",

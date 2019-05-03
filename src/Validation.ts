@@ -28,7 +28,7 @@ export const validateProofShare = genValidateFn([
 export const isValidMerkleProofArray = (value: any): boolean => {
   if (!Array.isArray(value)) return false
   if (value.length === 0) return false
-  return value.every(v => validateVerifiedDataLegacy(v).kind === 'validated')
+  return value.every(v => validateProofShare(v).kind === 'validated')
 }
 
 export const isValidLegacyDataNode = (value: any): boolean =>
@@ -212,3 +212,6 @@ export const validateVerifiablePresentation = genValidateFn([
   ['signature', validatePresentationSignature, true],
   ['token', tokenMatchesProof, true],
 ])
+
+export const isValidVerifiablePresentation = (value: any): boolean =>
+  validateVerifiablePresentation(value).kind === 'validated'

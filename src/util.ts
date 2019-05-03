@@ -8,11 +8,14 @@ import {
   IVerifiablePresentation,
   IMerkleProofNode,
   IMerkleProofShare,
+  ICredentialProof,
 } from './types'
 import {validateVerifiablePresentation} from './Validation'
 import {HashingLogic} from '@bloomprotocol/attestations-lib'
 import _ from 'lodash'
 import {TDecodedLog, getDecodedTxEventLogs, getDecodedLogValueByName} from './txUtils'
+import * as EthU from 'ethereumjs-util'
+import {orderedStringify} from '@bloomprotocol/attestations-lib/dist/src/HashingLogic'
 
 export const stripHexPrefix = (hexStr: string): string => {
   if (hexStr.length < 2) return hexStr
@@ -208,8 +211,113 @@ export const validateUntypedResponseData = async (
   }
 }
 
-export const getPresentationProof = (
+export const getOnChainCredentialProof = (
+  tx: string,
+  stage: 'mainnet' | 'rinkeby' | 'local',
+  components: HashingLogic.IBloomMerkleTreeComponents,
+  target: HashingLogic.ISignedClaimNode
+): ICredentialProof => {
+  const bloomMerkleTree = HashingLogic.getMerkleTreeFromComponents(components)
+  const proof = formatMerkleProofForShare(
+    bloomMerkleTree.getProof(EthU.toBuffer(HashingLogic.hashMessage(target.attesterSig)))
+  )
+  return {
+    type: 'Bloom-On-Chain-Proof-1.0.0',
+    created: target.claimNode.issuance.issuanceDate,
+    creator: components.attester,
+    data: {
+      version: DataVersions.onChain,
+      tx,
+      layer2Hash: components.layer2Hash,
+      rootHash: components.rootHash,
+      rootHashNonce: components.rootHashNonce,
+      proof,
+      stage,
+      target,
+      attester: components.attester,
+    },
+  }
+}
+
+export const getOnChainCredential = (
   subject: string,
+  authorization: HashingLogic.ISignedAuthorization[],
+  tx: string,
+  stage: 'mainnet' | 'rinkeby' | 'local',
+  components: HashingLogic.IBloomMerkleTreeComponents,
+  target: HashingLogic.ISignedClaimNode
+): IVerifiableCredential => {
+  return {
+    // TODO link to docs describing type strings
+    id: 'placeholder',
+    type: target.claimNode.type.type,
+    issuer: components.attester,
+    issuanceDate: target.claimNode.issuance.issuanceDate,
+    credentialSubject: {
+      subject: subject,
+      data: target.claimNode.data.data,
+      // authorization only needed if sender of presentation != subject
+      authorization: authorization,
+    },
+    proof: getOnChainCredentialProof(tx, stage, components, target),
+  }
+}
+
+export const getBatchCredentialProof = (
+  stage: 'mainnet' | 'rinkeby' | 'local',
+  components: HashingLogic.IBloomBatchMerkleTreeComponents,
+  target: HashingLogic.ISignedClaimNode
+): ICredentialProof => {
+  const bloomMerkleTree = HashingLogic.getMerkleTreeFromComponents(components)
+  const proof = formatMerkleProofForShare(
+    bloomMerkleTree.getProof(EthU.toBuffer(HashingLogic.hashMessage(target.attesterSig)))
+  )
+  return {
+    type: 'Bloom-Batch-Proof-1.0.0',
+    created: target.claimNode.issuance.issuanceDate,
+    creator: components.attester,
+    data: {
+      version: DataVersions.batch,
+      batchLayer2Hash: components.batchLayer2Hash,
+      batchAttesterSig: components.batchAttesterSig,
+      subjectSig: components.subjectSig,
+      requestNonce: components.requestNonce,
+      layer2Hash: components.layer2Hash,
+      rootHash: components.rootHash,
+      rootHashNonce: components.rootHashNonce,
+      proof,
+      stage,
+      target,
+      attester: components.attester,
+      subject: components.subject,
+    },
+  }
+}
+
+export const getBatchCredential = (
+  authorization: HashingLogic.ISignedAuthorization[],
+  stage: 'mainnet' | 'rinkeby' | 'local',
+  components: HashingLogic.IBloomBatchMerkleTreeComponents,
+  target: HashingLogic.ISignedClaimNode
+): IVerifiableCredential => {
+  return {
+    // TODO link to docs describing type strings
+    id: 'placeholder',
+    type: target.claimNode.type.type,
+    issuer: components.attester,
+    issuanceDate: target.claimNode.issuance.issuanceDate,
+    credentialSubject: {
+      subject: components.subject,
+      data: target.claimNode.data.data,
+      // authorization only needed if sender of presentation != subject
+      authorization: authorization,
+    },
+    proof: getBatchCredentialProof(stage, components, target),
+  }
+}
+
+export const getPresentationProof = (
+  holder: string,
   token: string,
   domain: string,
   credential: IVerifiableCredential[]
@@ -217,9 +325,28 @@ export const getPresentationProof = (
   return {
     type: 'Bloom-Presentation-1.0.0',
     created: new Date().toISOString(),
-    creator: subject,
+    creator: holder,
     nonce: token,
     domain: domain,
     credentialHash: HashingLogic.hashMessage(HashingLogic.orderedStringify(credential)),
+  }
+}
+
+export const getVerifiablePresentation = (
+  holder: string,
+  token: string,
+  domain: string,
+  credential: IVerifiableCredential[],
+  proof: IPresentationProof,
+  signature: string
+): IVerifiablePresentation => {
+  return {
+    context: ['placeholder'],
+    type: 'VerifiablePresentation',
+    verifiableCredential: credential,
+    proof,
+    packedData: HashingLogic.hashMessage(orderedStringify(proof)),
+    signature,
+    token,
   }
 }

@@ -2,13 +2,9 @@ import * as util from './util'
 import * as validation from './Validation'
 import {IVerifiedDataLegacy, IVerifiedDataBatch, DataVersions} from './types'
 import {HashingLogic} from '@bloomprotocol/attestations-lib'
-import {
-  IBloomMerkleTreeComponentsLegacy,
-  IBloomBatchMerkleTreeComponents,
-} from '@bloomprotocol/attestations-lib/dist/src/HashingLogic'
 
 // tslint:disable:max-line-length
-const validBatchMerkleTreeComponents: IBloomBatchMerkleTreeComponents = {
+const validBatchMerkleTreeComponents: HashingLogic.IBloomBatchMerkleTreeComponents = {
   subject: '0xf30a6a398fcbf9941c9beccfe15d9f79607595bb',
   version: 'Batch-Attestation-Tree-1.0.0',
   attester: '0x156ba3f2af07d24cfd5dd8ec0fe2b17c6131d7fb',
@@ -72,7 +68,7 @@ const validBatchMerkleTreeComponents: IBloomBatchMerkleTreeComponents = {
     '0x35aa174bad359fffbfa296942bf165df2cae9a543604c05dcad3f6e640b56b5c456ca7efada013dafde52ffc12616025a9573b40bd5efb9388d97e5387a614851c',
 }
 
-const validMerkleTreeComponentsLegacy: IBloomMerkleTreeComponentsLegacy = {
+const validMerkleTreeComponentsLegacy: HashingLogic.IBloomMerkleTreeComponentsLegacy = {
   rootHash: '0xfa0147ea749ba09f692162665de44b74801cfbeb16308aaf5788e87d0e1a09a1',
   dataNodes: [
     {

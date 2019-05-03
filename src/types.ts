@@ -249,6 +249,7 @@ type TVerifiedData = IVerifiedDataLegacy | IVerifiedDataOnChain | IVerifiedDataB
 interface ICredentialProof {
   // type string describing share kit style proof
   type: string
+  // issuance date of the proof
   created: string
 
   // TODO link within issuer document
@@ -269,6 +270,7 @@ interface IVerifiableCredential {
   issuanceDate: string
 
   credentialSubject: {
+    // original subject of attestation
     subject: string
     data: string
     /**
