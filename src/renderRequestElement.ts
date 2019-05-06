@@ -14,10 +14,10 @@ const renderRequestElement = (config: {
 }): RequestElementResult => {
   if (config.shouldRenderButton === undefined) {
     config.shouldRenderButton = parsedResult => {
-      const isMobile = parsedResult.platform.type === 'mobile' || parsedResult.platform.type === 'tablet'
-      const isIOS = parsedResult.os.name === 'iOS'
+      const isSupportedPlatform = parsedResult.platform.type === 'mobile' || parsedResult.platform.type === 'tablet'
+      const isSupportedOS = parsedResult.os.name === 'iOS' || parsedResult.os.name === 'Android'
 
-      return isMobile && isIOS
+      return isSupportedPlatform && isSupportedOS
     }
   }
 

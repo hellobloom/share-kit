@@ -1,3 +1,10 @@
+## 5.0.0
+
+
+**Breaking**
+
+- Render "Verify with Bloom" button for clients on Android devices
+
 ## 4.0.1
 
 **Improvements**:

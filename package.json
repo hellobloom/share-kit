@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/share-kit",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Easily allow your users to share their verified personal information directly with your application.",
@@ -42,7 +42,7 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.0",
     "ethereumjs-wallet": "^0.6.3",
-    "jest": "^23.6.0",
+    "jest": "^24.7.1",
     "jest-canvas-mock": "^2.0.0-alpha.1",
     "lint-staged": "^7.2.0",
     "prettier": "^1.13.7",
