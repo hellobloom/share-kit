@@ -1,7 +1,14 @@
 import * as Validation from './Validation'
 import {HashingLogic} from '@bloomprotocol/attestations-lib'
 import * as EthU from 'ethereumjs-util'
-import {formatMerkleProofForShare, getOnChainCredential} from './util'
+import {
+  formatMerkleProofForShare,
+  getOnChainCredential,
+  getBatchCredential,
+  getPresentationProof,
+  getVerifiablePresentation,
+  hashCredentials,
+} from './util'
 import * as ethereumjsWallet from 'ethereumjs-wallet'
 const ethSigUtil = require('eth-sig-util')
 
@@ -109,7 +116,24 @@ const batchComponents = HashingLogic.getSignedBatchMerkleTreeComponents(
   alicePrivkey
 )
 
-console.log(batchComponents)
+const batchCredential = getBatchCredential([], 'mainnet', batchComponents, batchComponents.claimNodes[1])
+
+const presentationToken = HashingLogic.generateNonce()
+const presentationDomain = 'https://bloom.co/receiveData'
+const presentationProof = getPresentationProof(bobAddress, presentationToken, presentationDomain, [
+  batchCredential,
+  onChainCredential,
+])
+const presentationSig = HashingLogic.signHash(
+  EthU.toBuffer(HashingLogic.hashMessage(HashingLogic.orderedStringify(presentationProof))),
+  bobPrivkey
+)
+const presentation = getVerifiablePresentation(
+  presentationToken,
+  [batchCredential, onChainCredential],
+  presentationProof,
+  presentationSig
+)
 
 test('Validation.isValidPositionString', () => {
   expect(Validation.isValidPositionString('left')).toBeTruthy()
@@ -147,62 +171,114 @@ test('Validation.isValidClaimNode', () => {
 })
 
 test('Validation.isValidVerifiedData', () => {
-  expect(Validation.isValidVerifiedData(onChainCredential)).toBeTruthy()
-  expect(true)
+  expect(Validation.isValidVerifiedData(onChainCredential.proof.data)).toBeTruthy()
+  expect(Validation.isValidVerifiedData(batchCredential.proof.data)).toBeTruthy()
 })
 
 test('Validation.isOptionalArrayOfAuthorizations', () => {
-  expect(true)
+  expect(Validation.isOptionalArrayOfAuthorizations([])).toBeTruthy()
 })
 
 test('Validation.formatMerkleProofForVerify', () => {
-  expect(true)
+  const testLeaves = HashingLogic.getPadding(1)
+  const validMerkleTree = HashingLogic.getMerkleTreeFromLeaves(testLeaves)
+  const validMerkleProof = validMerkleTree.getProof(EthU.toBuffer(testLeaves[1]))
+  const shareableMerkleProof = formatMerkleProofForShare(validMerkleProof)
+  const verifiableMerkleProof = Validation.formatMerkleProofForVerify(shareableMerkleProof)
+  expect(verifiableMerkleProof).toEqual(validMerkleProof)
 })
 
 test('Validation.verifyCredentialMerkleProof', () => {
-  expect(true)
+  expect(Validation.verifyCredentialMerkleProof(onChainCredential.proof.data)).toBeTruthy()
+  expect(Validation.verifyCredentialMerkleProof(batchCredential.proof.data)).toBeTruthy()
+  const invalidProof = JSON.parse(JSON.stringify(batchCredential.proof.data))
+  invalidProof.proof[0].data = ''
+  expect(Validation.verifyCredentialMerkleProof(invalidProof)).toBeFalsy()
 })
 
 test('Validation.isValidCredentialProof', () => {
-  expect(true)
+  expect(Validation.isValidCredentialProof(onChainCredential.proof)).toBeTruthy()
+  expect(Validation.isValidCredentialProof(batchCredential.proof)).toBeTruthy()
 })
 
 test('Validation.isValidCredentialSubject', () => {
-  expect(true)
+  expect(Validation.isValidCredentialSubject(onChainCredential.credentialSubject)).toBeTruthy()
+  expect(Validation.isValidCredentialSubject(batchCredential.credentialSubject)).toBeTruthy()
 })
 
 test('Validation.proofMatchesSubject', () => {
-  expect(true)
+  expect(Validation.proofMatchesSubject(onChainCredential.proof, onChainCredential)).toBeTruthy()
+  expect(Validation.proofMatchesSubject(batchCredential.proof, onChainCredential)).toBeFalsy()
+  expect(Validation.proofMatchesSubject(batchCredential.proof, batchCredential)).toBeTruthy()
+  expect(Validation.proofMatchesSubject(onChainCredential.proof, batchCredential)).toBeFalsy()
 })
 
 test('Validation.isArrayOfNonEmptyStrings', () => {
-  expect(true)
+  expect(Validation.isArrayOfNonEmptyStrings([])).toBeFalsy()
+  expect(Validation.isArrayOfNonEmptyStrings([''])).toBeFalsy()
+  expect(Validation.isArrayOfNonEmptyStrings(['a'])).toBeTruthy()
 })
 
 test('Validation.isArrayOfVerifiableCredentials', () => {
-  expect(true)
+  expect(Validation.isArrayOfVerifiableCredentials([onChainCredential, batchCredential])).toBeTruthy()
+  expect(Validation.isArrayOfVerifiableCredentials([])).toBeFalsy()
 })
 
 test('Validation.isValidPresentationProof', () => {
-  expect(true)
+  expect(Validation.isValidPresentationProof(presentationProof)).toBeTruthy()
+  expect(Validation.isValidPresentationProof(onChainCredential)).toBeFalsy()
 })
 
 test('Validation.proofMatchesCredential', () => {
-  expect(true)
+  expect(Validation.proofMatchesCredential(presentationProof, presentation)).toBeTruthy()
+  expect(
+    Validation.proofMatchesCredential(
+      getPresentationProof(bobAddress, presentationToken, presentationDomain, [onChainCredential, batchCredential]),
+      presentation
+    )
+  ).toBeTruthy()
+  expect(
+    Validation.proofMatchesCredential(
+      getPresentationProof(bobAddress, presentationToken, presentationDomain, [batchCredential]),
+      presentation
+    )
+  ).toBeFalsy()
 })
 
 test('Validation.packedDataMatchesProof', () => {
-  expect(true)
+  expect(Validation.packedDataMatchesProof(presentation.packedData, presentation)).toBeTruthy()
+  expect(Validation.packedDataMatchesProof(presentationToken, presentation)).toBeFalsy()
 })
 
 test('Validation.tokenMatchesProof', () => {
-  expect(true)
+  expect(Validation.tokenMatchesProof(presentationToken, presentation)).toBeTruthy()
+  expect(Validation.tokenMatchesProof(HashingLogic.generateNonce(), presentation)).toBeFalsy()
 })
 
 test('Validation.validatePresentationSignature', () => {
-  expect(true)
+  expect(Validation.validatePresentationSignature(presentationSig, presentation)).toBeTruthy()
+
+  expect(
+    Validation.validatePresentationSignature(
+      HashingLogic.signHash(
+        alicePrivkey,
+        EthU.toBuffer(HashingLogic.hashMessage(HashingLogic.orderedStringify(presentationProof)))
+      ),
+      presentation
+    )
+  ).toBeFalsy()
 })
 
 test('Validation.isValidVerifiablePresentation', () => {
-  expect(true)
+  expect(Validation.isValidVerifiablePresentation(presentation)).toBeTruthy()
+  expect(Validation.isValidVerifiablePresentation(onChainCredential)).toBeFalsy()
+})
+
+test('hashCredentials returns same hash no matter order of array', () => {
+  const hashA = hashCredentials([batchCredential, onChainCredential])
+  const hashB = hashCredentials([onChainCredential, batchCredential])
+  expect(hashA).toBe(hashB)
+  const hashC = hashCredentials([batchCredential, onChainCredential, batchCredential])
+  const hashD = hashCredentials([onChainCredential, batchCredential, batchCredential])
+  expect(hashC).toBe(hashD)
 })

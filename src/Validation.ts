@@ -11,6 +11,7 @@ import {
   IMerkleProofNode,
   TVerifiedData,
 } from './types'
+import {hashCredentials} from './util'
 
 export const isValidPositionString = (value: any): boolean => {
   return ['left', 'right'].indexOf(value) > -1
@@ -181,19 +182,15 @@ export const validatePresentationProof = genValidateFn([
 export const isValidPresentationProof = (value: any): boolean => validatePresentationProof(value).kind === 'validated'
 
 export const proofMatchesCredential = (proof: IPresentationProof, params: TUnvalidated<IVerifiablePresentation>) => {
-  return (
-    proof.credentialHash.toLowerCase() ===
-    HashingLogic.hashMessage(HashingLogic.orderedStringify(params.verifiableCredential))
-  )
+  return proof.credentialHash.toLowerCase() === hashCredentials(params.verifiableCredential)
 }
 
 export const packedDataMatchesProof = (packedData: string, params: TUnvalidated<IVerifiablePresentation>) => {
   return packedData.toLowerCase() === HashingLogic.hashMessage(HashingLogic.orderedStringify(params.proof))
-  return true
 }
 
 export const tokenMatchesProof = (token: string, params: TUnvalidated<IVerifiablePresentation>) => {
-  return token.toLowerCase() === params.proof.token.toLowerCase()
+  return token.toLowerCase() === params.proof.nonce.toLowerCase()
 }
 
 export const validatePresentationSignature = (signature: string, params: TUnvalidated<IVerifiablePresentation>) => {

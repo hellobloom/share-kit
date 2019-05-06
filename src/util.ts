@@ -316,6 +316,17 @@ export const getBatchCredential = (
   }
 }
 
+// todo does this make any sense
+export const hashCredentials = (credential: IVerifiableCredential[]): string => {
+  const credentialSorted = credential.sort((a, b) => {
+    const hashA = HashingLogic.hashMessage(HashingLogic.orderedStringify(a))
+    const hashB = HashingLogic.hashMessage(HashingLogic.orderedStringify(b))
+    if (hashA === hashB) return 0
+    return hashA < hashB ? -1 : 1
+  })
+  return HashingLogic.hashMessage(HashingLogic.orderedStringify(credentialSorted))
+}
+
 export const getPresentationProof = (
   holder: string,
   token: string,
@@ -328,14 +339,12 @@ export const getPresentationProof = (
     creator: holder,
     nonce: token,
     domain: domain,
-    credentialHash: HashingLogic.hashMessage(HashingLogic.orderedStringify(credential)),
+    credentialHash: hashCredentials(credential),
   }
 }
 
 export const getVerifiablePresentation = (
-  holder: string,
   token: string,
-  domain: string,
   credential: IVerifiableCredential[],
   proof: IPresentationProof,
   signature: string
