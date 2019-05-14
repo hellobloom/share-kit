@@ -316,10 +316,18 @@ export const getBatchCredential = (
   }
 }
 
+export const sortByKeys = (obj: {}) => {
+  let orderedObj = {}
+  Object.keys(obj)
+    .sort()
+    .map(o => (orderedObj[o] = obj[o]))
+  return orderedObj
+}
+
 // todo does this make any sense
 export const hashCredentials = (credential: IVerifiableCredential[]): string => {
   const credentialSorted = credential
-    .map(c => HashingLogic.orderedStringify(c))
+    .map(c => sortByKeys(c))
     .sort((a, b) => {
       const hashA = HashingLogic.hashMessage(HashingLogic.orderedStringify(a))
       const hashB = HashingLogic.hashMessage(HashingLogic.orderedStringify(b))

@@ -10,6 +10,7 @@ import {
   hashCredentials,
 } from './util'
 import * as ethereumjsWallet from 'ethereumjs-wallet'
+import {IVerifiableCredential} from './types'
 const ethSigUtil = require('eth-sig-util')
 
 const aliceWallet = ethereumjsWallet.fromPrivateKey(
@@ -274,6 +275,22 @@ test('Validation.isValidVerifiablePresentation', () => {
   expect(Validation.isValidVerifiablePresentation(onChainCredential)).toBeFalsy()
 })
 
+const reverseObject = (obj: Object) => {
+  var newObject = {}
+  var keys = []
+
+  for (var key of Object.keys(obj)) {
+    keys.push(key)
+  }
+
+  for (var i = keys.length - 1; i >= 0; i--) {
+    var value = obj[keys[i]]
+    newObject[keys[i]] = value
+  }
+
+  return newObject
+}
+
 test('hashCredentials returns same hash no matter order of array', () => {
   const hashA = hashCredentials([batchCredential, onChainCredential])
   const hashB = hashCredentials([onChainCredential, batchCredential])
@@ -281,4 +298,7 @@ test('hashCredentials returns same hash no matter order of array', () => {
   const hashC = hashCredentials([batchCredential, onChainCredential, batchCredential])
   const hashD = hashCredentials([onChainCredential, batchCredential, batchCredential])
   expect(hashC).toBe(hashD)
+  const sortedCopyBatch = reverseObject(batchCredential)
+  const hashF = hashCredentials([sortedCopyBatch as IVerifiableCredential, onChainCredential])
+  expect(hashA).toBe(hashF)
 })
