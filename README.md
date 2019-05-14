@@ -11,7 +11,7 @@ Easily allow your users to share their verified personal information directly wi
     - [Usage](#usage)
       - [RequestData](#requestdata)
         - [Appending to URL](#appending-to-url)
-      - [QROptions](#qr-options)
+      - [QROptions](#qroptions)
       - [Button Callback URl](#button-callback-url)
   - [Response](#response)
     - [ResponseData](#responsedata)
@@ -159,13 +159,14 @@ Display options for the rendered QR code.
 
 _NOTE:_ Does not apply to the rendered button
 
-| Name      | Description                                      | Type      | Default    |
-| --------- | ------------------------------------------------ | --------- | ---------- |
-| size      | The height and width of the QR code.             | `number`  | `128`      |
-| bgColor   | The background color of the QR code.             | `string`  | `#fff`     |
-| fgColor   | The foreground color of the QR code.             | `string`  | `#6067f1`  |
-| logoImage | The `<img />` src to displayed over the QR code. | `string`  | Bloom logo |
-| hideLogo  | Whether the `logoImage` should be rendered.      | `boolean` | `false`    |
+| Name      | Description                                                                                            | Type      | Default    |
+| --------- | ------------------------------------------------------------------------------------------------------ | --------- | ---------- |
+| size      | The height and width of the QR code.                                                                   | `number`  | `128`      |
+| bgColor   | The background color of the QR code.                                                                   | `string`  | `#fff`     |
+| fgColor   | The foreground color of the QR code.                                                                   | `string`  | `#6067f1`  |
+| logoImage | The `<img />` src to displayed over the QR code.                                                       | `string`  | Bloom logo |
+| hideLogo  | Whether the `logoImage` should be rendered.                                                            | `boolean` | `false`    |
+| padding   | Percentage of the `size` of the QR code that will be padding. This will be the same color as `bgColor` | `number`  | `0`        |
 
 #### Button Callback URL
 
