@@ -318,13 +318,15 @@ export const getBatchCredential = (
 
 // todo does this make any sense
 export const hashCredentials = (credential: IVerifiableCredential[]): string => {
-  const credentialSorted = credential.sort((a, b) => {
-    const hashA = HashingLogic.hashMessage(HashingLogic.orderedStringify(a))
-    const hashB = HashingLogic.hashMessage(HashingLogic.orderedStringify(b))
-    if (hashA === hashB) return 0
-    return hashA < hashB ? -1 : 1
-  })
-  return HashingLogic.hashMessage(HashingLogic.orderedStringify(credentialSorted))
+  const credentialSorted = credential
+    .map(c => HashingLogic.orderedStringify(c))
+    .sort((a, b) => {
+      const hashA = HashingLogic.hashMessage(HashingLogic.orderedStringify(a))
+      const hashB = HashingLogic.hashMessage(HashingLogic.orderedStringify(b))
+      if (hashA === hashB) return 0
+      return hashA < hashB ? -1 : 1
+    })
+  return HashingLogic.hashMessage(JSON.stringify(credentialSorted))
 }
 
 export const getPresentationProof = (
