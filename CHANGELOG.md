@@ -1,5 +1,10 @@
-## 5.0.0
+## 5.0.1
 
+**Improvements**
+
+- Improve how padding is calculated and displayed
+
+## 5.0.0
 
 **Breaking**
 

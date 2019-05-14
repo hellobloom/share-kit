@@ -39,3 +39,10 @@ storiesOf('renderRequestElement', module)
       <Base requestData={defaultData} shouldRenderButton={() => true} buttonCallbackUrl={buttonCallbackUrl} />
     </div>
   ))
+  .add('Padding', () => (
+    <Base
+      requestData={defaultData}
+      qrOptions={{padding: 10, bgColor: '#EBF0F1', fgColor: '#3C3C3D'}}
+      buttonCallbackUrl={buttonCallbackUrl}
+    />
+  ))

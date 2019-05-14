@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/share-kit",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Easily allow your users to share their verified personal information directly with your application.",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
-    "@storybook/react": "^4.0.0-alpha.12",
+    "@storybook/react": "^5.0.10",
     "@types/jest": "^23.3.3",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.0",
