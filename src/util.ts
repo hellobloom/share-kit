@@ -326,15 +326,8 @@ export const sortByKeys = (obj: {}) => {
 
 // todo does this make any sense
 export const hashCredentials = (credential: IVerifiableCredential[]): string => {
-  const credentialSorted = credential
-    .map(c => sortByKeys(c))
-    .sort((a, b) => {
-      const hashA = HashingLogic.hashMessage(HashingLogic.orderedStringify(a))
-      const hashB = HashingLogic.hashMessage(HashingLogic.orderedStringify(b))
-      if (hashA === hashB) return 0
-      return hashA < hashB ? -1 : 1
-    })
-  return HashingLogic.hashMessage(JSON.stringify(credentialSorted))
+  const credentialProofSorted = credential.map(c => c.proof.data.layer2Hash).sort()
+  return HashingLogic.hashMessage(JSON.stringify(credentialProofSorted))
 }
 
 export const getPresentationProof = (

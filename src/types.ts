@@ -299,7 +299,7 @@ interface IPresentationProof {
   // host of recipient endpoint
   domain: string
 
-  // hash of verifiableCredential array
+  // hash of ordered array of layer2Hashes from each credential proof
   credentialHash: string
 }
 
