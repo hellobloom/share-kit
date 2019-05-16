@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/share-kit",
-  "version": "5.0.1",
+  "version": "6.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Easily allow your users to share their verified personal information directly with your application.",
@@ -24,7 +24,7 @@
     "storybook": "start-storybook -p 9001 -c .storybook"
   },
   "dependencies": {
-    "@bloomprotocol/attestations-lib": "^3.0.5",
+    "@bloomprotocol/attestations-lib": "^4.1.7",
     "@types/common-tags": "^1.8.0",
     "@types/lodash": "^4.14.120",
     "abi-decoder": "^1.2.0",
@@ -41,6 +41,7 @@
     "@types/jest": "^23.3.3",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.0",
+    "ethereumjs-wallet": "^0.6.3",
     "jest": "^24.7.1",
     "jest-canvas-mock": "^2.0.0-alpha.1",
     "lint-staged": "^7.2.0",
