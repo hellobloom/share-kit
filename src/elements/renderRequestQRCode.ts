@@ -212,7 +212,9 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Pa
   // - The 1 extra from the border on top/left
   canvas.height = canvas.width = size * scale + 4
   canvas.style.height = canvas.style.width = `${size}px`
-  canvas.style.padding = (100 * padding) / size + '%'
+  canvas.style.padding = `${size * (padding / 100 / 2)}px`
+  canvas.style.boxSizing = 'border-box'
+  canvas.style.backgroundColor = bgColor
   ctx.scale(scale, scale)
 
   makeRect(ctx, bgColor, {x: 0, y: 0, w: size, h: size})

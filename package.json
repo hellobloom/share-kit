@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
-    "@storybook/react": "^4.0.0-alpha.12",
+    "@storybook/react": "^5.0.10",
     "@types/jest": "^23.3.3",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.0",
