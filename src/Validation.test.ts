@@ -281,8 +281,4 @@ test('hashCredentials returns same hash no matter order of array', () => {
   const hashC = hashCredentials([batchCredential, onChainCredential, batchCredential])
   const hashD = hashCredentials([onChainCredential, batchCredential, batchCredential])
   expect(hashC).toBe(hashD)
-  console.log(hashA)
-  console.log(hashB)
-  console.log(hashC)
-  console.log(hashD)
 })
