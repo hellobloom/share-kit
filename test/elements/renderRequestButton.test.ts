@@ -1,9 +1,9 @@
-import {renderRequestButton} from './renderRequestButton'
-import {Action, RequestData} from '../..'
+import {renderRequestButton} from '../../src/elements/renderRequestButton'
+import {Action, RequestData} from '../../src/types'
 
-jest.mock('./utils', () => {
+jest.mock('../../src/elements/utils', () => {
   return {
-    ...jest.requireActual('./utils'),
+    ...jest.requireActual('../../src/elements/utils'),
     generateId: () => 'bloom-request-element-',
   }
 })

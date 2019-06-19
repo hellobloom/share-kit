@@ -1,12 +1,11 @@
-import {renderRequestElement} from './renderRequestElement'
-import {Action} from './types'
+import {renderRequestElement} from '../src/renderRequestElement'
+import {Action} from '../src/types'
+import * as qr from '../src/elements/renderRequestQRCode'
+import * as btn from '../src/elements/renderRequestButton'
 
-import * as qr from './elements/renderRequestQRCode'
-import * as btn from './elements/renderRequestButton'
-
-jest.mock('./elements/utils', () => {
+jest.mock('../src/elements/utils', () => {
   return {
-    ...jest.requireActual('./elements/utils'),
+    ...jest.requireActual('../src/elements/utils'),
     generateId: () => 'bloom-request-element-',
   }
 })
@@ -15,8 +14,7 @@ jest.mock('./elements/utils', () => {
 const userAgents = {
   iOS:
     'Mozilla/5.0 (iPhone; CPU iPhone OS 12_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Mobile/15E148 Safari/604.1',
-  macOs:
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
+  macOs: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
 }
 /* tslint:enable:max-line-length */
 
@@ -101,7 +99,7 @@ describe('renderRequestElement', () => {
         expect(qrSpy).toHaveBeenCalledWith(
           expect.objectContaining({
             requestData: expect.objectContaining({url: 'https://receive-kit.bloom.co/api/receive?share-kit-from=qr'}),
-          })
+          }),
         )
       })
 
@@ -115,7 +113,7 @@ describe('renderRequestElement', () => {
             requestData: expect.objectContaining({
               url: 'https://receive-kit.bloom.co/api/receive?test=&share-kit-from=qr',
             }),
-          })
+          }),
         )
       })
     })
@@ -131,7 +129,7 @@ describe('renderRequestElement', () => {
             requestData: expect.objectContaining({
               url: 'https://receive-kit.bloom.co/api/receive?share-kit-from=button',
             }),
-          })
+          }),
         )
       })
 
@@ -145,7 +143,7 @@ describe('renderRequestElement', () => {
             requestData: expect.objectContaining({
               url: 'https://receive-kit.bloom.co/api/receive?test=&share-kit-from=button',
             }),
-          })
+          }),
         )
       })
     })

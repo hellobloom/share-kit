@@ -1,58 +1,73 @@
 {
   "name": "@bloomprotocol/share-kit",
-  "version": "6.0.0",
+  "version": "7.0.0-alpha.0",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "module": "dist/share-kit.esm.js",
+  "typings": "dist/index.d.ts",
   "description": "Easily allow your users to share their verified personal information directly with your application.",
   "repository": "https://github.com/hellobloom/share-kit",
   "author": "Bloom Team <team@bloom.co>",
   "license": "Apache-2.0",
-  "lint-staged": {
-    "src/**/*.{ts,tsx,json,css}": [
-      "prettier --write",
-      "git add"
-    ]
-  },
   "files": [
-    "dist/**"
+    "dist"
   ],
   "scripts": {
-    "build": "npm run clean && ./bin/build",
+    "start": "npm run clean && tsdx watch --tsconfig ./tsconfig.build.json",
+    "build": "npm run clean && tsdx build --tsconfig ./tsconfig.build.json",
+    "test": "tsdx test",
     "clean": "rimraf dist",
     "prepare": "npm run build",
-    "test": "node_modules/.bin/jest --watch",
-    "storybook": "start-storybook -p 9001 -c .storybook"
+    "prepublishOnly": "npm run test && npm run eslint",
+    "storybook": "start-storybook -p 9001 -c .storybook",
+    "eslint": "./bin/eslint",
+    "eslint-fix": "./bin/eslint --fix"
   },
   "dependencies": {
-    "@bloomprotocol/attestations-lib": "^4.1.7",
+    "@bloomprotocol/attestations-lib": "^5.0.0-alpha.0",
+    "@types/append-query": "^2.0.0",
     "@types/common-tags": "^1.8.0",
-    "@types/lodash": "^4.14.120",
-    "abi-decoder": "^1.2.0",
     "append-query": "^2.0.1",
-    "bowser": "^2.1.0",
+    "bowser": "^2.4.0",
     "common-tags": "^1.8.0",
-    "lodash": "^4.17.11",
-    "qr.js": "0.0.0",
-    "web3x": "^3.0.0"
+    "qr.js": "0.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@storybook/react": "^5.0.10",
     "@types/jest": "^23.3.3",
+    "@typescript-eslint/eslint-plugin": "^1.7.0",
+    "@typescript-eslint/parser": "^1.7.0",
+    "acorn": "^6.1.1",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.0",
-    "ethereumjs-wallet": "^0.6.3",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.2.0",
+    "eslint-plugin-prettier": "^3.0.1",
     "jest": "^24.7.1",
-    "jest-canvas-mock": "^2.0.0-alpha.1",
+    "jest-canvas-mock": "^2.1.0",
     "lint-staged": "^7.2.0",
-    "prettier": "^1.13.7",
+    "prettier": "^1.17.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "rimraf": "^2.6.2",
-    "ts-jest": "^23.1.4",
     "ts-loader": "^4.5.0",
     "tslint": "^5.11.0",
-    "typescript": "^3.2.2",
+    "tsdx": "^0.7.1",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.2",
     "webpack": "^4.17.1"
+  },
+  "jest": {
+    "setupFiles": [
+      "jest-canvas-mock"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }

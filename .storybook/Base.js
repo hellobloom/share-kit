@@ -24,11 +24,7 @@ class Base extends React.Component {
     const {requestData: prevRequestData, qrOptions: prevQROptions, buttonCallbackUrl: prevButtonCallbackUrl} = prevProps
     const {requestData, qrOptions, buttonCallbackUrl} = this.props
 
-    if (
-      prevRequestData !== requestData ||
-      prevQROptions !== requestData ||
-      prevButtonCallbackUrl !== buttonCallbackUrl
-    ) {
+    if (prevRequestData !== requestData || prevQROptions !== requestData || prevButtonCallbackUrl !== buttonCallbackUrl) {
       this.requestElement.update({requestData, qrOptions, buttonCallbackUrl})
     }
   }

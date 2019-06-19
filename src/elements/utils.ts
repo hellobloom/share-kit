@@ -64,7 +64,7 @@ const getBloomLogo = (config?: {fgColor?: string; bgColor?: string}) => {
       fgColor: '#6067f1',
       bgColor: '#fff',
     },
-    config || {}
+    config || {},
   )
   defaultedConfig.fgColor = encodeURIComponent(defaultedConfig.fgColor)
   defaultedConfig.bgColor = encodeURIComponent(defaultedConfig.bgColor)

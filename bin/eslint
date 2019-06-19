@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Pass in the project config file and directory to run eslint
+#
+#   1. Passes in project file, enabling type-based linting
+#   2. Uses verbose formatter so we know which lint rule failed
+#   3. Excludes test files
+#   4. Passes in flags from command line to eslint. `bin/eslint --fix` should work
+eslint_project() {
+  local config_file="$1"
+  local directory1="$2"
+  local directory2="$3"
+
+  # Remove the function arguments
+  shift 3
+
+  # Use the verbose formatter which includes the rule name
+  ./node_modules/.bin/eslint                    \
+    --format table                              \
+    "$directory1/**/*.{ts,tsx}"                  \
+    "$directory2/**/*.{ts,tsx}"                  \
+    "$@" # Pass in commands passed to our executable
+}
+
+# Track if either task failed.
+linting_passed="true"
+
+if ! eslint_project tsconfig.json src test "$@"; then
+  linting_passed="false"
+fi
+
+if [ "$linting_passed" == "false" ]; then
+  exit 1
+fi
