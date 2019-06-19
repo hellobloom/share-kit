@@ -1,7 +1,7 @@
 import Bowser from 'bowser'
 import appendQuery from 'append-query'
 
-import {QROptions, RequestData, ShouldRenderButton, RequestElementResult} from './types'
+import {QROptions, ButtonOptions, RequestData, ShouldRenderButton, RequestElementResult} from './types'
 import {renderRequestButton} from './elements/renderRequestButton'
 import {renderRequestQRCode} from './elements/renderRequestQRCode'
 
@@ -10,7 +10,7 @@ const renderRequestElement = (config: {
   requestData: RequestData
   qrOptions?: Partial<QROptions>
   shouldRenderButton?: ShouldRenderButton
-  buttonCallbackUrl: string
+  buttonOptions: ButtonOptions
 }): RequestElementResult => {
   if (config.shouldRenderButton === undefined) {
     config.shouldRenderButton = parsedResult => {

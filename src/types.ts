@@ -38,11 +38,15 @@ type QROptions = {
   logoOpacity?: number
 }
 
+type ButtonOptions = {
+  callbackUrl: string
+}
+
 type ShouldRenderButton = (parsedResult: Bowser.Parser.ParsedResult) => boolean
 
 type RequestElementResult = {
-  update: (config: {requestData: RequestData; buttonCallbackUrl: string; qrOptions?: Partial<QROptions>}) => void
+  update: (config: {requestData: RequestData; buttonOptions: ButtonOptions; qrOptions?: Partial<QROptions>}) => void
   remove: () => void
 }
 
-export {Action, RequestData, ErrorCorrectionLevel, QROptions, ShouldRenderButton, RequestElementResult}
+export {Action, RequestData, ErrorCorrectionLevel, QROptions, ButtonOptions, ShouldRenderButton, RequestElementResult}

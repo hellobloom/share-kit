@@ -1,7 +1,7 @@
 import React from 'react'
 
 import {Base} from './Base'
-import {Action} from '../index'
+import {Action} from '../src/index'
 
 class Updating extends React.Component {
   state = {counter: 0}
@@ -22,7 +22,7 @@ class Updating extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Base requestData={this.getData()} />
+        <Base requestData={this.getData()} buttonOptions={{callbackUrl: 'https://mysite.com/bloom-callback'}} />
         <button onClick={this.handleUpdate}>Update RequestQRCode</button>
       </React.Fragment>
     )

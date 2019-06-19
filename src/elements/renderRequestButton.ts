@@ -1,7 +1,7 @@
 import {oneLine, stripIndents} from 'common-tags'
 
 import {generateId} from './utils'
-import {RequestData, RequestElementResult} from '../types'
+import {RequestData, RequestElementResult, ButtonOptions} from '../types'
 
 /* tslint:disable:max-line-length */
 const backgroundPattern =
@@ -176,12 +176,12 @@ const renderTextAndLogo = (id: string) => {
 const getLink = (data: RequestData, callbackUrl: string) =>
   `https://bloom.co/download?request=${window.btoa(JSON.stringify(data))}&callback-url=${encodeURIComponent(callbackUrl)}`
 
-const updateRequestButton = (id: string, container: HTMLElement) => (config: {requestData: RequestData; buttonCallbackUrl: string}) => {
+const updateRequestButton = (id: string, container: HTMLElement) => (config: {requestData: RequestData; buttonOptions: ButtonOptions}) => {
   const button = container.querySelector<HTMLAnchorElement>(`#${id}`)
 
   if (!button) return
 
-  button.href = getLink(config.requestData, config.buttonCallbackUrl)
+  button.href = getLink(config.requestData, config.buttonOptions.callbackUrl)
 }
 
 const removeRequestButton = (id: string, container: HTMLElement) => () => {
@@ -193,14 +193,14 @@ const removeRequestButton = (id: string, container: HTMLElement) => () => {
 const renderRequestButton = (config: {
   container: HTMLElement
   requestData: RequestData
-  buttonCallbackUrl: string
+  buttonOptions: ButtonOptions
 }): RequestElementResult => {
   const id = generateId()
 
   const anchor = document.createElement('a')
   anchor.id = id
 
-  anchor.href = getLink(config.requestData, config.buttonCallbackUrl)
+  anchor.href = getLink(config.requestData, config.buttonOptions.callbackUrl)
   anchor.target = '_blank'
   anchor.rel = 'norefferer noopener'
 

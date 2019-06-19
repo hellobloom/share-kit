@@ -1,5 +1,5 @@
 import {renderRequestQRCode} from '../../src/elements/renderRequestQRCode'
-import {Action, RequestData, QROptions} from '../../src/types'
+import {Action, RequestData, QROptions, ButtonOptions} from '../../src/types'
 
 jest.mock('../../src/elements/utils', () => {
   return {
@@ -10,7 +10,7 @@ jest.mock('../../src/elements/utils', () => {
 
 describe('renderRequestQRCode', () => {
   let requestQRCode: {
-    update: (config: {requestData: RequestData; buttonCallbackUrl: string; options?: Partial<QROptions>}) => void
+    update: (config: {requestData: RequestData; buttonOptions: ButtonOptions; options?: Partial<QROptions>}) => void
     remove: () => void
   }
   let container: HTMLDivElement
