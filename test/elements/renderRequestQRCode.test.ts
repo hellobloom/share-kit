@@ -1,17 +1,16 @@
-import {renderRequestQRCode} from './renderRequestQRCode'
-import {Action, RequestData} from '../..'
-import {QROptions} from '../types'
+import {renderRequestQRCode} from '../../src/elements/renderRequestQRCode'
+import {Action, RequestData, QROptions, ButtonOptions} from '../../src/types'
 
-jest.mock('./utils', () => {
+jest.mock('../../src/elements/utils', () => {
   return {
-    ...jest.requireActual('./utils'),
+    ...jest.requireActual('../../src/elements/utils'),
     generateId: () => 'bloom-request-element-',
   }
 })
 
 describe('renderRequestQRCode', () => {
   let requestQRCode: {
-    update: (config: {requestData: RequestData; options?: Partial<QROptions>}) => void
+    update: (config: {requestData: RequestData; buttonOptions: ButtonOptions; options?: Partial<QROptions>}) => void
     remove: () => void
   }
   let container: HTMLDivElement

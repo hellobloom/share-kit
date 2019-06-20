@@ -1,16 +1,16 @@
-import {renderRequestButton} from './renderRequestButton'
-import {Action, RequestData} from '../..'
+import {renderRequestButton} from '../../src/elements/renderRequestButton'
+import {Action, RequestData, ButtonOptions} from '../../src/types'
 
-jest.mock('./utils', () => {
+jest.mock('../../src/elements/utils', () => {
   return {
-    ...jest.requireActual('./utils'),
+    ...jest.requireActual('../../src/elements/utils'),
     generateId: () => 'bloom-request-element-',
   }
 })
 
 describe('renderRequestButton', () => {
   let requestButton: {
-    update: (config: {requestData: RequestData; buttonCallbackUrl: string}) => void
+    update: (config: {requestData: RequestData; buttonOptions: ButtonOptions}) => void
     remove: () => void
   }
   let container: HTMLDivElement
@@ -36,7 +36,9 @@ describe('renderRequestButton', () => {
         org_privacy_policy_url: 'https://bloom.co/legal/privacy',
         types: ['phone', 'email'],
       },
-      buttonCallbackUrl: 'https://bloom.co/callback-url',
+      buttonOptions: {
+        callbackUrl: 'https://bloom.co/callback-url',
+      },
     })
   })
 
@@ -69,7 +71,9 @@ describe('renderRequestButton', () => {
         org_privacy_policy_url: 'https://bloom.co/legal/privacy',
         types: ['phone', 'email'],
       },
-      buttonCallbackUrl: 'https://bloom.co/callback-url-2',
+      buttonOptions: {
+        callbackUrl: 'https://bloom.co/callback-url-2',
+      },
     })
 
     const search = container.querySelector('a')!.href.replace('https://bloom.co/download', '')

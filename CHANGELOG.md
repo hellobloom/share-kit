@@ -1,3 +1,15 @@
+## 7.0.0
+
+**Improvements**
+
+- Use [tsdx](https://github.com/palmerhq/tsdx) to build
+
+**Breaking**
+
+- This package no longer provides validation utils, instead use [verify-kit](https://github.com/hellobloom/verify-kit)
+- Remove `buttonCallbackUrl` in favor of `buttonOptions`
+  - This will be expanded to include options for button type (signin/signup/verify/etc.) among other things
+
 ## 5.0.1
 
 **Improvements**

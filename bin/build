@@ -1,5 +1,0 @@
-#!/bin/bash
-
-source './bin/shared/strict-mode.sh'
-
-./node_modules/.bin/tsc -p tsconfig.build.json

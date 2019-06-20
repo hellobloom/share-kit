@@ -62,6 +62,11 @@ enum CornerType {
   bottomLeft,
 }
 
+enum EyePart {
+  inner,
+  outer,
+}
+
 const makeCorner = (ctx: CanvasRenderingContext2D, info: CellInfo, type: CornerType, part: EyePart) => {
   const outerRadius = part === EyePart.outer ? info.size : info.size / 4
   const innerRadius = outerRadius / 2
@@ -142,11 +147,6 @@ class ConnectionType {
   static readonly right = 1 << 1
   static readonly top = 1 << 2
   static readonly bottom = 1 << 4
-}
-
-enum EyePart {
-  inner,
-  outer,
 }
 
 const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionType: number, part: EyePart) => {
@@ -256,10 +256,8 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Pa
             connectionType = connectionType | ConnectionType.left
           }
 
-          const isInnerEyeX =
-            (cellIndex >= 2 && cellIndex <= 4) || (cellIndex >= cells.length - 7 && cellIndex <= cells.length)
-          const isInnerEyeY =
-            (rowIndex >= 2 && rowIndex <= 4) || (rowIndex >= cells.length - 5 && rowIndex <= cells.length - 3)
+          const isInnerEyeX = (cellIndex >= 2 && cellIndex <= 4) || (cellIndex >= cells.length - 7 && cellIndex <= cells.length)
+          const isInnerEyeY = (rowIndex >= 2 && rowIndex <= 4) || (rowIndex >= cells.length - 5 && rowIndex <= cells.length - 3)
           const isInnerEye = isInnerEyeX && isInnerEyeY
 
           const eyePart = isInnerEye ? EyePart.inner : EyePart.outer
@@ -276,8 +274,7 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Pa
   // If logoImage is not set default to BloomLogo with colors matching the rest of the QR code
   // Otherwise display the provided logo
   if (!options.hideLogo) {
-    const logoImage =
-      options.logoImage === undefined ? getBloomLogo({fgColor: fgColor, bgColor: bgColor}) : options.logoImage
+    const logoImage = options.logoImage === undefined ? getBloomLogo({fgColor: fgColor, bgColor: bgColor}) : options.logoImage
 
     const image = new Image()
     image.onload = () => {
@@ -301,6 +298,23 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Pa
   }
 }
 
+const updateRequestQRCode = (id: string, container: HTMLElement) => (config: {
+  requestData: RequestData
+  qrOptions?: Partial<QROptions>
+}) => {
+  const canvas = container.querySelector<HTMLCanvasElement>(`#${id}`)
+
+  if (!canvas) return
+
+  drawCanvas(canvas, config.requestData, config.qrOptions)
+}
+
+const removeRequestQRCode = (id: string, container: HTMLElement) => () => {
+  const canvas = container.querySelector(`#${id}`)
+
+  if (canvas) canvas.remove()
+}
+
 const renderRequestQRCode = (config: {
   container: HTMLElement
   requestData: RequestData
@@ -319,23 +333,6 @@ const renderRequestQRCode = (config: {
     update: updateRequestQRCode(id, config.container),
     remove: removeRequestQRCode(id, config.container),
   }
-}
-
-const updateRequestQRCode = (id: string, container: HTMLElement) => (config: {
-  requestData: RequestData
-  qrOptions?: Partial<QROptions>
-}) => {
-  const canvas = container.querySelector<HTMLCanvasElement>(`#${id}`)
-
-  if (!canvas) return
-
-  drawCanvas(canvas, config.requestData, config.qrOptions)
-}
-
-const removeRequestQRCode = (id: string, container: HTMLElement) => () => {
-  const canvas = container.querySelector(`#${id}`)
-
-  if (canvas) canvas.remove()
 }
 
 export {renderRequestQRCode}

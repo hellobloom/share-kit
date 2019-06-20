@@ -1,44 +1,53 @@
 import React from 'react'
 
-import {renderRequestElement} from '../index'
+import {renderRequestElement} from '../src/index'
 
 class Base extends React.Component {
   constructor(props) {
     super(props)
 
-    this.containerRef = React.createRef()
+    this.container = null
+    this.requestElement = null
   }
 
   componentDidMount() {
-    const {requestData, qrOptions, buttonCallbackUrl, shouldRenderButton} = this.props
+    if (!this.container) return
+
+    const {requestData, qrOptions, buttonOptions, shouldRenderButton} = this.props
     this.requestElement = renderRequestElement({
-      container: this.containerRef.current,
+      container: this.container,
       requestData,
       qrOptions,
-      buttonCallbackUrl,
+      buttonOptions,
       shouldRenderButton,
     })
   }
 
   componentDidUpdate(prevProps) {
-    const {requestData: prevRequestData, qrOptions: prevQROptions, buttonCallbackUrl: prevButtonCallbackUrl} = prevProps
-    const {requestData, qrOptions, buttonCallbackUrl} = this.props
+    if (!this.requestElement) return
 
-    if (
-      prevRequestData !== requestData ||
-      prevQROptions !== requestData ||
-      prevButtonCallbackUrl !== buttonCallbackUrl
-    ) {
-      this.requestElement.update({requestData, qrOptions, buttonCallbackUrl})
+    const {requestData: prevRequestData, qrOptions: prevQROptions, buttonOptions: prevButtonOptions} = prevProps
+    const {requestData, qrOptions, buttonOptions} = this.props
+
+    if (prevRequestData !== requestData || prevQROptions !== requestData || prevButtonOptions !== buttonOptions) {
+      this.requestElement.update({requestData, qrOptions, buttonOptions})
     }
   }
 
   componentWillUnmount() {
-    this.requestElement.remove()
+    if (this.requestElement) {
+      this.requestElement.remove()
+    }
   }
 
   render() {
-    return <div ref={this.containerRef} />
+    return (
+      <div
+        ref={element => {
+          this.container = element
+        }}
+      />
+    )
   }
 }
 

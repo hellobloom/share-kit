@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`renderRequestQRCode renders the qr code 1`] = `"<canvas id=\\"bloom-request-element-\\" width=\\"132\\" height=\\"132\\" style=\\"width: 128px; height: 128px; padding: 0%;\\"></canvas>"`;

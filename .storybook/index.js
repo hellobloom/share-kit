@@ -4,7 +4,7 @@ import {storiesOf} from '@storybook/react'
 import {Base} from './Base'
 import {Logo} from './Logo'
 import {Updating} from './Updating'
-import {Action} from '../index'
+import {Action} from '../src/index'
 
 const defaultData = {
   action: Action.attestation,
@@ -31,18 +31,18 @@ storiesOf('renderRequestElement', module)
       buttonCallbackUrl={buttonCallbackUrl}
     />
   ))
-  .add('Logo', () => <Logo requestData={defaultData} buttonCallbackUrl={buttonCallbackUrl} />)
-  .add('Size', () => <Base requestData={defaultData} qrOptions={{size: 300}} buttonCallbackUrl={buttonCallbackUrl} />)
+  .add('Logo', () => <Logo requestData={defaultData} buttonOptions={{callbackUrl: buttonCallbackUrl}} />)
+  .add('Size', () => <Base requestData={defaultData} qrOptions={{size: 300}} buttonOptions={{callbackUrl: buttonCallbackUrl}} />)
   .add('Updating', () => <Updating />)
   .add('Button', () => (
     <div style={{width: '335px'}}>
-      <Base requestData={defaultData} shouldRenderButton={() => true} buttonCallbackUrl={buttonCallbackUrl} />
+      <Base requestData={defaultData} shouldRenderButton={() => true} buttonOptions={{callbackUrl: buttonCallbackUrl}} />
     </div>
   ))
   .add('Padding', () => (
     <Base
       requestData={defaultData}
       qrOptions={{padding: 10, bgColor: '#EBF0F1', fgColor: '#3C3C3D'}}
-      buttonCallbackUrl={buttonCallbackUrl}
+      buttonOptions={{callbackUrl: buttonCallbackUrl}}
     />
   ))
