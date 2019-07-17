@@ -32,7 +32,7 @@ const Comp: React.FC<CompProps> = props => {
     }
   }, [container, requestData, buttonOptions])
 
-  return <div ref={container} style={{width: '300px'}} />
+  return <div ref={container} style={{width: buttonOptions.size === 'lg' || buttonOptions.size === undefined ? '335px' : undefined}} />
 }
 
 const requestData: RequestData = {
@@ -138,7 +138,7 @@ storiesOf('Button/Large', module)
   .add('Bloom', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'bloom'}} />)
 
 storiesOf('Button/Medium', module)
-  .add('Default', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md'}} />)
+  .add('Verify', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md'}} />)
   .add('Log In', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'log-in'}} />)
   .add('Sign Up', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'sign-up'}} />)
   .add('Connect', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'connect'}} />)
@@ -151,4 +151,14 @@ storiesOf('Button/Small', module)
   ))
   .add('Circle', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'circle'}} />)
   .add('Squircle', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'squircle'}} />)
-  .add('Inverted', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'inverted'}} />)
+  .add('Inverted', () => (
+    <div style={{backgroundColor: '#6262F6', padding: '4px', display: 'inline-block'}}>
+      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'square', invert: true}} />
+      <div style={{height: '4px'}} />
+      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'rounded-square', invert: true}} />
+      <div style={{height: '4px'}} />
+      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'circle', invert: true}} />
+      <div style={{height: '4px'}} />
+      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'squircle', invert: true}} />
+    </div>
+  ))

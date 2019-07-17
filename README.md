@@ -173,11 +173,11 @@ Rendering options for the rendered button.
 
 The type of button to rendered based on it's size
 
-| Size | Type                                                              | Required | Default  |
-| ---- | ----------------------------------------------------------------- | -------- | -------- |
-| sm   | `'square'| 'rounded-square' | 'circle' | 'squircle' | 'inverted'` | Y        | N/A      |
-| md   | `'log-in' | 'sign-up' | 'connect' | 'bloom' | 'verify'`           | N        | 'verify' |
-| lg   | `'log-in' | 'sign-up' | 'connect' | 'bloom' | 'verify'`           | N        | 'verify' |
+| Size | Type                                                    | Required | Default  |
+| ---- | ------------------------------------------------------- | -------- | -------- |
+| sm   | `'square'| 'rounded-square' | 'circle' | 'squircle'`    | Y        | N/A      |
+| md   | `'log-in' | 'sign-up' | 'connect' | 'bloom' | 'verify'` | N        | 'verify' |
+| lg   | `'log-in' | 'sign-up' | 'connect' | 'bloom' | 'verify'` | N        | 'verify' |
 
 Example:
 
@@ -191,10 +191,12 @@ Example:
     ![small circle](https://github.com/hellobloom/share-kit/raw/master/images/buttons/small/circle.png)
   - Squircle
     ![small squircle](https://github.com/hellobloom/share-kit/raw/master/images/buttons/small/squircle.png)
-  - Inverted
-    ![small inverted](https://github.com/hellobloom/share-kit/raw/master/images/buttons/small/inverted.png)
 
-- Medium:
+- Small Inverted:
+  - Small buttons can have thier foreground and background colors swaped with the `invert` flag
+  ![small inverted buttons](https://github.com/hellobloom/share-kit/raw/master/images/buttons/small/inverted.png)
+
+* Medium:
 
   - Log In
     ![medium log-in](https://github.com/hellobloom/share-kit/raw/master/images/buttons/medium/log-in.png)
@@ -207,7 +209,7 @@ Example:
   - Verify
     ![medium verify](https://github.com/hellobloom/share-kit/raw/master/images/buttons/medium/verify.png)
 
-- Large:
+* Large:
   - Log In
     ![large log-in](https://github.com/hellobloom/share-kit/raw/master/images/buttons/large/log-in.png)
   - Sign Up

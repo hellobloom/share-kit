@@ -6,7 +6,8 @@
   - This includes three sizes: small, medium, and large
     - Large is what was being rendered before
   - And style/content variations for each size
-    - Small: square, rounded square, circle, squircle, and inverted
+    - Small: square, rounded square, circle, squircle
+      - Small buttons can also have their foreground and background colors switched with the `inverted` field
     - Medium: log in, sign up, connect, bloom, and verify
     - Large: log in, sign up, connect, bloom, and verify
 

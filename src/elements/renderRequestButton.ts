@@ -18,7 +18,7 @@ const render = (id: string, anchor: HTMLAnchorElement, config: {requestData: Req
   const buttonOptions = config.buttonOptions
 
   if (buttonOptions.size === 'sm') {
-    renderSmallRequestButton(id, anchor, buttonOptions.type)
+    renderSmallRequestButton(id, anchor, buttonOptions.type, buttonOptions.invert)
   } else if (buttonOptions.size === 'md') {
     renderMediumRequestButton(id, anchor, buttonOptions.type || 'verify')
   } else {

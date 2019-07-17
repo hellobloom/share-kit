@@ -3,8 +3,6 @@ const renderBloomLogo = (id: string) => {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   svg.id = `${id}-logo`
   svg.setAttribute('viewBox', '0 0 33.85 35.57')
-  svg.setAttribute('width', '22px')
-  svg.setAttribute('height', '22px')
 
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
   path.setAttribute(

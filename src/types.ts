@@ -38,7 +38,7 @@ type QROptions = {
   logoOpacity?: number
 }
 
-type SmallButtonType = 'square' | 'rounded-square' | 'circle' | 'squircle' | 'inverted'
+type SmallButtonType = 'square' | 'rounded-square' | 'circle' | 'squircle'
 
 type MediumButtonType = 'log-in' | 'sign-up' | 'connect' | 'bloom' | 'verify'
 
@@ -54,6 +54,7 @@ type BaseButtonOptions = {
 type SmallButtonOptions = BaseButtonOptions & {
   size: 'sm'
   type: SmallButtonType
+  invert?: boolean
 }
 
 type MediumButtonOptions = BaseButtonOptions & {
