@@ -16,7 +16,7 @@ const renderStyle = (id: string, type: SmallButtonType) => {
       borderRadius = '12px'
       break
     case 'rounded-square':
-      borderRadius = '8px'
+      borderRadius = '4px'
       break
     case 'square':
     case 'inverted':
