@@ -1,4 +1,4 @@
-import {AttestationTypeID} from '@bloomprotocol/attestations-lib'
+import {TAttestationTypeNames} from '@bloomprotocol/attestations-lib'
 import Bowser from 'bowser'
 
 // Request Types
@@ -15,7 +15,7 @@ type RequestData = {
   org_name: string
   org_usage_policy_url: string
   org_privacy_policy_url: string
-  types: (keyof typeof AttestationTypeID)[]
+  types: TAttestationTypeNames[]
 }
 
 enum ErrorCorrectionLevel {
