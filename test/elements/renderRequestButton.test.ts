@@ -59,6 +59,49 @@ describe('renderRequestButton', () => {
     expect(callbackUrlQuery).toMatchSnapshot()
   })
 
+  test('renders a medium button', () => {
+    requestButton.update({
+      requestData: {
+        action: Action.attestation,
+        token: 'token',
+        url: 'https://receive-kit.bloom.co/api/receive',
+        org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
+        org_name: 'Bloom',
+        org_usage_policy_url: 'https://bloom.co/legal/terms',
+        org_privacy_policy_url: 'https://bloom.co/legal/privacy',
+        types: ['phone', 'email'],
+      },
+      buttonOptions: {
+        callbackUrl: 'https://bloom.co/callback-url',
+        size: 'md',
+      },
+    })
+
+    expect(container.innerHTML).toMatchSnapshot()
+  })
+
+  test('renders a small button', () => {
+    requestButton.update({
+      requestData: {
+        action: Action.attestation,
+        token: 'token',
+        url: 'https://receive-kit.bloom.co/api/receive',
+        org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
+        org_name: 'Bloom',
+        org_usage_policy_url: 'https://bloom.co/legal/terms',
+        org_privacy_policy_url: 'https://bloom.co/legal/privacy',
+        types: ['phone', 'email'],
+      },
+      buttonOptions: {
+        callbackUrl: 'https://bloom.co/callback-url',
+        size: 'sm',
+        type: 'square',
+      },
+    })
+
+    expect(container.innerHTML).toMatchSnapshot()
+  })
+
   test('updates the button', () => {
     requestButton.update({
       requestData: {

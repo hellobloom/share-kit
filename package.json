@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/share-kit",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "main": "dist/index.js",
   "module": "dist/share-kit.esm.js",
   "typings": "dist/index.d.ts",
@@ -18,7 +18,7 @@
     "clean": "rimraf dist",
     "prepare": "npm run build",
     "prepublishOnly": "npm run test && npm run eslint",
-    "storybook": "start-storybook -p 9001 -c .storybook",
+    "storybook": "start-storybook -p 9001",
     "eslint": "./bin/eslint",
     "eslint-fix": "./bin/eslint --fix"
   },
@@ -32,26 +32,28 @@
     "qr.js": "0.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0",
+    "@babel/core": "^7.5.4",
     "@storybook/react": "^5.1.9",
     "@types/jest": "^24.0.15",
-    "@typescript-eslint/eslint-plugin": "^1.7.0",
-    "@typescript-eslint/parser": "^1.7.0",
-    "acorn": "^6.1.1",
-    "babel-loader": "^8.0.0",
+    "@types/react": "^16.8.23",
+    "@types/storybook__react": "^4.0.2",
+    "@typescript-eslint/eslint-plugin": "^1.12.0",
+    "@typescript-eslint/parser": "^1.12.0",
+    "acorn": "^6.2.0",
+    "babel-loader": "^8.0.6",
+    "babel-preset-react-app": "^9.0.0",
     "eslint": "^5.16.0",
-    "eslint-config-prettier": "^5.0.0",
+    "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-prettier": "^3.1.0",
     "jest-canvas-mock": "^2.1.0",
     "prettier": "^1.18.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "rimraf": "^2.6.2",
-    "ts-loader": "^6.0.3",
     "tsdx": "^0.7.2",
     "tslib": "^1.10.0",
-    "typescript": "^3.5.2",
-    "webpack": "^4.35.0"
+    "typescript": "^3.5.3",
+    "webpack": "^4.35.3"
   },
   "jest": {
     "setupFiles": [

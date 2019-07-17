@@ -1,3 +1,15 @@
+## 7.1.0
+
+**New Features**:
+
+- Button variations are now available!
+  - This includes three sizes: small, medium, and large
+    - Large is what was being rendered before
+  - And style/content variations for each size
+    - Small: square, rounded square, circle, squircle, and inverted
+    - Medium: log in, sign up, connect, bloom, and verify
+    - Large: log in, sign up, connect, bloom, and verify
+
 ## 7.0.0
 
 **Improvements**

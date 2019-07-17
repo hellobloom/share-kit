@@ -38,9 +38,35 @@ type QROptions = {
   logoOpacity?: number
 }
 
-type ButtonOptions = {
+type SmallButtonType = 'square' | 'rounded-square' | 'circle' | 'squircle' | 'inverted'
+
+type MediumButtonType = 'log-in' | 'sign-up' | 'connect' | 'bloom' | 'verify'
+
+type LargeButtonType = 'log-in' | 'sign-up' | 'connect' | 'bloom' | 'verify'
+
+type ButtonSize = 'sm' | 'md' | 'lg'
+
+type BaseButtonOptions = {
   callbackUrl: string
+  size?: ButtonSize
 }
+
+type SmallButtonOptions = BaseButtonOptions & {
+  size: 'sm'
+  type: SmallButtonType
+}
+
+type MediumButtonOptions = BaseButtonOptions & {
+  size: 'md'
+  type?: MediumButtonType
+}
+
+type LargeButtonOptions = BaseButtonOptions & {
+  size?: 'lg'
+  type?: LargeButtonType
+}
+
+type ButtonOptions = SmallButtonOptions | MediumButtonOptions | LargeButtonOptions
 
 type ShouldRenderButton = (parsedResult: Bowser.Parser.ParsedResult) => boolean
 
@@ -49,4 +75,19 @@ type RequestElementResult = {
   remove: () => void
 }
 
-export {Action, RequestData, ErrorCorrectionLevel, QROptions, ButtonOptions, ShouldRenderButton, RequestElementResult}
+export {
+  Action,
+  RequestData,
+  ErrorCorrectionLevel,
+  QROptions,
+  SmallButtonType,
+  MediumButtonType,
+  LargeButtonType,
+  ButtonSize,
+  SmallButtonOptions,
+  MediumButtonOptions,
+  LargeButtonOptions,
+  ButtonOptions,
+  ShouldRenderButton,
+  RequestElementResult,
+}
