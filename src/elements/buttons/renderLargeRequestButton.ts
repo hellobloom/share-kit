@@ -244,7 +244,7 @@ const renderStyle = (id: string, type: LargeButtonType) => {
       top: 50%;
       transform: translateY(-50%);
       height: 20px;
-      color: #4742d7;
+      color: #5a5de0;
     }
 
     #${id}-text-and-logo {
