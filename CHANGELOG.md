@@ -1,3 +1,10 @@
+## 7.2.1
+
+**Bug fixes**:
+
+- Replace `append-query` dependency with internal function
+  - Fixes `npm audit` warning
+
 ## 7.2.0
 
 **Improvements**
