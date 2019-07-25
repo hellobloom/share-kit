@@ -1,3 +1,9 @@
+## 7.2.0
+
+**Improvements**
+
+- Update the `verify` button's text to "Verify with Bloom" instead of "Verify with BloomID"
+
 ## 7.1.0
 
 **New Features**:
