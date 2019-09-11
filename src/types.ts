@@ -4,13 +4,19 @@ enum Action {
   attestation = 'request_attestation_data',
 }
 
-type RequestData = {
+type BaseRequestData = {
   version: number
+}
+
+type RequestDataV1 = BaseRequestData & {
+  version: 1
   action: Action
   token: string
   url: string
   payload_url: string
 }
+
+type RequestData = RequestDataV1
 
 enum ErrorCorrectionLevel {
   'L' = 1,
