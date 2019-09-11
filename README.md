@@ -9,9 +9,12 @@ Easily allow your users to share their verified personal information directly wi
   - [Implementations](#implementations)
   - [Usage](#usage)
     - [RequestData](#requestdata)
-    - [TAttestationTypeNames](#tattestationtypenames)
-      - [TAttestationTypeNames Subtypes](#tattestationtypenames-subtypes)
+      - [Payload URL](#payload-url)
+        - [Types](#types)
+          - [Type Names](#type-names)
+          - [Detailed Config](#detailed-config)
       - [Appending to URL](#appending-to-url)
+      - [Example](#example)
     - [QROptions](#qroptions)
     - [ButtonOptions](#buttonoptions)
       - [ButtonType](#buttontype)
@@ -61,34 +64,58 @@ remove()
 
 Data to be rendered into the RequestQRCode.
 
-| Name                   | Description                                                                                     | Type                                              |
-| ---------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| action                 | Action type                                                                                     | `Action`                                          |
-| token                  | Unique string to identify this data request                                                     | `string`                                          |
-| url                    | The API endpoint to POST the `ResponseData` to.<br/> See [below](#appending-to-URL) for details | `string`                                          |
-| org_logo_url           | A url of the logo to display to the user when requesting data                                   | `string`                                          |
-| org_name               | The name of the organization requesting data                                                    | `string`                                          |
-| types                  | The type of attestions required and the amount needed                                           | [`TAttestationTypeNames`](#TAttestationTypeNames) |
-| org_usage_policy_url   | The url of the usage policy for the organization requesting data                                | `string`                                          |
-| org_privacy_policy_url | The url of the privacy policy for the organization requesting data                              | `string`                                          |
+QR codes can only contain so much data so instead of providing all the data to Share Kit directly you provide a `payload_url` that returns the necessary information.
 
-### TAttestationTypeNames
+| Name        | Description                                                                                     | Type     |
+| ----------- | ----------------------------------------------------------------------------------------------- | -------- |
+| version     | The version of the QR/Button data                                                               | `string` |
+| token       | Unique string to identify this data request                                                     | `string` |
+| url         | The API endpoint to POST the `ResponseData` to.<br/> See [below](#appending-to-URL) for details | `string` |
+| action      | The Action type                                                                                 | `Action` |
+| payload_url | The url to GET the rest of request data                                                         | `string` |
 
-| Type              | Description                       | Source     | Platforms |
-| ----------------- | --------------------------------- | ---------- | --------- |
-| 'phone'           | SMS verification                  | Twilio     | iOS, Web  |
-| 'email'           | Email verification                | Mailgun    | iOS, Web  |
-| 'facebook'        | Facebook verification             | Facebook   | iOS, Web  |
-| 'google'          | Google verification               | Google     | iOS, Web  |
-| 'linkedin'        | LinkedIn verification             | LinkedIn   | iOS, Web  |
-| 'twitter'         | Twitter verification              | Twitter    | iOS, Web  |
-| 'id-document'     | Identity document verification    | Acuant     | Web       |
-| 'sanction-screen' | Sanction person screening         | BlockScore | iOS, Web  |
-| 'pep-screen'      | Politically exposed person screen | KYC2020    | iOS, Web  |
-| 'income'          | Income verification               | Quovo      | Web       |
-| 'assets'          | Assets verification               | Quovo      | Web       |
+#### Payload URL
 
-#### TAttestationTypeNames Subtypes
+The `payload_url` should return JSON that takes the following shape:
+
+```ts
+{
+  version: number
+  org_logo_url: string
+  org_name: string
+  org_usage_policy_url: string
+  org_privacy_policy_url: string
+  types: (TAttestationTypeNames | DetailedAttestationTypeConfig)[]
+}
+```
+
+##### Types
+
+`types` can be set to a list of [Type Names](#type-names) or [Detailed Configs](#detailed-configs).
+
+###### Type Names
+
+> Types
+
+| Type              | Description                                                                                       | Source     | Platforms |
+| ----------------- | ------------------------------------------------------------------------------------------------- | ---------- | --------- |
+| 'phone'           | SMS verification                                                                                  | Twilio     | iOS, Web  |
+| 'email'           | Email verification                                                                                | Mailgun    | iOS, Web  |
+| 'facebook'        | Facebook verification                                                                             | Facebook   | iOS, Web  |
+| 'google'          | Google verification                                                                               | Google     | iOS, Web  |
+| 'linkedin'        | LinkedIn verification                                                                             | LinkedIn   | iOS, Web  |
+| 'twitter'         | Twitter verification                                                                              | Twitter    | iOS, Web  |
+| 'id-document'     | Identity document verification                                                                    | Acuant     | Web       |
+| 'sanction-screen' | Sanction person screening                                                                         | BlockScore | iOS, Web  |
+| 'pep-screen'      | Politically exposed person screen                                                                 | KYC2020    | iOS, Web  |
+| 'income'          | Income verification                                                                               | Quovo      | Web       |
+| 'assets'          | Assets verification                                                                               | Quovo      | Web       |
+| 'full-name'       | Subtype of 'facebook', 'linkedin', 'sanction-screen', 'pep-screen', and 'id-document' attestation | -          | iOS, Web  |
+| 'birth-date'      | Subtype of 'sanction-screen', 'pep-screen', and 'id-document' attestations                        | -          | iOS, Web  |
+| 'gender'          | Subtype of 'id-document' attestation                                                              | -          | Web       |
+| 'supplemental'    | Subtype of 'income' and 'assets' attestations                                                     | -          | Web       |
+
+> Subtypes
 
 | Type           | Description                                                                                       | Platforms |
 | -------------- | ------------------------------------------------------------------------------------------------- | --------- |
@@ -98,6 +125,19 @@ Data to be rendered into the RequestQRCode.
 | 'supplemental' | Subtype of 'income' and 'assets' attestations                                                     | Web       |
 
 For more information, see the [full list of attestation types](https://github.com/hellobloom/attestations-lib/blob/8192e222f66c9c9ec8a57f6e0e135f21acf4677b/src/AttestationTypes.ts#L8) that are implemented / planned to be implemented.
+
+###### Detailed Configs
+
+Detailed configs allow you to control exactly what attestation data you will recieve.
+
+| Name               | Description                                                            | Type                    |
+| ------------------ | ---------------------------------------------------------------------- | ----------------------- |
+| name               | The name of the attestation                                            | `TAttestationTypeNames` |
+| optional           | Whether the attestation is required to be completed                    | `boolean`               |
+| completed_after    | Signifies that the attestation has to be completed after a given date  | `string`                |
+| completed_before   | Signifies that the attestation has to be completed before a given date | `string`                |
+| provider_whitelist | List of providers to accept an attestation from                        | `string[]`              |
+| provider_blacklist | List of providers to _not_ accept an attestation from                  | `string[]`              |
 
 #### Appending to URL
 
@@ -123,18 +163,41 @@ Works if your url already has a query param too!
 'https://receive-kit.bloom.co/api/receive?my-param=&share-kit-from=qr',
 ```
 
-<h3 id="request-example">Example</h3>
+### Example
 
 ```ts
 {
-  action: Action.attestation,
-  token: '0x8f31e48a585fd12ba58e70e03292cac712cbae39bc7eb980ec189aa88e24d043',
+  version: 1,
+  token: '59a10d60-e765-4e90-9884-5a8a6de3fa85',
   url: 'https://receive-kit.bloom.co/api/receive',
+  payload_url: 'https://bloom.co/api/get-request-data-payload?token=59a10d60-e765-4e90-9884-5a8a6de3fa85'
+}
+```
+
+Result from `payload_url`:
+
+```ts
+{
+  version: 1,
+  types: [
+    {
+      name: 'full-name',
+      provider_whitelist: ['acuant'],
+    },
+    {
+      name: 'phone',
+      completed_after: dayjs().subtract(1, 'year').toISOString(),
+    },
+    'email',
+    {
+      name: 'address',
+      optional: true,
+    },
+  ],
   org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
   org_name: 'Bloom',
   org_usage_policy_url: 'https://bloom.co/legal/terms',
   org_privacy_policy_url: 'https://bloom.co/legal/privacy',
-  types: ['full-name', 'phone', 'email'],
 }
 ```
 
@@ -173,9 +236,9 @@ Rendering options for the rendered button.
 
 The type of button to rendered based on it's size
 
-| Size | Type                                                    | Required | Default  |
-| ---- | ------------------------------------------------------- | -------- | -------- |
-| sm   | `'square' \| 'rounded-square' \| 'circle' \| 'squircle'`   | Y        | N/A      |
+| Size | Type                                                        | Required | Default  |
+| ---- | ----------------------------------------------------------- | -------- | -------- |
+| sm   | `'square' \| 'rounded-square' \| 'circle' \| 'squircle'`    | Y        | N/A      |
 | md   | `'log-in' \| 'sign-up' \| 'connect' \| 'bloom' \| 'verify'` | N        | 'verify' |
 | lg   | `'log-in' \| 'sign-up' \| 'connect' \| 'bloom' \| 'verify'` | N        | 'verify' |
 

@@ -1,3 +1,14 @@
+## 8.0.0
+
+**Breaking**:
+
+- You will no longer provide Share Kit with all request data.
+  - Instead you will just give: `version`, `url`, `token`, `action`, and `payload_url`
+
+**Improvements**
+
+- No longer depend on `@bloomprotocol/attestations-lib`
+
 ## 7.2.1
 
 **Bug fixes**:

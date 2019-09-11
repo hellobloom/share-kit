@@ -25,7 +25,7 @@ const renderStyle = (id: string, type: SmallButtonType, invert?: boolean) => {
       throw new Error(`Unsupported type: ${type}`)
   }
 
-  let styleText = stripIndents(oneLine)`
+  const styleText = stripIndents(oneLine)`
     #${id} {
       background-color: ${invert ? '#fff' : '#6262F6'};
       color: ${invert ? '#6262F6' : '#fff'};

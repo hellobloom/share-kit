@@ -27,14 +27,11 @@ describe('renderRequestQRCode', () => {
     requestQRCode = renderRequestQRCode({
       container,
       requestData: {
+        version: 1,
         action: Action.attestation,
         token: 'token',
         url: 'https://receive-kit.bloom.co/api/receive',
-        org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
-        org_name: 'Bloom',
-        org_usage_policy_url: 'https://bloom.co/legal/terms',
-        org_privacy_policy_url: 'https://bloom.co/legal/privacy',
-        types: ['phone', 'email'],
+        payload_url: 'https://receive-kit.bloom.co/api/get-payload',
       },
     })
   })

@@ -1,21 +1,15 @@
-import {TAttestationTypeNames} from '@bloomprotocol/attestations-lib'
 import Bowser from 'bowser'
-
-// Request Types
 
 enum Action {
   attestation = 'request_attestation_data',
 }
 
 type RequestData = {
+  version: number
   action: Action
   token: string
   url: string
-  org_logo_url: string
-  org_name: string
-  org_usage_policy_url: string
-  org_privacy_policy_url: string
-  types: TAttestationTypeNames[]
+  payload_url: string
 }
 
 enum ErrorCorrectionLevel {
