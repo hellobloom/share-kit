@@ -2,12 +2,19 @@
 
 **Breaking**:
 
-- You will no longer provide Share Kit with all request data.
+- `renderRequestElement` is now JWT based
+  - This means instead of passing the raw `RequestData` you will be passing a JWT the data
+- `RequestData` has also been modified
+  - You will no longer provide Share Kit with all request data.
   - Instead you will just give: `version`, `url`, `token`, `action`, and `payload_url`
 
 **Improvements**
 
-- No longer depend on `@bloomprotocol/attestations-lib`
+- No longer depend on `extend`, `url`
+
+**Misc**
+
+- Bump dev dependencies
 
 ## 7.2.1
 

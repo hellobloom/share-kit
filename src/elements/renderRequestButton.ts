@@ -2,13 +2,16 @@ import {generateId} from './utils'
 import {renderSmallRequestButton} from './buttons/renderSmallRequestButton'
 import {renderMediumRequestButton} from './buttons/renderMediumRequestButton'
 import {renderLargeRequestButton} from './buttons/renderLargeRequestButton'
-import {RequestData, RequestElementResult, ButtonOptions} from '../types'
+import {verifyJWT} from '../jwt'
+import {RequestElementResult, ButtonOptions, JsonWebTokenConfig} from '../types'
 
-const getLink = (data: RequestData, callbackUrl: string) =>
-  `https://bloom.co/download?request=${window.btoa(JSON.stringify(data))}&callback-url=${encodeURIComponent(callbackUrl)}`
+const getLink = (jwtConfig: JsonWebTokenConfig, callbackUrl: string) =>
+  `https://bloom.co/download?request=${window.btoa(JSON.stringify(jwtConfig))}&callback-url=${encodeURIComponent(callbackUrl)}`
 
-const render = (id: string, anchor: HTMLAnchorElement, config: {requestData: RequestData; buttonOptions: ButtonOptions}) => {
-  anchor.href = getLink(config.requestData, config.buttonOptions.callbackUrl)
+const render = (id: string, anchor: HTMLAnchorElement, config: {jwtConfig: JsonWebTokenConfig; buttonOptions: ButtonOptions}) => {
+  verifyJWT(config.jwtConfig)
+
+  anchor.href = getLink(config.jwtConfig, config.buttonOptions.callbackUrl)
 
   // Clear all children
   while (anchor.lastChild) {
@@ -26,7 +29,10 @@ const render = (id: string, anchor: HTMLAnchorElement, config: {requestData: Req
   }
 }
 
-const updateRequestButton = (id: string, container: HTMLElement) => (config: {requestData: RequestData; buttonOptions: ButtonOptions}) => {
+const updateRequestButton = (id: string, container: HTMLElement) => (config: {
+  jwtConfig: JsonWebTokenConfig
+  buttonOptions: ButtonOptions
+}) => {
   const anchor = container.querySelector<HTMLAnchorElement>(`#${id}`)
 
   if (!anchor) return
@@ -42,7 +48,7 @@ const removeRequestButton = (id: string, container: HTMLElement) => () => {
 
 const renderRequestButton = (config: {
   container: HTMLElement
-  requestData: RequestData
+  jwtConfig: JsonWebTokenConfig
   buttonOptions: ButtonOptions
 }): RequestElementResult => {
   const id = generateId()
@@ -50,7 +56,7 @@ const renderRequestButton = (config: {
   const anchor = document.createElement('a')
   anchor.id = id
 
-  anchor.href = getLink(config.requestData, config.buttonOptions.callbackUrl)
+  anchor.href = getLink(config.jwtConfig, config.buttonOptions.callbackUrl)
   anchor.target = '_blank'
   anchor.rel = 'norefferer noopener'
 

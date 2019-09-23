@@ -1,10 +1,11 @@
 import React, {useRef, useEffect, useState} from 'react'
 import {storiesOf} from '@storybook/react'
 
-import {RequestElementResult, renderRequestElement, ButtonOptions, RequestData, Action, ButtonSize} from '../src'
+import {RequestElementResult, renderRequestElement, ButtonOptions, ButtonSize, JsonWebTokenConfig, RequestData, Action} from '../src'
+import {generateJWT} from '../src'
 
 type CompProps = {
-  requestData: RequestData
+  jwtConfig: JsonWebTokenConfig
   buttonOptions: ButtonOptions
 }
 
@@ -12,20 +13,20 @@ const Comp: React.FC<CompProps> = props => {
   const container = useRef<HTMLDivElement>(null)
   const requestElementResult = useRef<RequestElementResult | undefined>(undefined)
 
-  const {requestData, buttonOptions} = props
+  const {jwtConfig, buttonOptions} = props
 
   useEffect(() => {
     if (!container.current) return
 
     if (requestElementResult.current) {
       requestElementResult.current.update({
-        requestData,
+        jwtConfig,
         buttonOptions,
       })
     } else {
       requestElementResult.current = renderRequestElement({
         container: container.current,
-        requestData,
+        jwtConfig,
         shouldRenderButton: () => true,
         buttonOptions,
       })
@@ -41,6 +42,16 @@ const requestData: RequestData = {
   token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
   url: 'https://receive-kit.bloom.co/api/receive',
   payload_url: 'https://receive-kit.bloom.co/api/get-payload?token=',
+}
+
+const jwtConfig: JsonWebTokenConfig = {
+  token: generateJWT(requestData, 'shhhhh'),
+  secretOrPublicKey: 'shhhhh',
+}
+
+const invalidJwtConfig: JsonWebTokenConfig = {
+  token: generateJWT(requestData, 'shhhhh'),
+  secretOrPublicKey: 'invalid',
 }
 
 const Updating: React.FC = () => {
@@ -76,7 +87,7 @@ const Updating: React.FC = () => {
 
   return (
     <React.Fragment>
-      <Comp buttonOptions={buttonOptions} requestData={requestData} />
+      <Comp buttonOptions={buttonOptions} jwtConfig={jwtConfig} />
       <div style={{paddingTop: '8px'}}>
         <label>
           <input
@@ -124,38 +135,37 @@ const baseButtonOptions: ButtonOptions = {
 }
 
 storiesOf('Button', module)
-  .add('Basic', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions}} />)
+  .add('Basic', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions}} />)
+  .add('Invalid', () => <Comp jwtConfig={invalidJwtConfig} buttonOptions={{...baseButtonOptions}} />)
   .add('Updating', () => <Updating />)
 
 storiesOf('Button/Large', module)
-  .add('Default', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions}} />)
-  .add('Log In', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'log-in'}} />)
-  .add('Sign Up', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'sign-up'}} />)
-  .add('Connect', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'connect'}} />)
-  .add('Bloom', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'bloom'}} />)
+  .add('Default', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions}} />)
+  .add('Log In', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, type: 'log-in'}} />)
+  .add('Sign Up', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, type: 'sign-up'}} />)
+  .add('Connect', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, type: 'connect'}} />)
+  .add('Bloom', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, type: 'bloom'}} />)
 
 storiesOf('Button/Medium', module)
-  .add('Verify', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md'}} />)
-  .add('Log In', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'log-in'}} />)
-  .add('Sign Up', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'sign-up'}} />)
-  .add('Connect', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'connect'}} />)
-  .add('Bloom', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'bloom'}} />)
+  .add('Verify', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'md'}} />)
+  .add('Log In', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'md', type: 'log-in'}} />)
+  .add('Sign Up', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'md', type: 'sign-up'}} />)
+  .add('Connect', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'md', type: 'connect'}} />)
+  .add('Bloom', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'md', type: 'bloom'}} />)
 
 storiesOf('Button/Small', module)
-  .add('Square', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'square'}} />)
-  .add('Rounded Square', () => (
-    <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'rounded-square'}} />
-  ))
-  .add('Circle', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'circle'}} />)
-  .add('Squircle', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'squircle'}} />)
+  .add('Square', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'square'}} />)
+  .add('Rounded Square', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'rounded-square'}} />)
+  .add('Circle', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'circle'}} />)
+  .add('Squircle', () => <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'squircle'}} />)
   .add('Inverted', () => (
     <div style={{backgroundColor: '#6262F6', padding: '4px', display: 'inline-block'}}>
-      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'square', invert: true}} />
+      <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'square', invert: true}} />
       <div style={{height: '4px'}} />
-      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'rounded-square', invert: true}} />
+      <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'rounded-square', invert: true}} />
       <div style={{height: '4px'}} />
-      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'circle', invert: true}} />
+      <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'circle', invert: true}} />
       <div style={{height: '4px'}} />
-      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'squircle', invert: true}} />
+      <Comp jwtConfig={jwtConfig} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'squircle', invert: true}} />
     </div>
   ))

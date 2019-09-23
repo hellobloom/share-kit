@@ -1,10 +1,11 @@
 import React, {useRef, useEffect, useState} from 'react'
 import {storiesOf} from '@storybook/react'
 
-import {RequestData, QROptions, RequestElementResult, renderRequestElement, Action} from '../src'
+import {QROptions, RequestElementResult, renderRequestElement, JsonWebTokenConfig, RequestData, Action} from '../src'
+import {generateJWT} from '../src'
 
 type CompProps = {
-  requestData: RequestData
+  jwtConfig: JsonWebTokenConfig
   qrOptions?: Partial<QROptions>
 }
 
@@ -12,27 +13,27 @@ const Comp: React.FC<CompProps> = props => {
   const container = useRef<HTMLDivElement>(null)
   const requestElementResult = useRef<RequestElementResult | undefined>(undefined)
 
-  const {requestData, qrOptions} = props
+  const {jwtConfig, qrOptions} = props
 
   useEffect(() => {
     if (!container.current) return
 
     if (requestElementResult.current) {
       requestElementResult.current.update({
-        requestData,
+        jwtConfig,
         qrOptions,
         buttonOptions: {callbackUrl: ''},
       })
     } else {
       requestElementResult.current = renderRequestElement({
         container: container.current,
-        requestData,
+        jwtConfig,
         shouldRenderButton: () => false,
         qrOptions,
         buttonOptions: {callbackUrl: ''},
       })
     }
-  }, [container, requestData, qrOptions])
+  }, [container, jwtConfig, qrOptions])
 
   return <div ref={container} />
 }
@@ -43,6 +44,16 @@ const requestData: RequestData = {
   token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
   url: 'https://receive-kit.bloom.co/api/receive',
   payload_url: 'https://receive-kit.bloom.co/api/get-payload?token=a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
+}
+
+const jwtConfig: JsonWebTokenConfig = {
+  token: generateJWT(requestData, 'shhhhh'),
+  secretOrPublicKey: 'shhhhh',
+}
+
+const invalidJwtConfig: JsonWebTokenConfig = {
+  token: generateJWT(requestData, 'shhhhh'),
+  secretOrPublicKey: 'invalid',
 }
 
 const Updating: React.FC = () => {
@@ -56,9 +67,14 @@ const Updating: React.FC = () => {
     payload_url: 'https://receive-kit.bloom.co/api/get-payload?token=a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
   }
 
+  const jwtConfig = {
+    token: generateJWT(data, 'shhhhh'),
+    secretOrPublicKey: 'shhhhh',
+  }
+
   return (
     <React.Fragment>
-      <Comp requestData={data} />
+      <Comp jwtConfig={jwtConfig} />
       <button onClick={() => setCount(count + 1)}>Update QR Code</button>
     </React.Fragment>
   )
@@ -69,17 +85,18 @@ const Logo: React.FC = () => {
 
   return (
     <React.Fragment>
-      <Comp requestData={requestData} qrOptions={{hideLogo: logoHidden}} />
+      <Comp jwtConfig={jwtConfig} qrOptions={{hideLogo: logoHidden}} />
       <button onClick={() => setLogoHidden(!logoHidden)}>{logoHidden ? 'Show' : 'Hide'} Logo</button>
     </React.Fragment>
   )
 }
 
 storiesOf('QR', module)
-  .add('Basic', () => <Comp requestData={requestData} />)
+  .add('Basic', () => <Comp jwtConfig={jwtConfig} />)
+  .add('Invalid', () => <Comp jwtConfig={invalidJwtConfig} />)
   .add('Colors', () => (
     <Comp
-      requestData={requestData}
+      jwtConfig={jwtConfig}
       qrOptions={{
         bgColor: '#EBF0F1',
         fgColor: '#3C3C3D',
@@ -87,6 +104,6 @@ storiesOf('QR', module)
     />
   ))
   .add('Logo', () => <Logo />)
-  .add('Size', () => <Comp requestData={requestData} qrOptions={{size: 300}} />)
+  .add('Size', () => <Comp jwtConfig={jwtConfig} qrOptions={{size: 300}} />)
   .add('Updating', () => <Updating />)
-  .add('Padding', () => <Comp requestData={requestData} qrOptions={{padding: 10, bgColor: '#EBF0F1', fgColor: '#3C3C3D'}} />)
+  .add('Padding', () => <Comp jwtConfig={jwtConfig} qrOptions={{padding: 10, bgColor: '#EBF0F1', fgColor: '#3C3C3D'}} />)

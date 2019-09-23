@@ -8,13 +8,15 @@ Easily allow your users to share their verified personal information directly wi
   - [Installation](#installation)
   - [Implementations](#implementations)
   - [Usage](#usage)
+    - [JsonWebTokenConfig](#jsonwebtokenconfig)
+      - [Token](#token)
     - [RequestData](#requestdata)
       - [Payload URL](#payload-url)
         - [Types](#types)
           - [Type Names](#type-names)
-          - [Detailed Config](#detailed-config)
+          - [Detailed Configs](#detailed-configs)
       - [Appending to URL](#appending-to-url)
-      - [Example](#example)
+    - [Example](#example)
     - [QROptions](#qroptions)
     - [ButtonOptions](#buttonoptions)
       - [ButtonType](#buttontype)
@@ -40,29 +42,41 @@ npm install --save @bloomprotocol/share-kit
 `renderRequestElement` will render a QR code or button based on the client's platform. By default it will render a button when the client is mobile or tablet and on iOS.
 
 ```typescript
-import {renderRequestElement, RequestData, QROptions} from '@bloomprotocol/share-kit'
+import {renderRequestElement, JsonWebTokenConfig, QROptions} from '@bloomprotocol/share-kit'
 
-const requestData: RequestData = {...}
+const jwtConfig: JsonWebTokenConfig = {...}
 const qrOptions: Partial<QROptions> = {
   size: 200,
 }
 const callbackUrl = 'https://mysite.com/bloom-callback'
 const container = document.createElement('div')
 
-const {update, remove} = renderRequestElement({container, requestData, qrOptions, callbackUrl})
+const {update, remove} = renderRequestElement({container, jwtConfig, qrOptions, callbackUrl})
 
 // Update the element
-update({requestData: newRequestData, qrOptions: newQROptions, callbackUrl: newCallbackUrl})
+update({jwtConfig: newJwtConfig, qrOptions: newQROptions, callbackUrl: newCallbackUrl})
 
 // Remove the element
 remove()
 ```
 
-<h2 id="request-types">Types</h3>
+### JsonWebTokenConfig
+
+JWT config to be rendered into the QR code or button. We use a JWT instead of the raw data so the request element's content is verifiable and tamper proof.
+
+| Name              | Description                                                                                        | Type                |
+| ----------------- | -------------------------------------------------------------------------------------------------- | ------------------- |
+| token             | The JWT generated with a private key or secret, containing all necessary data                      | `string`            |
+| secretOrPublicKey | The secret or public key of the private key used to generate the `token`                           | `string`            |
+| options           | Options to use to verify the `token`, should correlate to the options used to generate the `token` | `jwt.VerifyOptions` |
+
+#### Token
+
+To generate this token it is recommended to use `generateJWT` function, provided by this libary, in an endpoint on your server.
 
 ### RequestData
 
-Data to be rendered into the RequestQRCode.
+Data to be signed and put into the JWT for the request element.
 
 QR codes can only contain so much data so instead of providing all the data to Share Kit directly you provide a `payload_url` that returns the necessary information.
 
@@ -76,18 +90,16 @@ QR codes can only contain so much data so instead of providing all the data to S
 
 #### Payload URL
 
-The `payload_url` should return JSON that takes the following shape:
+The `payload_url` should return `RequestDataPayload`.
 
-```ts
-{
-  version: number
-  org_logo_url: string
-  org_name: string
-  org_usage_policy_url: string
-  org_privacy_policy_url: string
-  types: (TAttestationTypeNames | DetailedAttestationTypeConfig)[]
-}
-```
+| Name                   | Description                                                        | Type      |
+| ---------------------- | ------------------------------------------------------------------ | --------- |
+| version                | The version of the payload data                                    | `string`  |
+| org_logo_url           | A url of the logo to display to the user when requesting data      | `string`  |
+| org_name               | The name of the organization requesting data                       | `string`  |
+| org_usage_policy_url   | The url of the usage policy for the organization requesting data   | `string`  |
+| org_privacy_policy_url | The url of the privacy policy for the organization requesting data | `string`  |
+| types                  | The type of attestions required and the amount needed              | See below |
 
 ##### Types
 
@@ -166,39 +178,81 @@ Works if your url already has a query param too!
 ### Example
 
 ```ts
-{
-  version: 1,
-  token: '59a10d60-e765-4e90-9884-5a8a6de3fa85',
-  url: 'https://receive-kit.bloom.co/api/receive',
-  payload_url: 'https://bloom.co/api/get-request-data-payload?token=59a10d60-e765-4e90-9884-5a8a6de3fa85'
-}
+// Server
+
+import {generateJWT, RequestData, RequestDataPayload} from '@bloomprotocol/share-kit'
+import uuid from 'uuid'
+
+app.get('/api/share-kit/get-jwt', function(req, res) {
+  const userToken = uuid()
+  const requestDataPayload: RequestDataPayload = {
+    version: 1,
+    types: [
+      {
+        name: 'full-name',
+        provider_whitelist: ['acuant'],
+      },
+      {
+        name: 'phone',
+        completed_after: dayjs()
+          .subtract(1, 'year')
+          .toISOString(),
+      },
+      'email',
+      {
+        name: 'address',
+        optional: true,
+      },
+    ],
+    org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
+    org_name: 'Bloom',
+    org_usage_policy_url: 'https://bloom.co/legal/terms',
+    org_privacy_policy_url: 'https://bloom.co/legal/privacy',
+  }
+
+  storeRequestDataPayloadForUserToken(userToken, requestDataPayload)
+
+  const requestData: RequestData = {
+    version: 1,
+    token: requestToken,
+    url: 'https://mysite.com/api/share-kit/receive',
+    payload_url: `https://mysite.com/api/share-kit/get-request-data-payload?userToken=${userToken}`,
+  }
+  const jwt = generateJWT(requestData, process.env.SHARE_KIT_PRIV_KEY)
+
+  res.json({jwt, publicKey: process.env.SHARE_KIT_PUB_KEY, userToken})
+})
+
+app.get('/api/share-kit/get-request-data-payload', function(req, res) {
+  const userToken = req.query.userToken
+
+  const requestDataPayload: RequestDataPayload = getRequestDataPayloadForUserToken(userToken)
+
+  res.json(requestDataPayload)
+})
 ```
 
-Result from `payload_url`:
-
 ```ts
-{
-  version: 1,
-  types: [
-    {
-      name: 'full-name',
-      provider_whitelist: ['acuant'],
-    },
-    {
-      name: 'phone',
-      completed_after: dayjs().subtract(1, 'year').toISOString(),
-    },
-    'email',
-    {
-      name: 'address',
-      optional: true,
-    },
-  ],
-  org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
-  org_name: 'Bloom',
-  org_usage_policy_url: 'https://bloom.co/legal/terms',
-  org_privacy_policy_url: 'https://bloom.co/legal/privacy',
+// Client
+
+import {renderRequestElement, JsonWebTokenConfig, QROptions} from '@bloomprotocol/share-kit'
+
+const res = await fetch('/api/share-kit/get-jwt')
+const json = await res.json()
+const {jwt, publicKey, userToken} = json
+
+const jwtConfig: JsonWebTokenConfig = {
+  token: jwt,
+  secretOrPublicKey: publicKey,
 }
+
+const qrOptions: Partial<QROptions> = {...}
+const buttonOptions: ButtonOptions = {
+  callbackUrl: `https://mysite.com/bloom-callback?userToken=${userToken}`
+}
+const container = document.createElement('div')
+
+const {update, remove} = renderRequestElement({container, jwtConfig, qrOptions, buttonOptions})
 ```
 
 ![Sample QR](https://github.com/hellobloom/share-kit/raw/master/images/sampleQR.png)

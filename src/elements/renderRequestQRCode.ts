@@ -1,5 +1,6 @@
 import {generateId, getBloomLogo} from './utils'
-import {QROptions, RequestData, ErrorCorrectionLevel, RequestElementResult} from '../types'
+import {verifyJWT} from '../jwt'
+import {QROptions, ErrorCorrectionLevel, RequestElementResult, JsonWebTokenConfig} from '../types'
 
 const QRCodeImpl = require('qr.js/lib/QRCode')
 
@@ -192,13 +193,15 @@ const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionTyp
   }
 }
 
-const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Partial<QROptions>) => {
+const drawCanvas = (canvas: HTMLCanvasElement, jwtConfig: JsonWebTokenConfig, qrOptions?: Partial<QROptions>) => {
+  verifyJWT(jwtConfig)
+
   const options = {...defaultOptions, ...qrOptions}
 
   const {ecLevel, size, bgColor, fgColor, padding} = options
 
   const qr = new QRCodeImpl(-1, ErrorCorrectionLevel[ecLevel])
-  qr.addData(JSON.stringify(data))
+  qr.addData(JSON.stringify(jwtConfig))
   qr.make()
 
   const ctx = canvas.getContext('2d')!
@@ -299,14 +302,14 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Pa
 }
 
 const updateRequestQRCode = (id: string, container: HTMLElement) => (config: {
-  requestData: RequestData
+  jwtConfig: JsonWebTokenConfig
   qrOptions?: Partial<QROptions>
 }) => {
   const canvas = container.querySelector<HTMLCanvasElement>(`#${id}`)
 
   if (!canvas) return
 
-  drawCanvas(canvas, config.requestData, config.qrOptions)
+  drawCanvas(canvas, config.jwtConfig, config.qrOptions)
 }
 
 const removeRequestQRCode = (id: string, container: HTMLElement) => () => {
@@ -317,7 +320,7 @@ const removeRequestQRCode = (id: string, container: HTMLElement) => () => {
 
 const renderRequestQRCode = (config: {
   container: HTMLElement
-  requestData: RequestData
+  jwtConfig: JsonWebTokenConfig
   qrOptions?: Partial<QROptions>
 }): RequestElementResult => {
   const id = generateId()
@@ -325,7 +328,7 @@ const renderRequestQRCode = (config: {
   const canvas = document.createElement('canvas')
   canvas.id = id
 
-  drawCanvas(canvas, config.requestData, config.qrOptions)
+  drawCanvas(canvas, config.jwtConfig, config.qrOptions)
 
   config.container.append(canvas)
 
