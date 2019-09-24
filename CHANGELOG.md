@@ -2,15 +2,8 @@
 
 **Breaking**:
 
-- `renderRequestElement` is now JWT based
-  - This means instead of passing the raw `RequestData` you will be passing a JWT the data
-- `RequestData` has also been modified
-  - You will no longer provide Share Kit with all request data.
+- You will no longer provide Share Kit with all request data.
   - Instead you will just give: `version`, `url`, `token`, `action`, and `payload_url`
-
-**Improvements**
-
-- No longer depend on `extend`, `url`
 
 **Misc**
 

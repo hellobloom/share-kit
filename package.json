@@ -24,11 +24,12 @@
   "dependencies": {
     "@bloomprotocol/attestations-lib": "^5.1.0",
     "@types/common-tags": "^1.8.0",
-    "@types/jsonwebtoken": "^8.3.4",
+    "@types/extend": "^3.0.1",
     "bowser": "^2.4.0",
     "common-tags": "^1.8.0",
-    "jsonwebtoken": "^8.5.1",
-    "qr.js": "0.0.0"
+    "extend": "^3.0.2",
+    "qr.js": "0.0.0",
+    "url": "^0.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

@@ -1,5 +1,4 @@
 import Bowser from 'bowser'
-import jwt from 'jsonwebtoken'
 import {TAttestationTypeNames} from '@bloomprotocol/attestations-lib'
 
 enum Action {
@@ -20,7 +19,7 @@ type RequestDataV1 = BaseRequestData & {
 
 type RequestData = RequestDataV1
 
-type BaseRequestDataPayload = {
+type BasePayloadRequestData = {
   version: number
 }
 
@@ -33,7 +32,7 @@ type DetailedAttestationTypeConfig = {
   provider_blacklist?: string[]
 }
 
-type RequestDataPayloadV1 = BaseRequestDataPayload & {
+type RequestPayloadDataV1 = BasePayloadRequestData & {
   version: 1
   org_logo_url: string
   org_name: string
@@ -42,13 +41,7 @@ type RequestDataPayloadV1 = BaseRequestDataPayload & {
   types: (TAttestationTypeNames | DetailedAttestationTypeConfig)[]
 }
 
-type RequestDataPayload = RequestDataPayloadV1
-
-type JsonWebTokenConfig = {
-  token: string
-  secretOrPublicKey: string | Buffer
-  options?: jwt.VerifyOptions
-}
+type RequestPayloadData = RequestPayloadDataV1
 
 enum ErrorCorrectionLevel {
   'L' = 1,
@@ -104,15 +97,14 @@ type ButtonOptions = SmallButtonOptions | MediumButtonOptions | LargeButtonOptio
 type ShouldRenderButton = (parsedResult: Bowser.Parser.ParsedResult) => boolean
 
 type RequestElementResult = {
-  update: (config: {jwtConfig: JsonWebTokenConfig; buttonOptions: ButtonOptions; qrOptions?: Partial<QROptions>}) => void
+  update: (config: {requestData: RequestData; buttonOptions: ButtonOptions; qrOptions?: Partial<QROptions>}) => void
   remove: () => void
 }
 
 export {
   Action,
   RequestData,
-  RequestDataPayload,
-  JsonWebTokenConfig,
+  RequestPayloadData,
   ErrorCorrectionLevel,
   QROptions,
   SmallButtonType,

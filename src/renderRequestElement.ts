@@ -1,12 +1,13 @@
 import Bowser from 'bowser'
 
-import {QROptions, ButtonOptions, ShouldRenderButton, RequestElementResult, JsonWebTokenConfig} from './types'
+import {appendQuery} from './append'
+import {QROptions, ButtonOptions, RequestData, ShouldRenderButton, RequestElementResult} from './types'
 import {renderRequestButton} from './elements/renderRequestButton'
 import {renderRequestQRCode} from './elements/renderRequestQRCode'
 
 const renderRequestElement = (config: {
   container: HTMLElement
-  jwtConfig: JsonWebTokenConfig
+  requestData: RequestData
   qrOptions?: Partial<QROptions>
   shouldRenderButton?: ShouldRenderButton
   buttonOptions: ButtonOptions
@@ -21,6 +22,9 @@ const renderRequestElement = (config: {
   }
 
   const shouldRenderButton = config.shouldRenderButton(Bowser.parse(window.navigator.userAgent))
+
+  // Append a query parameter to inform the server how the data has been shared
+  config.requestData.url = appendQuery(config.requestData.url, {'share-kit-from': `${shouldRenderButton ? 'button' : 'qr'}`})
 
   if (shouldRenderButton) {
     return renderRequestButton(config)
