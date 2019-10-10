@@ -3,9 +3,13 @@ import {renderSmallRequestButton} from './buttons/renderSmallRequestButton'
 import {renderMediumRequestButton} from './buttons/renderMediumRequestButton'
 import {renderLargeRequestButton} from './buttons/renderLargeRequestButton'
 import {RequestData, RequestElementResult, ButtonOptions} from '../types'
+import {appendQuery} from '../append'
 
-const getLink = (data: RequestData, callbackUrl: string) =>
-  `https://bloom.co/download?request=${window.btoa(JSON.stringify(data))}&callback-url=${encodeURIComponent(callbackUrl)}`
+const getLink = (data: RequestData, callbackUrl: string) => {
+  data.url = appendQuery(data.url, {'share-kit-from': 'button'})
+
+  return `https://bloom.co/download?request=${window.btoa(JSON.stringify(data))}&callback-url=${encodeURIComponent(callbackUrl)}`
+}
 
 const render = (id: string, anchor: HTMLAnchorElement, config: {requestData: RequestData; buttonOptions: ButtonOptions}) => {
   anchor.href = getLink(config.requestData, config.buttonOptions.callbackUrl)
@@ -64,4 +68,4 @@ const renderRequestButton = (config: {
   }
 }
 
-export {renderRequestButton}
+export {renderRequestButton, updateRequestButton}

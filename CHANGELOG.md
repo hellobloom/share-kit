@@ -1,3 +1,9 @@
+## 7.2.2
+
+**Bug fixes**:
+
+- Append the `share-kit-from` query parameter within `renderRequestButton` and `renderRequestQRCode` so it's appended when updating the request element.
+
 ## 7.2.1
 
 **Bug fixes**:

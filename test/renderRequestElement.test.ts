@@ -1,7 +1,5 @@
 import {renderRequestElement} from '../src/renderRequestElement'
 import {Action} from '../src/types'
-import * as qr from '../src/elements/renderRequestQRCode'
-import * as btn from '../src/elements/renderRequestButton'
 
 jest.mock('../src/elements/utils', () => {
   return {
@@ -89,65 +87,5 @@ describe('renderRequestElement', () => {
     expect(container.querySelector('canvas')).toBeNull()
 
     element.remove()
-  })
-
-  describe('appends the share-kit-from query correctly', () => {
-    describe('on desktop when', () => {
-      test('there are no existing query params', () => {
-        const qrSpy = jest.spyOn(qr, 'renderRequestQRCode')
-
-        renderElem({userAgent: userAgents.macOs})
-
-        expect(qrSpy).toHaveBeenCalledWith(
-          expect.objectContaining({
-            requestData: expect.objectContaining({url: 'https://receive-kit.bloom.co/api/receive?share-kit-from=qr'}),
-          }),
-        )
-      })
-
-      test('there are existing query params', () => {
-        const qrSpy = jest.spyOn(qr, 'renderRequestQRCode')
-
-        renderElem({userAgent: userAgents.macOs, url: 'https://receive-kit.bloom.co/api/receive?test='})
-
-        expect(qrSpy).toHaveBeenCalledWith(
-          expect.objectContaining({
-            requestData: expect.objectContaining({
-              url: 'https://receive-kit.bloom.co/api/receive?test=&share-kit-from=qr',
-            }),
-          }),
-        )
-      })
-    })
-
-    describe('on mobile when', () => {
-      test('there are no existing query params', () => {
-        const btnSpy = jest.spyOn(btn, 'renderRequestButton')
-
-        renderElem({userAgent: userAgents.iOS})
-
-        expect(btnSpy).toHaveBeenCalledWith(
-          expect.objectContaining({
-            requestData: expect.objectContaining({
-              url: 'https://receive-kit.bloom.co/api/receive?share-kit-from=button',
-            }),
-          }),
-        )
-      })
-
-      test('there are existing query params', () => {
-        const btnSpy = jest.spyOn(btn, 'renderRequestButton')
-
-        renderElem({userAgent: userAgents.iOS, url: 'https://receive-kit.bloom.co/api/receive?test='})
-
-        expect(btnSpy).toHaveBeenCalledWith(
-          expect.objectContaining({
-            requestData: expect.objectContaining({
-              url: 'https://receive-kit.bloom.co/api/receive?test=&share-kit-from=button',
-            }),
-          }),
-        )
-      })
-    })
   })
 })

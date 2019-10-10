@@ -1,5 +1,6 @@
 import {generateId, getBloomLogo} from './utils'
 import {QROptions, RequestData, ErrorCorrectionLevel, RequestElementResult} from '../types'
+import {appendQuery} from '../append'
 
 const QRCodeImpl = require('qr.js/lib/QRCode')
 
@@ -198,6 +199,7 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Pa
   const {ecLevel, size, bgColor, fgColor, padding} = options
 
   const qr = new QRCodeImpl(-1, ErrorCorrectionLevel[ecLevel])
+  data.url = appendQuery(data.url, {'share-kit-from': 'qr'})
   qr.addData(JSON.stringify(data))
   qr.make()
 
