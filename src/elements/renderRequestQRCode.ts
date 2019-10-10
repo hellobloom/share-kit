@@ -322,7 +322,6 @@ const renderRequestQRCode = (config: {
   requestData: RequestData
   qrOptions?: Partial<QROptions>
 }): RequestElementResult => {
-  console.log({requestData: config.requestData})
   const id = generateId()
 
   const canvas = document.createElement('canvas')
