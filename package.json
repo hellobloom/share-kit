@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/share-kit",
-  "version": "7.2.1",
+  "version": "7.2.2",
   "main": "dist/index.js",
   "module": "dist/share-kit.esm.js",
   "typings": "dist/index.d.ts",
