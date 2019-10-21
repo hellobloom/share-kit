@@ -1,3 +1,9 @@
+## 7.3.0
+
+**Miscellaneous**:
+
+- Add `onclick` handler to QR element to copy the request data as JSON to the clipboard.
+
 ## 7.2.2
 
 **Bug fixes**:

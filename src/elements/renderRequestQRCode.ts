@@ -1,4 +1,4 @@
-import {generateId, getBloomLogo} from './utils'
+import {generateId, getBloomLogo, copyToClipboard} from './utils'
 import {QROptions, RequestData, ErrorCorrectionLevel, RequestElementResult} from '../types'
 import {appendQuery} from '../append'
 
@@ -297,6 +297,10 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Pa
       ctx.restore()
     }
     image.src = logoImage
+  }
+
+  canvas.onclick = _ev => {
+    copyToClipboard("'" + JSON.stringify(data) + "'")
   }
 }
 
