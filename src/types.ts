@@ -8,7 +8,7 @@ enum Action {
   authentication = 'authentication',
 }
 
-interface IRequestDataBase {
+type RequestDataBase = {
   action: keyof typeof Action
   token: string
   url: string
@@ -18,17 +18,17 @@ interface IRequestDataBase {
   org_privacy_policy_url: string
 }
 
-interface IRequestDataAttestation extends IRequestDataBase {
+type RequestDataAttestation = RequestDataBase & {
   action: 'attestation'
   types: TAttestationTypeNames[]
 }
 
-interface IRequestDataAuthentication extends IRequestDataBase {
+type RequestDataAuthentication = RequestDataBase & {
   action: 'authentication'
   types: []
 }
 
-type RequestData = IRequestDataAttestation | IRequestDataAuthentication
+type RequestData = RequestDataAttestation | RequestDataAuthentication
 
 enum ErrorCorrectionLevel {
   'L' = 1,
