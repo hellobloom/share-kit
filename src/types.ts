@@ -5,7 +5,7 @@ import Bowser from 'bowser'
 
 enum Action {
   attestation = 'request_attestation_data',
-  authenticate = 'authenticate',
+  authentication = 'authentication',
 }
 
 interface IRequestDataBase {
@@ -23,12 +23,12 @@ interface IRequestDataAttestation extends IRequestDataBase {
   types: TAttestationTypeNames[]
 }
 
-interface IRequestDataAuthenticate extends IRequestDataBase {
-  action: 'authenticate'
+interface IRequestDataAuthentication extends IRequestDataBase {
+  action: 'authentication'
   types: []
 }
 
-type RequestData = IRequestDataAttestation | IRequestDataAuthenticate
+type RequestData = IRequestDataAttestation | IRequestDataAuthentication
 
 enum ErrorCorrectionLevel {
   'L' = 1,

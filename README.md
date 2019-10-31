@@ -125,6 +125,8 @@ Works if your url already has a query param too!
 
 <h3 id="request-example">Example</h3>
 
+# Attestation data request: 
+
 ```ts
 {
   action: Action.attestation,
@@ -135,6 +137,21 @@ Works if your url already has a query param too!
   org_usage_policy_url: 'https://bloom.co/legal/terms',
   org_privacy_policy_url: 'https://bloom.co/legal/privacy',
   types: ['full-name', 'phone', 'email'],
+}
+```
+
+# Authentication/login request: 
+
+```ts
+{
+  action: Action.authentication,
+  token: '0xabcdee48a585fd12ba58e70e03292cac7fbac958b591baf9cbe9ac157cbadefa',
+  url: 'https://receive-kit.bloom.co/api/receive',
+  org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
+  org_name: 'Bloom',
+  org_usage_policy_url: 'https://bloom.co/legal/terms',
+  org_privacy_policy_url: 'https://bloom.co/legal/privacy',
+  types: [],
 }
 ```
 
