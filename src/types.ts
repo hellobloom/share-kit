@@ -9,7 +9,7 @@ enum Action {
 }
 
 type RequestDataBase = {
-  action: keyof typeof Action
+  action: Action
   token: string
   url: string
   org_logo_url: string
