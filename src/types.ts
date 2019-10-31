@@ -5,18 +5,30 @@ import Bowser from 'bowser'
 
 enum Action {
   attestation = 'request_attestation_data',
+  authenticate = 'authenticate',
 }
 
-type RequestData = {
-  action: Action
+interface IRequestDataBase {
+  action: keyof typeof Action
   token: string
   url: string
   org_logo_url: string
   org_name: string
   org_usage_policy_url: string
   org_privacy_policy_url: string
+}
+
+interface IRequestDataAttestation extends IRequestDataBase {
+  action: 'attestation'
   types: TAttestationTypeNames[]
 }
+
+interface IRequestDataAuthenticate extends IRequestDataBase {
+  action: 'authenticate'
+  types: []
+}
+
+type RequestData = IRequestDataAttestation | IRequestDataAuthenticate
 
 enum ErrorCorrectionLevel {
   'L' = 1,
