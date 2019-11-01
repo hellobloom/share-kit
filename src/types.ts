@@ -8,8 +8,8 @@ enum Action {
   authentication = 'authentication',
 }
 
-type RequestDataBase = {
-  action: Action
+type RequestDataBase<T extends Action> = {
+  action: T
   token: string
   url: string
   org_logo_url: string
@@ -18,15 +18,9 @@ type RequestDataBase = {
   org_privacy_policy_url: string
 }
 
-type RequestDataAttestation = RequestDataBase & {
-  action: 'attestation'
-  types: TAttestationTypeNames[]
-}
+type RequestDataAttestation = RequestDataBase<Action.attestation> & {types: TAttestationTypeNames[]}
 
-type RequestDataAuthentication = RequestDataBase & {
-  action: 'authentication'
-  types: []
-}
+type RequestDataAuthentication = RequestDataBase<Action.authentication>
 
 type RequestData = RequestDataAttestation | RequestDataAuthentication
 
