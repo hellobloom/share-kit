@@ -5,18 +5,24 @@ import Bowser from 'bowser'
 
 enum Action {
   attestation = 'request_attestation_data',
+  authentication = 'authentication',
 }
 
-type RequestData = {
-  action: Action
+type RequestDataBase<T extends Action> = {
+  action: T
   token: string
   url: string
   org_logo_url: string
   org_name: string
   org_usage_policy_url: string
   org_privacy_policy_url: string
-  types: TAttestationTypeNames[]
 }
+
+type RequestDataAttestation = RequestDataBase<Action.attestation> & {types: TAttestationTypeNames[]}
+
+type RequestDataAuthentication = RequestDataBase<Action.authentication>
+
+type RequestData = RequestDataAttestation | RequestDataAuthentication
 
 enum ErrorCorrectionLevel {
   'L' = 1,
