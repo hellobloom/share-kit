@@ -84,6 +84,8 @@ type RequestElementResult = {
 
 export {
   Action,
+  RequestDataAttestation,
+  RequestDataAuthentication,
   RequestData,
   ErrorCorrectionLevel,
   QROptions,
