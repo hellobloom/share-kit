@@ -57,9 +57,23 @@ remove()
 
 <h2 id="request-types">Types</h3>
 
-### RequestData
+### RequestDataAuthentication
 
-Data to be rendered into the RequestQRCode.
+Data to be rendered into the RequestQRCode for authentication requests.
+
+| Name                   | Description                                                                                     | Type                                              |
+| ---------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| action                 | Action type                                                                                     | `Action`                                          |
+| token                  | Unique string to identify this data request                                                     | `string`                                          |
+| url                    | The API endpoint to POST the `ResponseData` to.<br/> See [below](#appending-to-URL) for details | `string`                                          |
+| org_logo_url           | A url of the logo to display to the user when requesting data                                   | `string`                                          |
+| org_name               | The name of the organization requesting data                                                    | `string`                                          |
+| org_usage_policy_url   | The url of the usage policy for the organization requesting data                                | `string`                                          |
+| org_privacy_policy_url | The url of the privacy policy for the organization requesting data                              | `string`                                          |
+
+### RequestDataAttestation
+
+Data to be rendered into the RequestQRCode for attestation sharing requests.
 
 | Name                   | Description                                                                                     | Type                                              |
 | ---------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------- |
