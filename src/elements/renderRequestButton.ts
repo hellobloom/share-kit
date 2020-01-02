@@ -5,10 +5,10 @@ import {renderLargeRequestButton} from './buttons/renderLargeRequestButton'
 import {RequestData, RequestElementResult, ButtonOptions} from '../types'
 import {appendQuery} from '../append'
 
-const getLink = (data: RequestData, callbackUrl: string) => {
-  data.url = appendQuery(data.url, {'share-kit-from': 'button'})
+const getLink = (requestData: RequestData, callbackUrl: string) => {
+  requestData.url = appendQuery(requestData.url, {'share-kit-from': 'button'})
 
-  return `https://bloom.co/download?request=${window.btoa(JSON.stringify(data))}&callback-url=${encodeURIComponent(callbackUrl)}`
+  return `https://bloom.co/download?request=${window.btoa(JSON.stringify(requestData))}&callback-url=${encodeURIComponent(callbackUrl)}`
 }
 
 const render = (id: string, anchor: HTMLAnchorElement, config: {requestData: RequestData; buttonOptions: ButtonOptions}) => {
@@ -44,7 +44,7 @@ const removeRequestButton = (id: string, container: HTMLElement) => () => {
   if (anchor) anchor.remove()
 }
 
-const renderRequestButton = (config: {
+export const renderRequestButton = (config: {
   container: HTMLElement
   requestData: RequestData
   buttonOptions: ButtonOptions
@@ -67,5 +67,3 @@ const renderRequestButton = (config: {
     remove: removeRequestButton(id, config.container),
   }
 }
-
-export {renderRequestButton, updateRequestButton}

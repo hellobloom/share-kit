@@ -25,7 +25,7 @@ const renderStyle = (id: string, type: SmallButtonType, invert?: boolean) => {
       throw new Error(`Unsupported type: ${type}`)
   }
 
-  let styleText = stripIndents(oneLine)`
+  const styleText = stripIndents(oneLine)`
     #${id} {
       background-color: ${invert ? '#fff' : '#6262F6'};
       color: ${invert ? '#6262F6' : '#fff'};
@@ -49,9 +49,7 @@ const renderStyle = (id: string, type: SmallButtonType, invert?: boolean) => {
   return style
 }
 
-const renderSmallRequestButton = (id: string, anchor: HTMLAnchorElement, type: SmallButtonType, invert?: boolean) => {
+export const renderSmallRequestButton = (id: string, anchor: HTMLAnchorElement, type: SmallButtonType, invert?: boolean) => {
   anchor.append(renderStyle(id, type, invert))
   anchor.append(renderBloomLogo(id))
 }
-
-export {renderSmallRequestButton}

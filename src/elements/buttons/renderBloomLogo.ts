@@ -1,5 +1,5 @@
 /* tslint:disable:max-line-length */
-const renderBloomLogo = (id: string) => {
+export const renderBloomLogo = (id: string) => {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   svg.id = `${id}-logo`
   svg.setAttribute('viewBox', '0 0 33.85 35.57')
@@ -16,5 +16,3 @@ const renderBloomLogo = (id: string) => {
   return svg
 }
 /* tslint:enable:max-line-length */
-
-export {renderBloomLogo}

@@ -1,5 +1,5 @@
 import {renderRequestQRCode} from '../../src/elements/renderRequestQRCode'
-import {Action, RequestData, QROptions, ButtonOptions} from '../../src/types'
+import {RequestData, QROptions, ButtonOptions} from '../../src/types'
 
 jest.mock('../../src/elements/utils', () => {
   return {
@@ -27,14 +27,10 @@ describe('renderRequestQRCode', () => {
     requestQRCode = renderRequestQRCode({
       container,
       requestData: {
-        action: Action.attestation,
+        version: 1,
         token: 'token',
         url: 'https://receive-kit.bloom.co/api/receive',
-        org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
-        org_name: 'Bloom',
-        org_usage_policy_url: 'https://bloom.co/legal/terms',
-        org_privacy_policy_url: 'https://bloom.co/legal/privacy',
-        types: ['phone', 'email'],
+        payload_url: 'https://receive-kit.bloom.co/api/get-payload',
       },
     })
   })

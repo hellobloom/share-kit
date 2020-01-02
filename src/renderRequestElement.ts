@@ -4,14 +4,14 @@ import {QROptions, ButtonOptions, RequestData, ShouldRenderButton, RequestElemen
 import {renderRequestButton} from './elements/renderRequestButton'
 import {renderRequestQRCode} from './elements/renderRequestQRCode'
 
-const renderRequestElement = (config: {
+export const renderRequestElement = (config: {
   container: HTMLElement
   requestData: RequestData
   qrOptions?: Partial<QROptions>
   shouldRenderButton?: ShouldRenderButton
   buttonOptions: ButtonOptions
 }): RequestElementResult => {
-  if (config.shouldRenderButton === undefined) {
+  if (typeof config.shouldRenderButton === 'undefined') {
     config.shouldRenderButton = parsedResult => {
       const isSupportedPlatform = parsedResult.platform.type === 'mobile' || parsedResult.platform.type === 'tablet'
       const isSupportedOS = parsedResult.os.name === 'iOS' || parsedResult.os.name === 'Android'
@@ -20,7 +20,13 @@ const renderRequestElement = (config: {
     }
   }
 
-  const shouldRenderButton = config.shouldRenderButton(Bowser.parse(window.navigator.userAgent))
+  let shouldRenderButton: boolean
+
+  if (typeof config.shouldRenderButton === 'boolean') {
+    shouldRenderButton = config.shouldRenderButton
+  } else {
+    shouldRenderButton = config.shouldRenderButton(Bowser.parse(window.navigator.userAgent))
+  }
 
   if (shouldRenderButton) {
     return renderRequestButton(config)
@@ -28,5 +34,3 @@ const renderRequestElement = (config: {
     return renderRequestQRCode(config)
   }
 }
-
-export {renderRequestElement}

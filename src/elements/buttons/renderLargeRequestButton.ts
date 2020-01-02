@@ -357,10 +357,8 @@ const renderTextAndLogo = (id: string, type: LargeButtonType) => {
   return textAndLogo
 }
 
-const renderLargeRequestButton = (id: string, anchor: HTMLAnchorElement, type: LargeButtonType) => {
+export const renderLargeRequestButton = (id: string, anchor: HTMLAnchorElement, type: LargeButtonType) => {
   anchor.appendChild(renderStyle(id, type))
   anchor.appendChild(renderLockIcon(id))
   anchor.appendChild(renderTextAndLogo(id, type))
 }
-
-export {renderLargeRequestButton}

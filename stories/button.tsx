@@ -1,7 +1,7 @@
 import React, {useRef, useEffect, useState} from 'react'
 import {storiesOf} from '@storybook/react'
 
-import {RequestElementResult, renderRequestElement, ButtonOptions, RequestData, Action, ButtonSize} from '../src'
+import {RequestElementResult, renderRequestElement, ButtonOptions, RequestData, ButtonSize, Action} from '../src'
 
 type CompProps = {
   requestData: RequestData
@@ -26,7 +26,7 @@ const Comp: React.FC<CompProps> = props => {
       requestElementResult.current = renderRequestElement({
         container: container.current,
         requestData,
-        shouldRenderButton: () => true,
+        shouldRenderButton: true,
         buttonOptions,
       })
     }
@@ -35,18 +35,7 @@ const Comp: React.FC<CompProps> = props => {
   return <div ref={container} style={{width: buttonOptions.size === 'lg' || buttonOptions.size === undefined ? '335px' : undefined}} />
 }
 
-const requestData: RequestData = {
-  action: Action.attestation,
-  token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
-  url: 'https://receive-kit.bloom.co/api/receive',
-  org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
-  org_name: 'Bloom',
-  org_usage_policy_url: 'https://bloom.co/legal/terms',
-  org_privacy_policy_url: 'https://bloom.co/legal/privacy',
-  types: ['phone', 'email'],
-}
-
-const Updating: React.FC = () => {
+const Updating: React.FC<{requestData: RequestData}> = props => {
   const [size, setSize] = useState<ButtonSize>('lg')
 
   let buttonOptions: ButtonOptions
@@ -79,7 +68,7 @@ const Updating: React.FC = () => {
 
   return (
     <React.Fragment>
-      <Comp buttonOptions={buttonOptions} requestData={requestData} />
+      <Comp buttonOptions={buttonOptions} requestData={props.requestData} />
       <div style={{paddingTop: '8px'}}>
         <label>
           <input
@@ -125,40 +114,66 @@ const Updating: React.FC = () => {
 const baseButtonOptions: ButtonOptions = {
   callbackUrl: 'https://mysite.com/bloom-callback',
 }
+const allVersions: {label: string; requestData: RequestData}[] = [
+  {
+    label: 'V1',
+    requestData: {
+      version: 1,
+      token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
+      url: 'https://receive-kit.bloom.co/api/receive',
+      payload_url: 'https://receive-kit.bloom.co/api/payload/a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
+    },
+  },
+  {
+    label: 'Legacy',
+    requestData: {
+      action: Action.attestation,
+      token: 'a08714b92346a1bba4262ed575d23de3ff3e6b5480ad0e1c82c011bab0411fdf',
+      url: 'https://receive-kit.bloom.co/api/receive',
+      org_logo_url: 'https://bloom.co/images/notif/bloom-logo.png',
+      org_name: 'Bloom',
+      org_usage_policy_url: 'https://bloom.co/legal/terms',
+      org_privacy_policy_url: 'https://bloom.co/legal/privacy',
+      types: ['phone', 'email'],
+    },
+  },
+]
 
-storiesOf('Button', module)
-  .add('Basic', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions}} />)
-  .add('Updating', () => <Updating />)
+allVersions.forEach(({label, requestData}) => {
+  storiesOf(`Button/${label}`, module)
+    .add('Basic', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions}} />)
+    .add('Updating', () => <Updating requestData={requestData} />)
 
-storiesOf('Button/Large', module)
-  .add('Default', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions}} />)
-  .add('Log In', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'log-in'}} />)
-  .add('Sign Up', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'sign-up'}} />)
-  .add('Connect', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'connect'}} />)
-  .add('Bloom', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'bloom'}} />)
+  storiesOf(`Button/${label}/Large`, module)
+    .add('Default', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions}} />)
+    .add('Log In', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'log-in'}} />)
+    .add('Sign Up', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'sign-up'}} />)
+    .add('Connect', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'connect'}} />)
+    .add('Bloom', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, type: 'bloom'}} />)
 
-storiesOf('Button/Medium', module)
-  .add('Verify', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md'}} />)
-  .add('Log In', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'log-in'}} />)
-  .add('Sign Up', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'sign-up'}} />)
-  .add('Connect', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'connect'}} />)
-  .add('Bloom', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'bloom'}} />)
+  storiesOf(`Button/${label}/Medium`, module)
+    .add('Verify', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md'}} />)
+    .add('Log In', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'log-in'}} />)
+    .add('Sign Up', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'sign-up'}} />)
+    .add('Connect', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'connect'}} />)
+    .add('Bloom', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'md', type: 'bloom'}} />)
 
-storiesOf('Button/Small', module)
-  .add('Square', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'square'}} />)
-  .add('Rounded Square', () => (
-    <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'rounded-square'}} />
-  ))
-  .add('Circle', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'circle'}} />)
-  .add('Squircle', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'squircle'}} />)
-  .add('Inverted', () => (
-    <div style={{backgroundColor: '#6262F6', padding: '4px', display: 'inline-block'}}>
-      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'square', invert: true}} />
-      <div style={{height: '4px'}} />
-      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'rounded-square', invert: true}} />
-      <div style={{height: '4px'}} />
-      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'circle', invert: true}} />
-      <div style={{height: '4px'}} />
-      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'squircle', invert: true}} />
-    </div>
-  ))
+  storiesOf(`Button/${label}/Small`, module)
+    .add('Square', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'square'}} />)
+    .add('Rounded Square', () => (
+      <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'rounded-square'}} />
+    ))
+    .add('Circle', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'circle'}} />)
+    .add('Squircle', () => <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'squircle'}} />)
+    .add('Inverted', () => (
+      <div style={{backgroundColor: '#6262F6', padding: '4px', display: 'inline-block'}}>
+        <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'square', invert: true}} />
+        <div style={{height: '4px'}} />
+        <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'rounded-square', invert: true}} />
+        <div style={{height: '4px'}} />
+        <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'circle', invert: true}} />
+        <div style={{height: '4px'}} />
+        <Comp requestData={requestData} buttonOptions={{...baseButtonOptions, size: 'sm', type: 'squircle', invert: true}} />
+      </div>
+    ))
+})

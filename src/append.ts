@@ -2,7 +2,7 @@ import extend from 'extend'
 
 const url = require('url')
 
-const appendQuery = (uri: string, queryToAppend: {[key: string]: string | null}) => {
+export const appendQuery = (uri: string, queryToAppend: {[key: string]: string | null}) => {
   const parts = url.parse(uri, true)
   const parsedQuery = extend(true, {}, parts.query, queryToAppend)
 
@@ -18,5 +18,3 @@ const appendQuery = (uri: string, queryToAppend: {[key: string]: string | null})
 
   return url.format(parts)
 }
-
-export {appendQuery}

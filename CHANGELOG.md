@@ -1,3 +1,15 @@
+## 7.6.0
+
+**New Features**:
+
+- Introduce a pattern where you just provide `version`, `url`, `token`, `action`, and `payload_url` as `RequestData`
+  - This helps keep the QR code's more readable because they hold less data
+
+**Deprecations**:
+
+- Deprecate the old `RequestData` structure in favor of the `payload_url` pattern
+  - These types will be removed in v8.0.0
+
 ## 7.3.0
 
 **Miscellaneous**:

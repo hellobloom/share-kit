@@ -107,9 +107,7 @@ const renderTextAndLogo = (id: string, type: MediumButtonType) => {
   return textAndLogo
 }
 
-const renderMediumRequestButton = (id: string, anchor: HTMLAnchorElement, type: MediumButtonType) => {
+export const renderMediumRequestButton = (id: string, anchor: HTMLAnchorElement, type: MediumButtonType) => {
   anchor.append(renderStyle(id, type))
   anchor.append(renderTextAndLogo(id, type))
 }
-
-export {renderMediumRequestButton}

@@ -193,14 +193,14 @@ const makeEyeBit = (ctx: CanvasRenderingContext2D, info: CellInfo, connectionTyp
   }
 }
 
-const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Partial<QROptions>) => {
+const drawCanvas = (canvas: HTMLCanvasElement, requestData: RequestData, qrOptions?: Partial<QROptions>) => {
   const options = {...defaultOptions, ...qrOptions}
 
   const {ecLevel, size, bgColor, fgColor, padding} = options
 
   const qr = new QRCodeImpl(-1, ErrorCorrectionLevel[ecLevel])
-  data.url = appendQuery(data.url, {'share-kit-from': 'qr'})
-  qr.addData(JSON.stringify(data))
+  requestData.url = appendQuery(requestData.url, {'share-kit-from': 'qr'})
+  qr.addData(JSON.stringify(requestData))
   qr.make()
 
   const ctx = canvas.getContext('2d')!
@@ -300,7 +300,7 @@ const drawCanvas = (canvas: HTMLCanvasElement, data: RequestData, qrOptions?: Pa
   }
 
   canvas.onclick = _ev => {
-    copyToClipboard("'" + JSON.stringify(data) + "'")
+    copyToClipboard("'" + JSON.stringify(requestData) + "'")
   }
 }
 
@@ -321,7 +321,7 @@ const removeRequestQRCode = (id: string, container: HTMLElement) => () => {
   if (canvas) canvas.remove()
 }
 
-const renderRequestQRCode = (config: {
+export const renderRequestQRCode = (config: {
   container: HTMLElement
   requestData: RequestData
   qrOptions?: Partial<QROptions>
@@ -340,5 +340,3 @@ const renderRequestQRCode = (config: {
     remove: removeRequestQRCode(id, config.container),
   }
 }
-
-export {renderRequestQRCode}
