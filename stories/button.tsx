@@ -30,6 +30,11 @@ const Comp: React.FC<CompProps> = props => {
         buttonOptions,
       })
     }
+
+    return () => {
+      requestElementResult.current?.remove()
+      requestElementResult.current = undefined
+    }
   }, [container, requestData, buttonOptions])
 
   return <div ref={container} style={{width: buttonOptions.size === 'lg' || buttonOptions.size === undefined ? '335px' : undefined}} />

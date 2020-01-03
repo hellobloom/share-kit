@@ -1,4 +1,3 @@
-import {generateId} from './utils'
 import {renderSmallRequestButton} from './buttons/renderSmallRequestButton'
 import {renderMediumRequestButton} from './buttons/renderMediumRequestButton'
 import {renderLargeRequestButton} from './buttons/renderLargeRequestButton'
@@ -30,40 +29,39 @@ const render = (id: string, anchor: HTMLAnchorElement, config: {requestData: Req
   }
 }
 
-const updateRequestButton = (id: string, container: HTMLElement) => (config: {requestData: RequestData; buttonOptions: ButtonOptions}) => {
-  const anchor = container.querySelector<HTMLAnchorElement>(`#${id}`)
+const generateId = () => {
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
-  if (!anchor) return
+  let rand = ''
+  for (let i = 0; i < 4; i++) {
+    rand += possible.charAt(Math.floor(Math.random() * possible.length))
+  }
 
-  render(id, anchor, config)
-}
-
-const removeRequestButton = (id: string, container: HTMLElement) => () => {
-  const anchor = container.querySelector(`#${id}`)
-
-  if (anchor) anchor.remove()
+  return `bloom-request-element-${rand}`
 }
 
 export const renderRequestButton = (config: {
   container: HTMLElement
   requestData: RequestData
   buttonOptions: ButtonOptions
+  id?: string
 }): RequestElementResult => {
-  const id = generateId()
-
+  const id = config.id || generateId()
   const anchor = document.createElement('a')
-  anchor.id = id
+  config.container.appendChild(anchor)
 
-  anchor.href = getLink(config.requestData, config.buttonOptions.callbackUrl)
+  anchor.id = id
   anchor.target = '_blank'
   anchor.rel = 'norefferer noopener'
 
   render(id, anchor, config)
 
-  config.container.appendChild(anchor)
-
   return {
-    update: updateRequestButton(id, config.container),
-    remove: removeRequestButton(id, config.container),
+    update: updateConfig => {
+      render(id, anchor, updateConfig)
+    },
+    remove: () => {
+      anchor.remove()
+    },
   }
 }

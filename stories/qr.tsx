@@ -32,6 +32,11 @@ const Comp: React.FC<CompProps> = props => {
         buttonOptions: {callbackUrl: ''},
       })
     }
+
+    return () => {
+      requestElementResult.current?.remove()
+      requestElementResult.current = undefined
+    }
   }, [container, requestData, qrOptions])
 
   return <div ref={container} />

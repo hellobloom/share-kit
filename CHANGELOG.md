@@ -5,6 +5,10 @@
 - Introduce a pattern where you just provide `version`, `url`, `token`, `action`, and `payload_url` as `RequestData`
   - This helps keep the QR code's more readable because they hold less data
 
+**Improvements**
+
+- Use the `@bloomprotocol/qr` package to render the QR code
+
 **Deprecations**:
 
 - Deprecate the old `RequestData` structure in favor of the `payload_url` pattern

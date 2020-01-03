@@ -1,12 +1,7 @@
-import {renderRequestQRCode} from '../../src/elements/renderRequestQRCode'
-import {RequestData, QROptions, ButtonOptions} from '../../src/types'
+import {Options as QROptions} from '@bloomprotocol/qr'
 
-jest.mock('../../src/elements/utils', () => {
-  return {
-    ...jest.requireActual('../../src/elements/utils'),
-    generateId: () => 'bloom-request-element-',
-  }
-})
+import {renderRequestQRCode} from '../../src/elements/renderRequestQRCode'
+import {RequestData, ButtonOptions} from '../../src/types'
 
 describe('renderRequestQRCode', () => {
   let requestQRCode: {

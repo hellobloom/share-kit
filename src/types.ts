@@ -1,3 +1,5 @@
+import {Options as QROptions} from '@bloomprotocol/qr'
+
 import {TAttestationTypeNames} from '@bloomprotocol/attestations-lib'
 import Bowser from 'bowser'
 
@@ -91,28 +93,6 @@ export type AuthRequestPayloadDataV1 = BaseRequestPayloadDataV1 & {
 export type RequestPayloadDataV1 = AttestationRequestPayloadDataV1 | AuthRequestPayloadDataV1
 
 export type RequestPayloadData = RequestPayloadDataV1
-
-// QR Types
-
-export enum ErrorCorrectionLevel {
-  'L' = 1,
-  'M' = 0,
-  'Q' = 3,
-  'H' = 2,
-}
-
-export type QROptions = {
-  ecLevel: keyof typeof ErrorCorrectionLevel
-  size: number
-  bgColor: string
-  fgColor: string
-  hideLogo: boolean
-  padding: number
-  logoImage?: string
-  logoWidth?: number
-  logoHeight?: number
-  logoOpacity?: number
-}
 
 // Button Types
 

@@ -2,13 +2,6 @@ import {renderRequestElement} from '../src/renderRequestElement'
 import * as qr from '../src/elements/renderRequestQRCode'
 import * as btn from '../src/elements/renderRequestButton'
 
-jest.mock('../src/elements/utils', () => {
-  return {
-    ...jest.requireActual('../src/elements/utils'),
-    generateId: () => 'bloom-request-element-',
-  }
-})
-
 /* tslint:disable:max-line-length */
 const userAgents = {
   iOS:

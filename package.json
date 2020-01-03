@@ -17,17 +17,17 @@
     "test": "tsdx test",
     "lint": "tsdx lint src test stories",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run test && npm run eslint",
+    "prepublishOnly": "npm run test && npm run lint",
     "storybook": "start-storybook -p 9001"
   },
   "dependencies": {
     "@bloomprotocol/attestations-lib": "^5.0.0",
+    "@bloomprotocol/qr": "^2.0.0",
     "@types/common-tags": "^1.8.0",
     "@types/extend": "^3.0.1",
     "bowser": "^2.4.0",
     "common-tags": "^1.8.0",
     "extend": "^3.0.2",
-    "qr.js": "0.0.0",
     "url": "^0.11.0"
   },
   "devDependencies": {

@@ -1,13 +1,6 @@
 import {renderRequestButton} from '../../src/elements/renderRequestButton'
 import {RequestData, ButtonOptions} from '../../src/types'
 
-jest.mock('../../src/elements/utils', () => {
-  return {
-    ...jest.requireActual('../../src/elements/utils'),
-    generateId: () => 'bloom-request-element-',
-  }
-})
-
 describe('renderRequestButton', () => {
   let requestButton: {
     update: (config: {requestData: RequestData; buttonOptions: ButtonOptions}) => void
@@ -35,6 +28,7 @@ describe('renderRequestButton', () => {
       buttonOptions: {
         callbackUrl: 'https://bloom.co/callback-url',
       },
+      id: 'bloom-request-element-',
     })
   })
 
