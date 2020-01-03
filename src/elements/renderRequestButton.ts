@@ -1,8 +1,8 @@
+import {appendQuery} from './append'
 import {renderSmallRequestButton} from './buttons/renderSmallRequestButton'
 import {renderMediumRequestButton} from './buttons/renderMediumRequestButton'
 import {renderLargeRequestButton} from './buttons/renderLargeRequestButton'
 import {RequestData, RequestElementResult, ButtonOptions} from '../types'
-import {appendQuery} from '../append'
 
 const getLink = (requestData: RequestData, callbackUrl: string) => {
   requestData.url = appendQuery(requestData.url, {'share-kit-from': 'button'})

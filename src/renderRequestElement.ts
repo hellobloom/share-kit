@@ -5,15 +5,16 @@ import {ButtonOptions, RequestData, ShouldRenderButton, RequestElementResult} fr
 import {renderRequestButton} from './elements/renderRequestButton'
 import {renderRequestQRCode} from './elements/renderRequestQRCode'
 
-export const renderRequestElement = (_config: {
+export const renderRequestElement = ({
+  shouldRenderButton,
+  ...renderConfig
+}: {
   container: HTMLElement
   requestData: RequestData
   qrOptions?: Partial<QROptions>
   shouldRenderButton?: ShouldRenderButton
   buttonOptions: ButtonOptions
 }): RequestElementResult => {
-  const {shouldRenderButton, ...config} = _config
-
   let renderButton: boolean
 
   if (typeof shouldRenderButton === 'undefined') {
@@ -29,5 +30,5 @@ export const renderRequestElement = (_config: {
     renderButton = shouldRenderButton(Bowser.parse(window.navigator.userAgent))
   }
 
-  return (renderButton ? renderRequestButton : renderRequestQRCode)(config)
+  return (renderButton ? renderRequestButton : renderRequestQRCode)(renderConfig)
 }
