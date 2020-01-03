@@ -19,6 +19,9 @@ Easily allow your users to share their verified personal information directly wi
         - [Type Names](#type-names)
         - [Detailed Configs](#detailed-configs)
           - [Version 1](#detailed-configs-version-1)
+      - [Notes](#notes)
+        - [Provider vs Attester](#provider-vs-attester)
+        - [Server Side Checks](#server-side-checks)
     - [Example](#example)
     - [QROptions](#qroptions)
     - [ButtonOptions](#buttonoptions)
@@ -197,11 +200,19 @@ Detailed configs allow you to control exactly what attestation data you will rec
 | attester_whitelist | List of attester ETH addresses to accept an attestation from           | `string[]`              | N        |
 | attester_blacklist | List of attester ETH addresses to _not_ accept an attestation from     | `string[]`              | N        |
 
-**What is the different between a provider and attester?**
+#### Notes
+
+##### Provider vs Attester
 
 A provider is the party who supplies the data to be verified and an attester is the party that signs the data gotten from the provider. Sometimes the provider can be the same as the attester.
 
 In the options above the provider will be the _name_ of the data provider while the attester will the be eth address of the signer.
+
+##### Server Side Checks
+
+The filtering options above (`completed_(after)|(before)`, `(provider)|(attester)_(black)|(white)list`) are meant to improve user expience when sharing attestations. When users attempt to share attestations from their mobile app they will be restricited by the provided filters. But due to the nature of how they share data directly to your server people can share data outside of the app.
+
+This means that the completed data, provider, and attester still need to be verified on your backend after receiving the data. You can do this while you are validating the overall structure and proofs with [Verify Kit](https://github.com/hellobloom/verify-kit).
 
 ### Example
 
