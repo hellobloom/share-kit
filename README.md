@@ -128,10 +128,12 @@ The rest of the data necessary for sharing verified data.
 
 In addition to [above](#payload-version-1)
 
-| Name   | Description                                           | Type                |
-| ------ | ----------------------------------------------------- | ------------------- |
-| action | The action to take                                    | `attestation`       |
-| types  | The type of attestions required and the amount needed | See [below](#types) |
+| Name               | Description                                                         | Type                | Required |
+| ------------------ | ------------------------------------------------------------------- | ------------------- | -------- |
+| action             | The action to take                                                  | `attestation`       | Y        |
+| types              | The type of attestions required and the amount needed               | See [below](#types) | Y        |
+| attester_whitelist | List of attester ETH addresses to accept any attestation from       | `string[]`          | N        |
+| attester_blacklist | List of attester ETH addresses to _not_ accept any attestation from | `string[]`          | N        |
 
 <h5 id="payload-version-1-authentication">Authentication</h5>
 
@@ -184,14 +186,22 @@ Detailed configs allow you to control exactly what attestation data you will rec
 
 <h6 id="detailed-configs-version-1">Version 1</h6>
 
-| Name               | Description                                                            | Type                    | Optional |
+| Name               | Description                                                            | Type                    | Required |
 | ------------------ | ---------------------------------------------------------------------- | ----------------------- | -------- |
-| name               | The name of the attestation                                            | `TAttestationTypeNames` | N        |
-| optional           | Whether the attestation is required to be completed                    | `boolean`               | Y        |
-| completed_after    | Signifies that the attestation has to be completed after a given date  | `string`                | Y        |
-| completed_before   | Signifies that the attestation has to be completed before a given date | `string`                | Y        |
-| provider_whitelist | List of providers to accept an attestation from                        | `string[]`              | Y        |
-| provider_blacklist | List of providers to _not_ accept an attestation from                  | `string[]`              | Y        |
+| name               | The name of the attestation                                            | `TAttestationTypeNames` | Y        |
+| optional           | Whether the attestation is required to be completed                    | `boolean`               | N        |
+| completed_after    | Signifies that the attestation has to be completed after a given date  | `string`                | N        |
+| completed_before   | Signifies that the attestation has to be completed before a given date | `string`                | N        |
+| provider_whitelist | List of provider names to accept an attestation from                   | `string[]`              | N        |
+| provider_blacklist | List of provider names to _not_ accept an attestation from             | `string[]`              | N        |
+| attester_whitelist | List of attester ETH addresses to accept an attestation from           | `string[]`              | N        |
+| attester_blacklist | List of attester ETH addresses to _not_ accept an attestation from     | `string[]`              | N        |
+
+**What is the different between a provider and attester?**
+
+A provider is the party who supplies the data to be verified and an attester is the party that signs the data gotten from the provider. Sometimes the provider can be the same as the attester.
+
+In the options above the provider will be the _name_ of the data provider while the attester will the be eth address of the signer.
 
 ### Example
 
@@ -205,8 +215,11 @@ app.get('/api/share-kit/get-token', function(req, res) {
   const token = uuid()
   const requestPayloadData: RequestPayloadData = {
     version: 1,
+    // Enforce that all attestations come from a specified attester
+    attester_whitelist: ['0x123...'],
     types: [
       {
+        // Enforce that this attestation came from an ID document (acuant)
         name: 'full-name',
         provider_whitelist: ['acuant'],
       },
@@ -215,6 +228,8 @@ app.get('/api/share-kit/get-token', function(req, res) {
         completed_after: dayjs()
           .subtract(1, 'year')
           .toISOString(),
+        // Enfoce that this attestation comes from a different specified attester
+        attester_whitelist: ['0x456...'],
       },
       'email',
       {

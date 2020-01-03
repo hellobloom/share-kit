@@ -71,6 +71,8 @@ export type DetailedAttestationTypeConfigV1 = {
   completed_before?: string
   provider_whitelist?: string[]
   provider_blacklist?: string[]
+  attester_whitelist?: string[]
+  attester_blacklist?: string[]
 }
 
 export type BaseRequestPayloadDataV1 = BasePayloadRequestData & {
@@ -84,6 +86,8 @@ export type BaseRequestPayloadDataV1 = BasePayloadRequestData & {
 export type AttestationRequestPayloadDataV1 = BaseRequestPayloadDataV1 & {
   action: 'attestation'
   types: (TAttestationTypeNames | DetailedAttestationTypeConfigV1)[]
+  attester_whitelist?: string[]
+  attester_blacklist?: string[]
 }
 
 export type AuthRequestPayloadDataV1 = BaseRequestPayloadDataV1 & {
