@@ -1,5 +1,7 @@
 ![Share Kit](https://github.com/hellobloom/share-kit/raw/master/images/logo.png)
 
+**Important**: This repository is no longer maintained. It has been moved to the [attestations-es](https://github.com/hellobloom/attestations-es/) monorepo.
+
 # Share Kit
 
 Easily allow your users to share their verified personal information directly with your application.
@@ -61,15 +63,15 @@ remove()
 
 Data to be rendered into the RequestQRCode for authentication requests.
 
-| Name                   | Description                                                                                     | Type                                              |
-| ---------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| action                 | Action type                                                                                     | `Action`                                          |
-| token                  | Unique string to identify this data request                                                     | `string`                                          |
-| url                    | The API endpoint to POST the `ResponseData` to.<br/> See [below](#appending-to-URL) for details | `string`                                          |
-| org_logo_url           | A url of the logo to display to the user when requesting data                                   | `string`                                          |
-| org_name               | The name of the organization requesting data                                                    | `string`                                          |
-| org_usage_policy_url   | The url of the usage policy for the organization requesting data                                | `string`                                          |
-| org_privacy_policy_url | The url of the privacy policy for the organization requesting data                              | `string`                                          |
+| Name                   | Description                                                                                     | Type     |
+| ---------------------- | ----------------------------------------------------------------------------------------------- | -------- |
+| action                 | Action type                                                                                     | `Action` |
+| token                  | Unique string to identify this data request                                                     | `string` |
+| url                    | The API endpoint to POST the `ResponseData` to.<br/> See [below](#appending-to-URL) for details | `string` |
+| org_logo_url           | A url of the logo to display to the user when requesting data                                   | `string` |
+| org_name               | The name of the organization requesting data                                                    | `string` |
+| org_usage_policy_url   | The url of the usage policy for the organization requesting data                                | `string` |
+| org_privacy_policy_url | The url of the privacy policy for the organization requesting data                              | `string` |
 
 ### RequestDataAttestation
 
@@ -139,7 +141,7 @@ Works if your url already has a query param too!
 
 <h3 id="request-example">Example</h3>
 
-# Attestation data request: 
+# Attestation data request:
 
 ```ts
 {
@@ -154,7 +156,7 @@ Works if your url already has a query param too!
 }
 ```
 
-# Authentication/login request: 
+# Authentication/login request:
 
 ```ts
 {
@@ -204,9 +206,9 @@ Rendering options for the rendered button.
 
 The type of button to rendered based on it's size
 
-| Size | Type                                                    | Required | Default  |
-| ---- | ------------------------------------------------------- | -------- | -------- |
-| sm   | `'square' \| 'rounded-square' \| 'circle' \| 'squircle'`   | Y        | N/A      |
+| Size | Type                                                        | Required | Default  |
+| ---- | ----------------------------------------------------------- | -------- | -------- |
+| sm   | `'square' \| 'rounded-square' \| 'circle' \| 'squircle'`    | Y        | N/A      |
 | md   | `'log-in' \| 'sign-up' \| 'connect' \| 'bloom' \| 'verify'` | N        | 'verify' |
 | lg   | `'log-in' \| 'sign-up' \| 'connect' \| 'bloom' \| 'verify'` | N        | 'verify' |
 
