@@ -1,3 +1,7 @@
+:warning: **_Notice_** :warning:
+
+This library is no longer maintained, please use [ssi-sdk](https://github.com/hellobloom/ssi-sdk) instead.
+
 ![Share Kit](https://github.com/hellobloom/share-kit/raw/master/images/logo.png)
 
 **Important**: This repository is no longer maintained. It has been moved to the [attestations-es](https://github.com/hellobloom/attestations-es/) monorepo.
